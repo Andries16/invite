@@ -110,3 +110,14 @@ Supported media classes include image, GIF, video, audio, voice note, sticker, m
 ## Campaign reuse
 
 Campaign recipients normally point to the same generated experience artifact while resolving safe recipient variables at runtime or at a controlled generation boundary. The platform must avoid building hundreds of logically identical applications.
+
+
+## Experience data
+
+The data model adds ExperienceSpec and SceneSpec alongside InvitationSpec. A SceneSpec contains id, order, purpose, trigger, content, media references, motion, interaction references and optional duration.
+
+Trigger types include load, scroll, click, timed transition and interaction completion. Public interaction events include scene started, scene completed, choice selected, reveal opened, quiz completed and RSVP submitted.
+
+Supported media classes include image, GIF, video, audio, voice, sticker, map and screenshot. Campaign variables are explicit and typed.
+
+Experience versions remain immutable after publication. The logical invitation points to the active artifact so rebuilds never require a new public URL or QR code.
