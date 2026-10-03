@@ -1,0 +1,40 @@
+# Phase 00 — Foundation
+
+Monorepo, tooling, shared packages, adapters, local environment and CI. Resolves open documentation conflicts and records the ADRs required before code depends on them.
+
+**Exit condition:** Services start locally, contracts compile, CI runs typecheck, lint, tests and build.
+
+| ID | Task | Priority | Depends on |
+| --- | --- | --- | --- |
+| T00.01 | [Resolve documentation conflicts](00-01-resolve-documentation-conflicts.md) | P0 | — |
+| T00.02 | [ADR: monorepo and package tooling](00-02-adr-monorepo-tooling.md) | P0 | [T00.01](00-01-resolve-documentation-conflicts.md) |
+| T00.03 | [ADR: database selection](00-03-adr-database-selection.md) | P0 | [T00.01](00-01-resolve-documentation-conflicts.md) |
+| T00.04 | [ADR: API transport and contracts](00-04-adr-api-transport.md) | P0 | [T00.01](00-01-resolve-documentation-conflicts.md) |
+| T00.05 | [ADR: authentication provider](00-05-adr-authentication-provider.md) | P0 | [T00.01](00-01-resolve-documentation-conflicts.md) |
+| T00.06 | [ADR: single and campaign public URL convention](00-06-adr-public-url-convention.md) | P0 | [T00.01](00-01-resolve-documentation-conflicts.md) |
+| T00.07 | [ADR: edge and CDN provider](00-07-adr-edge-provider.md) | P1 | [T00.06](00-06-adr-public-url-convention.md) |
+| T00.08 | [Monorepo workspace](00-08-monorepo-workspace.md) | P0 | [T00.02](00-02-adr-monorepo-tooling.md) |
+| T00.09 | [Strict TypeScript base configuration](00-09-typescript-strict-config.md) | P0 | [T00.08](00-08-monorepo-workspace.md) |
+| T00.10 | [Lint rules enforcing conventions](00-10-lint-and-format-rules.md) | P0 | [T00.09](00-09-typescript-strict-config.md) |
+| T00.11 | [Shared primitives package](00-11-shared-package.md) | P0 | [T00.09](00-09-typescript-strict-config.md) |
+| T00.12 | [Configuration parsing and validation](00-12-config-package.md) | P0 | [T00.11](00-11-shared-package.md) |
+| T00.13 | [Structured logging and correlation](00-13-observability-package.md) | P0 | [T00.12](00-12-config-package.md) |
+| T00.14 | [Contracts package](00-14-contracts-package.md) | P0 | [T00.11](00-11-shared-package.md), [T00.04](00-04-adr-api-transport.md) |
+| T00.15 | [Domain package skeleton](00-15-domain-package.md) | P0 | [T00.11](00-11-shared-package.md) |
+| T00.16 | [Testing utilities and synthetic fixtures](00-16-testing-package.md) | P0 | [T00.09](00-09-typescript-strict-config.md) |
+| T00.17 | [Translations package](00-17-translations-package.md) | P0 | [T00.09](00-09-typescript-strict-config.md) |
+| T00.18 | [Local development environment](00-18-local-dev-environment.md) | P0 | [T00.03](00-03-adr-database-selection.md), [T00.08](00-08-monorepo-workspace.md) |
+| T00.19 | [Database adapter and migrations](00-19-database-package.md) | P0 | [T00.03](00-03-adr-database-selection.md), [T00.12](00-12-config-package.md), [T00.18](00-18-local-dev-environment.md) |
+| T00.20 | [Object storage adapter](00-20-storage-package.md) | P0 | [T00.12](00-12-config-package.md), [T00.18](00-18-local-dev-environment.md) |
+| T00.21 | [Queue adapter and job envelope](00-21-queue-package.md) | P0 | [T00.12](00-12-config-package.md), [T00.18](00-18-local-dev-environment.md) |
+| T00.22 | [Transactional outbox](00-22-outbox-dispatcher.md) | P1 | [T00.19](00-19-database-package.md), [T00.21](00-21-queue-package.md) |
+| T00.23 | [Idempotency keys](00-23-idempotency-infrastructure.md) | P1 | [T00.19](00-19-database-package.md), [T00.14](00-14-contracts-package.md) |
+| T00.24 | [Feature flag infrastructure](00-24-feature-flags.md) | P1 | [T00.12](00-12-config-package.md) |
+| T00.25 | [API application bootstrap](00-25-api-app-bootstrap.md) | P0 | [T00.12](00-12-config-package.md), [T00.13](00-13-observability-package.md), [T00.14](00-14-contracts-package.md), [T00.04](00-04-adr-api-transport.md) |
+| T00.26 | [Error model and HTTP mapping](00-26-error-model-http-mapping.md) | P0 | [T00.25](00-25-api-app-bootstrap.md), [T00.14](00-14-contracts-package.md) |
+| T00.27 | [Worker application bootstrap](00-27-worker-app-bootstrap.md) | P0 | [T00.21](00-21-queue-package.md), [T00.13](00-13-observability-package.md) |
+| T00.28 | [Creator application bootstrap](00-28-creator-app-bootstrap.md) | P0 | [T00.10](00-10-lint-and-format-rules.md), [T00.17](00-17-translations-package.md) |
+| T00.29 | [Continuous integration](00-29-ci-pipeline.md) | P0 | [T00.10](00-10-lint-and-format-rules.md), [T00.16](00-16-testing-package.md) |
+| T00.30 | [Liveness and readiness checks](00-30-health-checks.md) | P1 | [T00.25](00-25-api-app-bootstrap.md), [T00.27](00-27-worker-app-bootstrap.md) |
+
+[Back to task index](../README.md)

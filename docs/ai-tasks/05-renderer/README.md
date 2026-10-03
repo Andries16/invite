@@ -1,0 +1,29 @@
+# Phase 05 — Invitation renderer
+
+Deterministic invitation runtime that turns a validated, normalized InvitationSpec plus resolved assets into a React tree, shared by live preview and static generation.
+
+**Exit condition:** Every golden fixture renders deterministically through the trusted registry, accessibly and responsively.
+
+| ID | Task | Priority | Depends on |
+| --- | --- | --- | --- |
+| T05.01 | [Invitation runtime package](05-01-runtime-package-scaffold.md) | P0 | [T02.18](../02-invitation-spec/02-18-spec-normalization.md), [T04.08](../04-design-system/04-08-invitation-layout-primitives.md) |
+| T05.02 | [Trusted component registry](05-02-component-registry.md) | P0 | [T05.01](05-01-runtime-package-scaffold.md) |
+| T05.03 | [Page composition and section renderer](05-03-page-composition.md) | P0 | [T05.02](05-02-component-registry.md) |
+| T05.04 | [Theme application](05-04-theme-application.md) | P0 | [T05.01](05-01-runtime-package-scaffold.md), [T04.14](../04-design-system/04-14-theme-contract-registry.md) |
+| T05.05 | [Hero component](05-05-hero-component.md) | P0 | [T05.03](05-03-page-composition.md), [T02.06](../02-invitation-spec/02-06-hero-section-schema.md), [T04.09](../04-design-system/04-09-invitation-content-primitives.md) |
+| T05.06 | [Narrative components](05-06-narrative-components.md) | P0 | [T05.03](05-03-page-composition.md), [T02.07](../02-invitation-spec/02-07-narrative-section-schemas.md) |
+| T05.07 | [Media components](05-07-media-components.md) | P0 | [T05.03](05-03-page-composition.md), [T02.08](../02-invitation-spec/02-08-media-section-schemas.md), [T04.17](../04-design-system/04-17-image-treatments.md) |
+| T05.08 | [Event components](05-08-event-components.md) | P0 | [T05.03](05-03-page-composition.md), [T02.09](../02-invitation-spec/02-09-event-section-schemas.md) |
+| T05.09 | [Interactive components](05-09-interactive-components.md) | P0 | [T05.03](05-03-page-composition.md), [T02.10](../02-invitation-spec/02-10-interactive-section-schemas.md) |
+| T05.10 | [Emotional interaction patterns](05-10-emotional-interactions.md) | P1 | [T05.09](05-09-interactive-components.md), [T04.12](../04-design-system/04-12-motion-engine.md) |
+| T05.11 | [Divider and spacer components](05-11-utility-components.md) | P0 | [T05.03](05-03-page-composition.md), [T02.11](../02-invitation-spec/02-11-layout-utility-schemas.md) |
+| T05.12 | [Motion integration](05-12-motion-integration.md) | P0 | [T05.03](05-03-page-composition.md), [T04.12](../04-design-system/04-12-motion-engine.md) |
+| T05.13 | [Asset resolution](05-13-asset-resolution.md) | P0 | [T05.01](05-01-runtime-package-scaffold.md), [T02.14](../02-invitation-spec/02-14-asset-reference-schema.md) |
+| T05.14 | [Public-safe runtime configuration](05-14-public-runtime-config.md) | P0 | [T05.01](05-01-runtime-package-scaffold.md) |
+| T05.15 | [Determinism guards](05-15-determinism-guards.md) | P0 | [T05.03](05-03-page-composition.md) |
+| T05.16 | [Document metadata and social previews](05-16-seo-metadata.md) | P0 | [T05.03](05-03-page-composition.md) |
+| T05.17 | [Renderer accessibility enforcement](05-17-renderer-accessibility.md) | P0 | [T05.03](05-03-page-composition.md), [T04.18](../04-design-system/04-18-accessibility-utilities.md) |
+| T05.18 | [Minimal JavaScript output](05-18-renderer-performance.md) | P1 | [T05.03](05-03-page-composition.md) |
+| T05.19 | [Renderer golden tests](05-19-renderer-golden-tests.md) | P0 | [T05.05](05-05-hero-component.md), [T05.06](05-06-narrative-components.md), [T05.07](05-07-media-components.md), [T05.08](05-08-event-components.md), [T05.09](05-09-interactive-components.md), [T05.11](05-11-utility-components.md), [T02.23](../02-invitation-spec/02-23-golden-spec-fixtures.md) |
+
+[Back to task index](../README.md)

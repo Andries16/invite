@@ -1,0 +1,33 @@
+# Phase 02 — InvitationSpec
+
+The versioned product contract between AI and deterministic rendering. Schemas, domain validation, capability validation, normalization, patches, migrations and golden fixtures.
+
+**Exit condition:** Golden fixture specs validate, normalize, hash deterministically and reject malicious or invalid input.
+
+| ID | Task | Priority | Depends on |
+| --- | --- | --- | --- |
+| T02.01 | [InvitationSpec package and versioning](02-01-spec-package-scaffold.md) | P0 | [T00.11](../00-foundation/00-11-shared-package.md), [T00.01](../00-foundation/00-01-resolve-documentation-conflicts.md) |
+| T02.02 | [Primitive value schemas](02-02-primitive-value-schemas.md) | P0 | [T02.01](02-01-spec-package-scaffold.md) |
+| T02.03 | [Metadata, people and event schemas](02-03-metadata-people-event-schemas.md) | P0 | [T02.02](02-02-primitive-value-schemas.md) |
+| T02.04 | [Content model schema](02-04-content-model-schema.md) | P0 | [T02.02](02-02-primitive-value-schemas.md) |
+| T02.05 | [Section discriminated union](02-05-section-union-schema.md) | P0 | [T02.04](02-04-content-model-schema.md) |
+| T02.06 | [Hero section schema](02-06-hero-section-schema.md) | P0 | [T02.05](02-05-section-union-schema.md) |
+| T02.07 | [Narrative section schemas](02-07-narrative-section-schemas.md) | P0 | [T02.05](02-05-section-union-schema.md) |
+| T02.08 | [Media section schemas](02-08-media-section-schemas.md) | P0 | [T02.05](02-05-section-union-schema.md), [T02.14](02-14-asset-reference-schema.md) |
+| T02.09 | [Event section schemas](02-09-event-section-schemas.md) | P0 | [T02.05](02-05-section-union-schema.md), [T02.03](02-03-metadata-people-event-schemas.md) |
+| T02.10 | [Interactive section schemas](02-10-interactive-section-schemas.md) | P0 | [T02.05](02-05-section-union-schema.md), [T02.13](02-13-interaction-spec-schema.md) |
+| T02.11 | [Layout and utility schemas](02-11-layout-utility-schemas.md) | P0 | [T02.05](02-05-section-union-schema.md) |
+| T02.12 | [DesignSpec schema](02-12-design-spec-schema.md) | P0 | [T02.02](02-02-primitive-value-schemas.md) |
+| T02.13 | [InteractionSpec schema](02-13-interaction-spec-schema.md) | P0 | [T02.02](02-02-primitive-value-schemas.md) |
+| T02.14 | [AssetReference schema](02-14-asset-reference-schema.md) | P0 | [T02.02](02-02-primitive-value-schemas.md) |
+| T02.15 | [Variable definition schema](02-15-variable-definition-schema.md) | P1 | [T02.04](02-04-content-model-schema.md) |
+| T02.16 | [Domain validation rules](02-16-domain-validation.md) | P0 | [T02.06](02-06-hero-section-schema.md), [T02.07](02-07-narrative-section-schemas.md), [T02.08](02-08-media-section-schemas.md), [T02.09](02-09-event-section-schemas.md), [T02.10](02-10-interactive-section-schemas.md), [T02.11](02-11-layout-utility-schemas.md), [T02.12](02-12-design-spec-schema.md), [T02.13](02-13-interaction-spec-schema.md) |
+| T02.17 | [Capability validation](02-17-capability-validation.md) | P0 | [T02.16](02-16-domain-validation.md) |
+| T02.18 | [Spec normalization](02-18-spec-normalization.md) | P0 | [T02.16](02-16-domain-validation.md) |
+| T02.19 | [Canonical serialization and hashing](02-19-canonical-hash.md) | P0 | [T02.18](02-18-spec-normalization.md) |
+| T02.20 | [Structured spec patch operations](02-20-spec-patch-operations.md) | P0 | [T02.16](02-16-domain-validation.md) |
+| T02.21 | [Spec migration framework](02-21-spec-migrations.md) | P1 | [T02.01](02-01-spec-package-scaffold.md) |
+| T02.22 | [JSON Schema export for AI](02-22-json-schema-export.md) | P0 | [T02.16](02-16-domain-validation.md) |
+| T02.23 | [Golden spec fixtures](02-23-golden-spec-fixtures.md) | P0 | [T02.16](02-16-domain-validation.md), [T00.16](../00-foundation/00-16-testing-package.md) |
+
+[Back to task index](../README.md)
