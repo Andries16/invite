@@ -82,3 +82,50 @@ A failed AI request or build must never replace an existing published artifact. 
 
 ## ADR triggers
 Create an ADR for a new persistent service, public protocol, execution boundary, storage choice, public URL strategy, security boundary or major deployment topology.
+
+
+## Experience runtime architecture
+
+The experience layer sits between AI composition and deterministic rendering:
+
+~~~text
+Conversation
+   |
+Storyboard
+   |
+Validated ExperienceSpec
+   +-- DesignSpec
+   +-- SceneSpec[]
+   +-- InteractionSpec[]
+   +-- Media references
+   +-- Safe variables
+   |
+Deterministic experience runtime
+   +-- Creator preview
+   +-- Guest playback
+   +-- Static generation
+   |
+Immutable artifact -> CDN / Edge
+~~~
+
+The same normalized ExperienceSpec drives creator preview, guest playback and production generation. Preview is not a screenshot and production must not use a separate interpretation of the design.
+
+## Runtime boundary
+
+Generated experiences may execute trusted runtime code supplied by the platform, but must never receive platform secrets. User input, uploaded media metadata, AI output and campaign variables are untrusted. Arbitrary user-authored JavaScript is not the normal generation path.
+
+## Scene execution
+
+A scene runtime evaluates a validated trigger, resolves safe content and variables, loads media according to performance policy, applies deterministic motion and emits privacy-aware analytics events. Scene transitions must tolerate slow media and interrupted navigation.
+
+## Campaign runtime
+
+Campaign experiences should reuse a master artifact wherever possible. Recipient-specific values are resolved from a constrained variable model and must not alter the trusted runtime or introduce arbitrary markup or script.
+
+## Public interaction API
+
+Dynamic interactions such as RSVP, quizzes, guestbook and analytics are separate from static content delivery. The public page remains available even when an interaction API is degraded; the runtime should provide graceful fallback states.
+
+## Performance
+
+Experience generation must produce mobile-conscious media derivatives, poster images, lazy-loaded non-critical assets and reduced-motion behavior. A complex experience must not become an excuse for shipping all media in the initial request.
