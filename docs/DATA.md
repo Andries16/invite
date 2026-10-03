@@ -1,28 +1,12 @@
 # Data Architecture
 
 ## Principles
-
-Separate application state, binary assets and generated artifacts.
-
-Use IDs for relationships. Keep published versions immutable.
+Separate application state, binary assets and generated artifacts. Use IDs for relationships. Keep published versions immutable.
 
 ## Core entities
-
-- User
-- Project
-- Invitation
-- InvitationVersion
-- Conversation
-- Message
-- Asset
-- GenerationJob
-- Artifact
-- Publication
-- Campaign
-- Recipient
+User, Project, Invitation, InvitationVersion, Conversation, Message, Asset, GenerationJob, Artifact, Publication, Campaign and Recipient.
 
 ## Invitation
-
 The logical public identity.
 
 ~~~text
@@ -37,7 +21,6 @@ updatedAt
 ~~~
 
 ## InvitationVersion
-
 Immutable InvitationSpec snapshot and generation metadata.
 
 ~~~text
@@ -51,7 +34,6 @@ createdAt
 ~~~
 
 ## InvitationSpec
-
 Illustrative shape:
 
 ~~~ts
@@ -72,32 +54,18 @@ type InvitationSpec = {
 };
 ~~~
 
-The canonical schema must live in a dedicated package and be versioned.
+The canonical schema belongs in a dedicated package and is versioned.
 
 ## Storage
+Database: metadata, specifications, relationships, job state, authorization data and aggregates.
 
-Database:
-- metadata
-- specifications
-- relationships
-- job state
-- authorization data
-- analytics aggregates
-
-Object storage:
-- originals
-- processed media
-- static artifacts
-- temporary generation output
+Object storage: original uploads, processed media, static artifacts and temporary generation output.
 
 ## Immutability
-
 Publishing a new version creates a new immutable artifact. The logical invitation points to the current artifact. Rollback changes the pointer.
 
 ## Tenant isolation
-
-Every tenant-owned resource must have an ownership boundary. Authorization belongs in services, not only in the frontend.
+Every tenant-owned resource needs an ownership boundary. Authorization belongs in services, not only the frontend.
 
 ## Retention
-
-Define explicit retention for conversations, originals, generated artifacts, logs and analytics. Deleting an invitation must not leave private assets orphaned indefinitely.
+Define retention for conversations, originals, generated artifacts, logs and analytics. Deleting an invitation must not leave private assets orphaned indefinitely.
