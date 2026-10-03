@@ -356,10 +356,15 @@ function render() {
     settings: settings,
     account: account,
     billing: billing,
+    experiences: experiencesPage,
     editor: editor,
     published: published,
   }[S.screen]();
   $("app").innerHTML = b;
-  if (S.modal) $("app").insertAdjacentHTML("beforeend", S.modal);
+  if (S.modal) {
+    const match = S.modal.match(/^experience:(\\d+)$/);
+    if (match) $("app").insertAdjacentHTML("beforeend", experienceModal(Number(match[1])));
+    else $("app").insertAdjacentHTML("beforeend", S.modal);
+  }
 }
 render();
