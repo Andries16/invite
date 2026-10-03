@@ -37,3 +37,42 @@
 .experience-demo:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fff1,transparent);animation:scan 4s infinite}
 @media(max-width:1120px){.experience-grid{grid-template-columns:repeat(2,1fr)}.experience-builder{grid-template-columns:1fr}}
 @media(max-width:780px){.experience-grid{grid-template-columns:1fr}.builder-flow{justify-content:flex-start}.flow-arrow{display:none}}
+
+.experience-playbar{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:8;background:#111c;color:#fff;border:1px solid #fff2;border-radius:99px;padding:7px 9px;display:flex;align-items:center;gap:12px;font-size:10px;backdrop-filter:blur(12px)}
+.experience-playbar button{border:0;background:#fff1;color:#fff;border-radius:50%;width:25px;height:25px}
+.exp-cinematic,.exp-type,.exp-gif,.exp-scroll,.exp-quiz,.exp-reveal,.exp-timeline,.exp-video,.exp-party{min-height:610px;height:100%;position:relative;overflow:hidden;padding:35px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:#fff}
+.exp-cinematic{background:radial-gradient(circle at 70% 30%,#8d72b655,transparent 28%),linear-gradient(145deg,#0d0c11,#33263f)}
+.exp-cinematic:after{content:"";position:absolute;inset:10%;border:1px solid #fff2;border-radius:50%;animation:orb 7s linear infinite}
+.exp-cinematic strong{font:clamp(44px,7vw,82px)/.9 var(--serif);letter-spacing:-.06em;position:relative;z-index:1}
+.exp-cinematic small,.exp-cinematic span,.exp-type small,.exp-type span,.exp-gif small,.exp-gif>span,.exp-quiz small,.exp-quiz span,.exp-reveal small,.exp-timeline small,.exp-video span,.exp-party small,.exp-party span{font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.65;position:relative;z-index:2}
+.exp-cinematic span{margin-top:35px}
+.exp-type{background:linear-gradient(145deg,#171614,#514d47);align-items:flex-start;text-align:left}
+.exp-type strong{font:clamp(28px,5vw,58px)/1.05 var(--serif);max-width:650px;margin-top:22px}
+.exp-type i{font-family:var(--sans);animation:blink 1s infinite;font-style:normal}
+.exp-type span{margin-top:25px}
+.exp-gif{background:linear-gradient(145deg,#2c1c25,#9e5d76)}
+.gif-frame{width:min(390px,90%);height:270px;border-radius:16px;background:linear-gradient(135deg,#edb3bf,#5d4053);display:grid;place-items:center;box-shadow:0 25px 60px #0005;margin:20px 0}
+.gif-frame b{font-size:70px;animation:float 2.5s ease-in-out infinite}.gif-frame span{font:23px var(--serif);line-height:1.05}
+.exp-scroll{justify-content:flex-start;background:linear-gradient(180deg,#18242d,#8da9bb);padding-top:70px}
+.exp-scroll strong{font:45px var(--serif);line-height:1;margin:30px 0 50px}
+.scroll-card{width:90%;max-width:450px;padding:25px;background:#fff;color:#25231f;border-radius:14px;margin:12px;box-shadow:0 18px 40px #0003;transform:translateY(calc((3 - var(--scene,1))*5px))}
+.exp-quiz{background:linear-gradient(145deg,#28223c,#7463a3)}
+.exp-quiz strong{font:32px var(--serif);line-height:1.05;margin:20px 0}
+.exp-quiz button,.exp-party button{width:min(390px,100%);padding:13px;border:1px solid #fff4;background:#fff1;color:#fff;border-radius:11px;margin:4px;cursor:pointer}
+.exp-quiz button:hover,.exp-party button:hover{background:#fff2}
+.exp-reveal{background:radial-gradient(circle,#e5c79d,#694c35)}
+.envelope{width:250px;height:170px;background:#f5ead9;color:#5e4936;display:grid;place-items:center;box-shadow:0 25px 60px #0004;margin:25px;cursor:pointer;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+.envelope b{font-size:12px;letter-spacing:.2em}
+.exp-reveal strong{font:28px var(--serif)}
+.exp-timeline{background:linear-gradient(145deg,#202e27,#a8ae84);align-items:flex-start;text-align:left}
+.exp-timeline strong{font:45px var(--serif);line-height:1;margin:25px 0}
+.filmstrip{display:flex;gap:10px;width:100%;overflow:hidden;padding-bottom:10px}
+.filmstrip>div{min-width:135px;height:210px;border:1px solid #fff3;background:#fff1;display:flex;flex-direction:column;justify-content:end;padding:12px;opacity:.45}.filmstrip>div.seen{opacity:1;background:#fff2}
+.filmstrip b{font-size:10px}.filmstrip span{font-size:8px;opacity:.55;margin-top:5px}
+.exp-video{background:#111820}.video-poster{width:100%;height:330px;display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#8295aa,#17222d);border-radius:14px}.video-poster span{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#222;font-size:20px}.video-poster small{position:absolute;margin-top:140px;letter-spacing:.15em}.exp-video strong{font:28px var(--serif);margin:25px 0 10px}.exp-party{background:radial-gradient(circle at 30% 20%,#e5a167,transparent 20%),radial-gradient(circle at 70% 65%,#9c86e9,transparent 25%),#28232e}.exp-party strong{font:58px var(--serif);margin:20px}.confetti{font-size:28px;animation:float 2s ease-in-out infinite}
+.exp-footer{height:45px;background:#111;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:9px;letter-spacing:.08em}
+.experience-demo{height:360px!important;padding:0!important;background:#111!important}.experience-demo .exp-cinematic,.experience-demo .exp-type,.experience-demo .exp-gif,.experience-demo .exp-scroll,.experience-demo .exp-quiz,.experience-demo .exp-reveal,.experience-demo .exp-timeline,.experience-demo .exp-video,.experience-demo .exp-party{min-height:360px}
+.experience-modal{width:min(850px,100%)}
+@keyframes orb{to{transform:rotate(360deg)}}@keyframes blink{50%{opacity:0}}@keyframes float{50%{transform:translateY(-8px)}}
+@media(max-width:900px){.experience-grid{grid-template-columns:repeat(2,1fr)}.experience-builder{grid-template-columns:1fr}.search{display:none}}
+@media(max-width:600px){.experience-grid{grid-template-columns:1fr}.exp-cinematic,.exp-type,.exp-gif,.exp-scroll,.exp-quiz,.exp-reveal,.exp-timeline,.exp-video,.exp-party{min-height:600px}.experience-demo .exp-cinematic,.experience-demo .exp-type,.experience-demo .exp-gif,.experience-demo .exp-scroll,.experience-demo .exp-quiz,.experience-demo .exp-reveal,.experience-demo .exp-timeline,.experience-demo .exp-video,.experience-demo .exp-party{min-height:360px}}
