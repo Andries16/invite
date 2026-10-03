@@ -689,3 +689,16 @@ Guest variables are visible as safe tokens in the creator UI. A creator should u
 ## 44. Interaction feedback
 
 Every interactive element needs clear idle, focused, active, completed and unavailable states where applicable. Motion should reinforce state changes rather than decorate every interaction.
+
+
+## Experience design
+
+Invite.md treats the product as a sequence of intentional moments rather than a collection of landing-page sections.
+
+The scene editor exposes a timeline, live stage and inspector for trigger, media, animation, interaction and timing. It supports add, reorder, duplicate and AI remix operations.
+
+Mechanics include title sequences, typewriter text, GIF beats, scroll reveal, parallax, quizzes, branching choices, envelope reveals, timelines, video scenes, countdowns, maps, guestbooks, RSVP and celebration effects.
+
+Visual language is independent from mechanics. The same quiz can use a game, cinematic, editorial or chat visual treatment.
+
+Play as guest is the primary preview fidelity check. It hides creator chrome and runs the same normalized experience sequence used by production.
