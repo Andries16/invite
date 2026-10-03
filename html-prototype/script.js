@@ -4,369 +4,194 @@ const S = {
   step: 0,
   device: "phone",
   modal: "",
+  experience: "Cinematic reveal",
+  visual: "Film trailer",
+  media: "Images + GIFs",
+  playing: false,
+  scene: 0,
+  guestMode: false,
 };
-const templates = [
-  ["Velvet Letter", "Wedding", "Romantic", ""],
-  ["Olive Garden", "Wedding", "Botanical", "olive"],
-  ["After Hours", "Date", "Cinematic", "blue"],
-  ["Golden Hour", "Birthday", "Playful", "sun"],
-  ["Quiet Form", "Announcement", "Minimal", "blue"],
-  ["Postcard", "Anniversary", "Vintage", "olive"],
+
+const recipes = [
+  {id:"cinematic",name:"Cinematic intro",kind:"cinema",desc:"Movie-like opening with title cards, dramatic pacing, scene transitions and a final reveal.",tags:["Scenes","Titles","Transitions"]},
+  {id:"typewriter",name:"Typewriter story",kind:"type",desc:"A progressive story that reveals line by line like a film title or personal letter.",tags:["Text","Type-on","Pause"]},
+  {id:"gif",name:"GIF memory beats",kind:"gif",desc:"Looping memories punctuated by captions, stickers and rhythmic transitions.",tags:["GIF","Gallery","Loop"]},
+  {id:"scroll",name:"Scroll reveal",kind:"scroll",desc:"A cinematic scroll journey where content appears, shifts and transforms as guests move through it.",tags:["Scroll","Parallax","Reveal"]},
+  {id:"quiz",name:"Choose your path",kind:"quiz",desc:"An interactive story with questions, branching choices and a personalized reveal.",tags:["Quiz","Branching","Progress"]},
+  {id:"envelope",name:"Envelope reveal",kind:"reveal",desc:"A tactile opening moment that hides a letter, destination, message or RSVP.",tags:["Tap","Reveal","Letter"]},
+  {id:"timeline",name:"Film timeline",kind:"timeline",desc:"Photos, clips and captions arranged like a personal film timeline.",tags:["Timeline","Photos","Captions"]},
+  {id:"video",name:"Video scene",kind:"video",desc:"Poster, video, overlay copy and scene transitions for a film-like invitation.",tags:["Video","Scenes","Overlay"]},
+  {id:"party",name:"Celebration mode",kind:"party",desc:"Confetti, stickers, music moments and a strong final call to action.",tags:["Confetti","Audio","CTA"]},
 ];
+
+const visualLanguages = [
+  ["Film trailer","Dark title cards, credits, dramatic cuts"],
+  ["Terminal / code","Monospace text, commands, scanlines"],
+  ["VHS memory","Timestamp overlays, grain, playful glitches"],
+  ["Scrapbook","Tape, paper, polaroids and handwritten notes"],
+  ["Luxury editorial","Serif typography, whitespace, art direction"],
+  ["Music video","Rhythm, bold type, media-led transitions"],
+  ["Chat story","Messages, typing states and conversational reveals"],
+  ["Game UI","Progress, quests, choices and unlocks"],
+  ["Rom-com opening","Warm palette, playful copy, scene changes"],
+  ["Dark cinematic","Minimal light, slow motion, high contrast"],
+];
+
+const mediaTypes = ["Images","GIFs","Video","Audio","Voice","Stickers","Maps","Screenshots"];
+const interactionTypes = ["Tap reveal","Quiz","Choose a path","Scroll reveal","Countdown","Hidden message","Drag / swipe","RSVP","Guestbook","Map"];
+
+const scenes = [
+  ["01","Opening scene","Cinematic title","On load","2.8s"],
+  ["02","Memory beat","GIF / image","After scroll","3.5s"],
+  ["03","The question","Interactive choice","On click","Until answered"],
+  ["04","The reveal","Letter / destination","After choice","4.0s"],
+  ["05","The event","Details + map","Scroll","Persistent"],
+  ["06","Final moment","RSVP + message","On reveal","Persistent"],
+];
+
 const invites = [
-  ["Maya & Daniel", "Wedding", "14 June 2027", "live", "Editorial"],
-  ["A little surprise", "Date", "28 October 2026", "draft", "Cinematic"],
-  ["Leo turns 30", "Birthday", "02 December 2026", "live", "Playful"],
+  ["Maya & Daniel","Wedding","14 June 2027","live","Editorial"],
+  ["A little surprise","Date","28 October 2026","draft","Cinematic"],
+  ["Leo turns 30","Birthday","02 December 2026","live","Playful"],
 ];
-const $ = (id) => document.getElementById(id),
-  toast = (s) => {
-    $("toast").innerHTML = '<div class="toast">' + s + "</div>";
-    setTimeout(() => ($("toast").innerHTML = ""), 2300);
-  },
-  go = (s) => {
-    S.screen = s;
-    S.modal = "";
-    render();
-  };
-function nav() {
-  const a = [
-    ["home", "⌂", "Overview"],
-    ["create", "✦", "Create"],
-    ["templates", "▦", "Templates"],
-    ["invitations", "◫", "Invitations"],
-    ["campaigns", "◎", "Campaigns"],
-    ["assets", "▧", "Media"],
-    ["analytics", "↗", "Analytics"],
-    ["settings", "⚙", "Settings"],
-    ["account", "◎", "Account & plan"],
-    ["billing", "▤", "Billing"],
+
+const campaigns = [
+  ["Wedding guests","128 recipients","84% opened","74% RSVP","Active"],
+  ["Birthday launch","64 recipients","91% opened","63% RSVP","Active"],
+  ["Team celebration","42 recipients","76% opened","—","Draft"],
+];
+
+const $ = id => document.getElementById(id);
+const toast = s => { $("toast").innerHTML = '<div class="toast">'+s+'</div>'; setTimeout(()=>{$("toast").innerHTML=""},2300); };
+const go = s => { S.screen=s; S.modal=""; render(); };
+const recipe = () => recipes.find(x=>x.name===S.experience) || recipes[0];
+
+function nav(){
+  const a=[
+    ["home","⌂","Overview"],["create","✦","Create"],["experiences","◈","Experiences"],
+    ["templates","▦","Templates"],["invitations","◫","Invitations"],["campaigns","◎","Campaigns"],
+    ["assets","▧","Media"],["analytics","↗","Analytics"],["settings","⚙","Settings"],
+    ["account","◎","Account & plan"],["billing","▤","Billing"]
   ];
-  return \`<aside class="side"><div class="brand"><span class="mark">i.</span><span>invite.md</span></div><div class="workspace"><div class="avatar">AS</div><div class="ws-copy"><b>Andrei's workspace</b><span>Personal</span></div><span class="chev">⌄</span></div><div class="nav-label">Workspace</div><div class="nav">\${a.map((x) => \`<button class="\${S.screen == x[0] ? "on" : ""}" onclick="go('\${x[0]}')"><i>\${x[1]}</i><span>\${x[2]}</span></button>\`).join("")}</div><div class="side-bottom"><div class="plan-mini"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:11px">Creator plan</b><span style="font-size:9px;color:#bdb4ff">PRO</span></div><div class="bar"><i></i></div><div style="font-size:9px;color:#aaa49b">38 / 100 generations</div><button class="btn sm" style="width:100%;margin-top:9px;background:#fff;color:#211f1c" onclick="go('billing')">Manage plan</button></div><div class="profile"><div class="avatar">AS</div><div class="profile-copy"><b>Andrei S.</b><span>andrei@example.com</span></div><button class="icon-btn" style="width:30px;height:30px" onclick="go('account')">⋯</button></div></div></aside>\`;
+  return '<aside class="side"><div class="brand"><span class="mark">i.</span><span>invite.md</span></div>'+
+    '<div class="workspace"><div class="avatar">AS</div><div class="ws-copy"><b>Andrei’s workspace</b><span>Personal · Creator</span></div><span class="chev">⌄</span></div>'+
+    '<div class="nav-label">Workspace</div><div class="nav">'+a.map(x=>'<button class="'+(S.screen===x[0]?"on":"")+'" onclick="go(\''+x[0]+'\')"><i>'+x[1]+'</i><span>'+x[2]+'</span></button>').join("")+'</div>'+
+    '<div class="side-bottom"><div class="plan-mini"><b>Creator plan</b><div style="font-size:10px;color:#bcb7af;margin-top:3px">68 / 200 AI generations</div><div class="bar"><i></i></div><button class="btn sm" style="width:100%;background:#ffffff12;color:#fff;border-color:#ffffff18" onclick="go(\'billing\')">Manage plan</button></div>'+
+    '<div class="profile"><div class="avatar">AS</div><div class="profile-copy"><b>Andrei S.</b><span>andrei@invite.md</span></div><span class="chev">⌄</span></div></div></aside>';
 }
-function topBar(t) {
-  return (
-    '<header class="top"><span class="crumb">Workspace / <b>' +
-    t +
-    '</b></span><div class="top-actions"><button class="icon-btn" title="Search" onclick="toast(&quot;Search is ready&quot;)">⌕</button><button class="icon-btn" title="Notifications" onclick="toast(&quot;You are all caught up&quot;)">⌁</button><button class="btn soft sm" onclick="go(&quot;billing&quot;)">Creator · 38%</button><button class="btn dark sm" onclick="go(&quot;create&quot;)">+ New invitation</button></div></header>'
-  );
+function shell(content,title){
+  return nav()+'<main class="main"><header class="top"><div class="crumb">Workspace / <b>'+title+'</b></div><div class="top-actions"><input class="search" placeholder="Search invitations, experiences…" onclick="toast(\'Global search ready\')"><button class="icon-btn" onclick="toast(\'3 notifications\')">◌</button><button class="btn sm soft" onclick="go(\'billing\')">Creator · 68%</button><button class="btn dark sm" onclick="go(\'create\')">＋ New invitation</button></div></header>'+content+'</main>';
 }
-function shell(t, b) {
-  return (
-    '<div class="app">' +
-    nav() +
-    '<main class="main">' +
-    topBar(t) +
-    b +
-    "</main></div>"
-  );
+function page(inner){return '<div class="page">'+inner+'</div>'}
+function card(title,body,actions=""){return '<div class="card"><div class="pad"><div style="display:flex;justify-content:space-between;align-items:start;gap:10px"><div><h3>'+title+'</h3><div class="muted small">'+body+'</div></div>'+actions+'</div></div></div>'}
+
+function home(){
+  return shell(page(
+    '<div class="hero"><div><div class="eyebrow" style="color:#b9aaff">AI experience studio</div><h2>Create invitations people actually experience.</h2><p>Build cinematic stories, interactive reveals, quizzes, GIF memories and personalized guest journeys — not just another landing page.</p><div class="hero-actions"><button class="btn accent" onclick="go(\'create\')">Create with AI ✦</button><button class="btn" onclick="go(\'experiences\')">Explore experiences</button></div></div><div class="hero-art"><small>EXPERIENCE</small><b>For you,<br>always.</b><small>6 scenes · 3 interactions</small></div></div>'+
+    '<div class="section"><div><div class="eyebrow">Workspace</div><h2>Today</h2></div><button class="btn sm" onclick="go(\'analytics\')">View analytics →</button></div>'+
+    '<div class="grid g4"><div class="card stat"><div class="stat-top"><span class="muted small">Published</span><span class="stat-icon">↗</span></div><div class="num">12</div><div class="trend">+3 this month</div></div><div class="card stat"><div class="stat-top"><span class="muted small">Experiences</span><span class="stat-icon">◈</span></div><div class="num">27</div><div class="trend">8 interactive</div></div><div class="card stat"><div class="stat-top"><span class="muted small">Guest sessions</span><span class="stat-icon">◉</span></div><div class="num">8.4k</div><div class="trend">+18.2%</div></div><div class="card stat"><div class="stat-top"><span class="muted small">RSVP rate</span><span class="stat-icon">✓</span></div><div class="num">74%</div><div class="trend">+6.4 pts</div></div></div>'+
+    '<div class="section"><div><div class="eyebrow">Continue</div><h2>Your latest experience</h2></div><button class="btn sm" onclick="go(\'invitations\')">All invitations</button></div>'+
+    '<div class="grid g2"><div class="card"><div class="cover blue" style="height:230px"><div><span class="status draft">Draft</span><div class="cover-title">A little surprise</div><div style="font-size:10px;margin-top:7px;opacity:.75">Cinematic reveal · 6 scenes</div></div></div><div class="row"><div><b>Last edited 8 min ago</b><div class="muted small">3 interactions · 7 media assets</div></div><div class="row-actions"><button class="btn sm" onclick="go(\'editor\')">Continue</button><button class="btn sm" onclick="play()">▶</button></div></div></div>'+
+    '<div class="card"><div class="pad"><div class="eyebrow">AI activity</div><h3>Creative director</h3><p class="muted small">Your AI has enough context to continue designing the guest journey.</p><div class="notice" style="margin-top:13px"><b>Suggested next step</b><div class="muted small" style="margin-top:4px">Add a reveal after the quiz and personalize the final RSVP.</div></div><button class="btn sm accent" style="margin-top:12px" onclick="go(\'create\')">Ask AI to do it</button></div></div></div>'
+  ),"Overview");
 }
-function stat(n, l, d) {
-  return (
-    '<div class="card stat"><div class="num">' +
-    n +
-    "</div><b>" +
-    l +
-    '</b><div class="muted" style="font-size:12px;margin-top:6px">' +
-    d +
-    '</div><div class="trend">↑ Growing this month</div></div>'
-  );
+
+function experiencesPage(){
+  return shell(page(
+    '<div style="display:flex;justify-content:space-between;align-items:end;gap:15px"><div><div class="eyebrow">Experience library</div><h1>Build a moment, not a page.</h1><p class="muted" style="max-width:700px;line-height:1.6">Choose the mechanics guests will actually experience. Invite AI can combine them into scenes, transitions, media and interactions.</p></div><button class="btn dark" onclick="go(\'create\')">Build with AI ✦</button></div>'+
+    '<div class="section"><div><h2>Experience recipes</h2><span class="muted small">Reusable mechanics, not fixed templates.</span></div><div class="tags"><span class="tag">9 recipes</span><span class="tag">10 interactions</span><span class="tag">8 visual languages</span></div></div>'+
+    '<div class="grid experience-grid">'+recipes.map((r,i)=>'<div class="card experience-card"><div class="experience-visual '+r.kind+'" onclick="previewExperience('+i+')"><span>'+r.name.split(" ")[0]+'</span><div class="experience-scan"></div></div><div class="pad"><div style="display:flex;justify-content:space-between;gap:8px"><h3>'+r.name+'</h3><span class="tag">'+(i+1).toString().padStart(2,"0")+'</span></div><p class="muted small" style="line-height:1.55">'+r.desc+'</p><div class="tags">'+r.tags.map(t=>'<span class="tag">'+t+'</span>').join("")+'</div><div style="display:flex;gap:6px;margin-top:14px"><button class="btn sm" onclick="previewExperience('+i+')">Preview</button><button class="btn sm accent" onclick="useExperience('+i+')">Use recipe</button></div></div></div>').join("")+'</div>'+
+    '<div class="section"><div><div class="eyebrow">Visual language</div><h2>Make it feel like something.</h2></div></div>'+
+    '<div class="grid g4">'+visualLanguages.slice(0,8).map((v,i)=>'<button class="card pad" style="text-align:left;border:1px solid '+(S.visual===v[0]?"#b8abf3":"var(--line)")+'" onclick="chooseVisual('+i+')"><b>'+v[0]+'</b><div class="muted small" style="margin-top:5px">'+v[1]+'</div></button>').join("")+'</div>'+
+    '<div class="section"><div><div class="eyebrow">Composer</div><h2>Current experience direction</h2></div><button class="btn sm" onclick="go(\'editor\')">Open experience editor ↗</button></div>'+
+    '<div class="card pad"><div class="experience-builder"><div><span class="tag">'+S.experience+'</span><h2 style="margin-top:10px">Memory → interaction → reveal</h2><p class="muted small">The AI composes scenes from your chosen recipe, visual language, media and guest interaction.</p><div class="tags"><span class="tag">'+S.visual+'</span><span class="tag">Images + GIFs</span><span class="tag">3 interactions</span></div></div><div class="builder-flow">'+scenes.slice(0,5).map((x,i)=>'<div class="flow-step"><b>'+x[0]+'</b><span>'+x[1]+'</span><small class="muted" style="display:block;margin-top:5px">'+x[2]+'</small></div>'+((i<4)?'<span class="flow-arrow">→</span>':"")).join("")+'</div></div></div>'
+  ),"Experiences");
 }
-function home() {
-  return shell(
-    "Overview",
-    '<div class="page"><section class="hero"><div><div class="eyebrow">Your creative studio</div><h2>Turn a feeling into an invitation people remember.</h2><p>Describe the moment. AI shapes the story, design and interactions, then you refine everything in a live preview.</p><div class="hero-actions"><button class="btn accent" onclick="go(\&quot;create\&quot;)">Create with AI ✦</button><button class="btn" onclick="go(\&quot;templates\&quot;)">Browse templates</button></div></div><div class="hero-art"><small>LIVE PREVIEW</small><b>Maya & Daniel</b><span>14 June · Chişinău</span></div></section><div class="section"><div><h2>Workspace at a glance</h2><span class="muted">Invitations, campaigns and public activity.</span></div></div><div class="grid g4">' +
-      stat("3", "Invitations", "2 live · 1 draft") +
-      stat("248", "Guests reached", "Across published pages") +
-      stat("94%", "RSVP rate", "Maya & Daniel") +
-      stat("6", "Templates", "Curated starting points") +
-      '</div><div class="section"><h2>Recent invitations</h2><button class="btn sm" onclick="go(\&quot;invitations\&quot;)">View all</button></div><div class="grid g3">' +
-      invites.map(card).join("") +
-      "</div></div>",
-  );
+
+function create(){
+  let m='<div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI · Creative director</div>Hi! I’ll turn your idea into a complete invitation experience. You can be vague — I’ll ask only what matters.</div>';
+  if(S.step>0)m+='<div class="msg user">A romantic surprise date. Cinematic but personal.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div>I’m hearing <b>intimate, cinematic, understated</b>. I’ve prepared a dark editorial direction and a story-first guest journey.</div>';
+  if(S.step>0)m+='<div class="msg ai"><div class="ai-meta"><span class="ai-orb">◈</span> Experience director</div>How should the guest <b>experience</b> it? Pick a starting mechanic, or let me compose one from your story.<div class="choices"><button class="choice" onclick="useExperience(0)">🎬 Cinematic intro <span>Use</span></button><button class="choice" onclick="useExperience(2)">GIF memory beat <span>Use</span></button><button class="choice" onclick="useExperience(4)">Interactive quiz <span>Use</span></button><button class="choice" onclick="useExperience(5)">Envelope reveal <span>Use</span></button></div><button class="btn sm soft" style="margin-top:7px;width:100%" onclick="go(\\'experiences\\')">Explore all recipes →</button></div>';
+  if(S.step>1)m+='<div class="msg user">A secret destination. We always talked about going there.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Experience director</div>Perfect. I’m composing <b>memory → clue → reveal</b>, with a personalized final RSVP. I’ll use the '+S.experience+' recipe.</div>';
+  if(S.step>2)m+='<div class="msg user">Keep this direction.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div><b>Experience storyboard ready.</b> I’ve created 6 scenes, 3 interactions and 7 media slots. You can play it exactly as a guest would see it.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✓</span> System</div>Mobile passed · Desktop passed · Accessibility warnings: 0 · Media optimization ready</div>';
+  return '<div class="create"><section class="chat"><div class="chat-head"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="eyebrow">Create with AI</div><h2>Let’s make something personal.</h2><span class="muted small">AI creative + experience director</span></div><button class="icon-btn" onclick="toast(\'AI context panel opened\')">i</button></div><div class="ai-status"><span class="ai-dot"></span><b>AI is ready</b><span style="margin-left:auto">Context · 82%</span></div><div style="display:flex;align-items:center;gap:7px;margin-top:9px"><span class="tag">Experience</span><b style="font-size:10px">'+S.experience+'</b><button class="btn sm ghost" style="margin-left:auto" onclick="go(\\'experiences\\')">Change</button></div><div class="chat-progress"><i class="on"></i><i class="'+(S.step>0?"on":"")+'"></i><i class="'+(S.step>1?"on":"")+'"></i><i class="'+(S.step>2?"on":"")+'"></i></div></div><div class="messages">'+m+'</div><div class="suggestions"><button class="suggestion" onclick="quickPrompt(\\'warm\\')">Make it warmer</button><button class="suggestion" onclick="quickPrompt(\\'cinematic\\')">More cinematic</button><button class="suggestion" onclick="quickPrompt(\\'game\\')">Add a game</button><button class="suggestion" onclick="quickPrompt(\\'gif\\')">Use more GIFs</button></div><div class="chat-input"><div class="composer"><div class="composer-tools"><button title="Add media" onclick="go(\\'assets\\')">＋</button><button title="Context" onclick="toast(\\'Context picker opened\\')">@</button></div><input id="chat" placeholder="Tell AI what you want…" onkeydown="if(event.key===\\'Enter\\')send()"><button class="send" onclick="send()">↑</button></div><div style="display:flex;justify-content:space-between;margin-top:7px;color:#9a958b;font-size:9px"><span>AI can design story, scenes, media, motion and interactions.</span><span>⌘ ↵</span></div></div></section><section class="preview"><div class="preview-inner"><div class="preview-top"><div><b>Live experience canvas</b><div class="preview-label">'+(S.playing?"Playing as guest":"Changes update as your direction evolves")+'</div></div><div class="toolbar"><button class="device '+(S.device==="phone"?"active":"")+'" onclick="S.device=\\'phone\\';render()">Phone</button><button class="device '+(S.device==="desktop"?"active":"")+'" onclick="S.device=\\'desktop\\';render()">Desktop</button><button class="device" onclick="play()">'+(S.playing?"■ Stop":"▶ Play")+'</button><button class="device" onclick="go(\\'editor\\')">Experience editor ↗</button></div></div><div class="'+(S.device==="phone"?"phone":"desktop")+'">'+experienceSite(true)+'</div><div class="preview-footer"><button class="btn sm" onclick="toast(\'Version saved\')">✓ Saved</button><button class="btn sm" onclick="share()">Share preview</button><button class="btn sm accent" onclick="go(\\'editor\\')">Refine experience</button></div></div></section></div>';
 }
-function card(x) {
-  let c =
-    x[4] == "Botanical"
-      ? "olive"
-      : x[4] == "Cinematic"
-        ? "blue"
-        : x[4] == "Playful"
-          ? "sun"
-          : "";
-  return (
-    '<div class="card"><div class="cover ' +
-    c +
-    '"><div class="cover-title">' +
-    x[0] +
-    '</div></div><div class="meta"><b>' +
-    x[1] +
-    '</b><div class="muted" style="font-size:12px;margin:5px 0 12px">' +
-    x[2] +
-    " · " +
-    x[4] +
-    '</div><button class="btn sm" onclick="go(\&quot;editor\&quot;)">Edit</button> <button class="btn sm" onclick="go(\&quot;published\&quot;)">View</button> <span class="status ' +
-    x[3] +
-    '">' +
-    x[3] +
-    "</span></div></div>"
-  );
+function quickPrompt(type){S.step=Math.min(3,S.step+1);if(type==="cinematic")S.experience="Cinematic intro";if(type==="gif")S.experience="GIF memory beats";if(type==="game")S.experience="Choose your path";render();toast(type==="warm"?"Warmth added to the direction":"Experience direction updated")}
+function choice(){S.step=Math.min(3,S.step+1);render()}
+function send(){const v=$("chat")?.value;if(!v)return;S.step=Math.min(3,S.step+1);render();toast("AI incorporated your direction")}
+function useExperience(i){S.experience=recipes[i].name;S.step=Math.max(S.step,1);S.modal="";S.screen="create";S.scene=0;render();toast(recipes[i].name+" added to your experience")}
+function previewExperience(i){S.modal="experience:"+i;render()}
+function chooseVisual(i){S.visual=visualLanguages[i][0];toast("Visual language: "+S.visual);render()}
+function play(){S.playing=!S.playing;S.scene=0;render();if(S.playing)toast("Guest playback started")}
+function nextScene(){S.scene=Math.min(5,S.scene+1);render()}
+function previousScene(){S.scene=Math.max(0,S.scene-1);render()}
+
+function experienceSite(preview=false){
+  const r=recipe();
+  const controls=preview?'<div class="experience-playbar"><button onclick="previousScene()">←</button><b>Scene '+(S.scene+1)+' / 6</b><button onclick="nextScene()">→</button></div>':"";
+  let body="";
+  if(r.id==="cinematic")body='<div class="exp-cinematic"><small>INVITE FILM · CHAPTER I</small><strong>For you,<br>always.</strong><span>SCENE '+String(S.scene+1).padStart(2,"0")+' · A LITTLE SECRET</span></div>';
+  if(r.id==="typewriter")body='<div class="exp-type"><small>MEMORY.LOG</small><strong>'+(["There is a story…","that only we know.","Tonight, I want to show you.","Are you ready?"][S.scene%4])+'<i>_</i></strong><span>tap to continue</span></div>';
+  if(r.id==="gif")body='<div class="exp-gif"><small>MEMORY 03 · LOOP</small><div class="gif-frame"><b>✦</b><span>your favorite moment<br>on repeat</span></div><span>GIF / PHOTO / VIDEO BEAT</span></div>';
+  if(r.id==="scroll")body='<div class="exp-scroll"><small>KEEP SCROLLING</small><strong>Some stories<br>move with you.</strong><div class="scroll-card">A memory appears as you arrive.</div><div class="scroll-card">Another one waits below.</div></div>';
+  if(r.id==="quiz")body='<div class="exp-quiz"><small>QUESTION 02 / 03</small><strong>Where did we say<br>we would go someday?</strong><button onclick="toast(\\'Choice unlocked\\');nextScene()">Paris · Always</button><button onclick="toast(\\'Choice unlocked\\');nextScene()">Somewhere unexpected</button><span>Choose a path to unlock the next scene.</span></div>';
+  if(r.id==="envelope")body='<div class="exp-reveal"><small>YOU HAVE ONE LETTER</small><div class="envelope" onclick="nextScene()"><b>'+ (S.scene>0?"OPEN":"OPEN ME") +'</b></div><strong>'+ (S.scene>0?"There is something waiting for you.":"Tap the envelope.") +'</strong></div>';
+  if(r.id==="timeline")body='<div class="exp-timeline"><small>OUR FILM · 2019—2026</small><strong>Six moments.<br>One story.</strong><div class="filmstrip">'+["FIRST","THEN","THAT DAY","AGAIN","NOW"].map((x,i)=>'<div class="'+(i<=S.scene?"seen":"")+'"><b>'+x+'</b><span>PHOTO / CLIP</span></div>').join("")+'</div></div>';
+  if(r.id==="video")body='<div class="exp-video"><div class="video-poster"><span>▶</span><small>PLAY THE FILM</small></div><strong>One scene before the next.</strong><span>Poster → video → overlay → transition</span></div>';
+  if(r.id==="party")body='<div class="exp-party"><div class="confetti">✦　✦　✦　✦</div><small>THE PARTY STARTS HERE</small><strong>Let’s celebrate.</strong><button onclick="toast(\\'RSVP opened\\')">I’M IN →</button><span>music · confetti · guestbook · RSVP</span></div>';
+  return controls+body+'<div class="exp-footer"><small>'+S.visual+' · '+r.name+'</small><b>invite.md</b></div>';
 }
-function site() {
-  return '<div class="sitehero"><div><small style="letter-spacing:.16em">A LITTLE SECRET</small><h1>For you,<br>always.</h1><span>Something waiting to unfold.</span></div></div><div class="sitebody"><div class="site-section" style="border:0"><small class="muted">CHAPTER ONE</small><h2>Remember that place?</h2><p class="muted">There is something I have been wanting to show you. Start the journey when you are ready.</p><span class="pill">Begin the story</span></div><div class="site-section"><b>28 October · 19:30</b><p class="muted">Your first clue awaits.</p></div><div class="site-section"><div style="font:25px var(--serif)">“Some places are worth returning to.”</div></div></div>';
+
+function site(){return experienceSite(false)}
+
+function experienceModal(i){
+  const r=recipes[i];
+  return '<div class="modal-bg"><div class="modal experience-modal"><button class="close" onclick="S.modal=\\'\\';render()">×</button><div class="eyebrow">Experience recipe</div><h2>'+r.name+'</h2><p class="muted">'+r.desc+'</p><div class="experience-demo '+r.kind+'">'+experienceSite(false)+'</div><div class="grid g2" style="margin-top:15px"><div class="notice"><b>Guest behavior</b><div class="muted small" style="margin-top:4px">This recipe becomes real scenes, triggers, transitions and media slots in the published experience.</div></div><div class="notice"><b>AI composition</b><div class="muted small" style="margin-top:4px">Invite AI adapts it to your story, visual language and audience.</div></div></div><div class="modal-actions"><button class="btn" onclick="S.modal=\\'\\';render()">Close</button><button class="btn accent" onclick="useExperience('+i+')">Use this experience</button></div></div></div>';
 }
-function create() {
-  let m =
-    '<div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI · Creative director</div>Hi! I’ll turn your idea into a complete invitation. You can be vague — I’ll ask only what matters.</div>';
-  if (S.step > 0)
-    m += '<div class="msg user">A romantic surprise date. Cinematic but personal.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div>I’m hearing <b>intimate, cinematic, understated</b>. I’ve prepared a direction with a dark editorial palette, slow reveals and a story-first structure.<div class="choices" style="margin-top:9px"><button class="choice" onclick="choice()">A story only we know <span>→</span></button><button class="choice" onclick="choice()">A secret destination <span>→</span></button><button class="choice" onclick="choice()">A playful challenge <span>→</span></button></div></div>';
-  if (S.step > 0)
-    m += '<div class="msg ai"><div class="ai-meta"><span class="ai-orb">◈</span> Experience director</div>Now choose how guests should <b>experience</b> it. Not just the visual style — the actual moments between sections.<div class="choices" style="margin-top:9px"><button class="choice" onclick="useExperience(0)">🎬 Cinematic intro <span>Use</span></button><button class="choice" onclick="useExperience(2)">GIF memory beat <span>Use</span></button><button class="choice" onclick="useExperience(4)">Interactive quiz <span>Use</span></button><button class="choice" onclick="useExperience(5)">Envelope reveal <span>Use</span></button></div><button class="btn sm soft" style="margin-top:7px;width:100%" onclick="go(\'experiences\')">Explore all experience recipes →</button></div>';
-  if (S.step > 1)
-    m += '<div class="msg user">A secret destination. We always talked about going there.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div>Perfect. The experience now follows <b>memory → clue → reveal</b>. I’ve also added a final RSVP moment so the invitation has a clear payoff.</div><div class="choices"><button class="choice" onclick="choice()">Keep this direction <span>✓</span></button><button class="choice" onclick="choice()">Make it warmer <span>→</span></button></div>';
-  if (S.step > 2)
-    m += '<div class="msg user">Keep this direction.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div><b>First concept is ready.</b> You can edit the content, theme, media and motion without leaving this workspace.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✓</span> System</div>Design consistency check passed · Mobile layout passed · Accessibility warnings: 0</div>';
-  return '<div class="create"><section class="chat"><div class="chat-head"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="eyebrow">Create with AI</div><h2>Let’s make something personal.</h2><span class="muted small">Your AI creative director · always editable</span></div><button class="icon-btn" onclick="toast(&quot;AI context panel opened&quot;)">i</button></div><div class="ai-status"><span class="ai-dot"></span><b>AI is ready</b><span style="margin-left:auto">Context · 82%</span></div><div style="display:flex;align-items:center;gap:7px;margin-top:9px"><span class="tag">Experience</span><b style="font-size:10px">' + S.experience + '</b><button class="btn sm ghost" style="margin-left:auto" onclick="go(\&quot;experiences\&quot;)">Change</button></div><div class="chat-progress"><i class="on"></i><i class="' + (S.step > 0 ? "on" : "") + '"></i><i class="' + (S.step > 1 ? "on" : "") + '"></i><i class="' + (S.step > 2 ? "on" : "") + '"></i></div></div><div class="messages">' + m + '</div><div class="suggestions"><button class="suggestion" onclick="quickPrompt(&quot;warm&quot;)">Make it warmer</button><button class="suggestion" onclick="quickPrompt(&quot;cinematic&quot;)">More cinematic</button><button class="suggestion" onclick="quickPrompt(&quot;minimal&quot;)">Simplify it</button></div><div class="chat-input"><div class="composer"><div class="composer-tools"><button title="Add media" onclick="toast(&quot;Media picker opened&quot;)">＋</button><button title="Mention" onclick="toast(&quot;Context picker opened&quot;)">@</button></div><input id="chat" placeholder="Describe what you want to change…" onkeydown="if(event.key===&quot;Enter&quot;)send()"><button class="send" onclick="send()">↑</button></div><div style="display:flex;justify-content:space-between;margin-top:7px;color:#9a958b;font-size:9px"><span>AI can propose copy, structure, design and motion.</span><span>⌘ ↵</span></div></div></section><section class="preview"><div class="preview-inner"><div class="preview-top"><div><b>Live canvas</b><div class="preview-label">Changes update as your direction evolves</div></div><div class="toolbar"><button class="device ' + (S.device == "phone" ? "active" : "") + '" onclick="S.device=\&quot;phone\&quot;;render()">Phone</button><button class="device ' + (S.device == "desktop" ? "active" : "") + '" onclick="S.device=\&quot;desktop\&quot;;render()">Desktop</button><button class="device" onclick="toast(&quot;Preview synced with latest AI version&quot;)">↻</button><button class="device" onclick="go(&quot;editor&quot;)">Open editor ↗</button></div></div><div class="' + (S.device == "phone" ? "phone" : "desktop") + '">' + site() + '</div><div class="preview-footer"><button class="btn sm" onclick="toast(&quot;Version saved&quot;)">✓ Saved</button><button class="btn sm" onclick="share()">Share preview</button><button class="btn sm accent" onclick="go(&quot;editor&quot;)">Refine design</button></div></div></section></div>';
+
+function editor(){
+  return shell('<div class="editor"><aside class="editor-side"><div class="eyebrow">Experience editor</div><h3>A little surprise</h3><div class="tags"><span class="tag">'+S.experience+'</span><span class="tag">'+S.visual+'</span></div><div style="display:flex;gap:5px;margin:13px 0"><button class="btn sm" onclick="go(\\'create\\')">← AI</button><button class="btn sm accent" onclick="play()">▶ Play</button></div><div class="muted" style="font-size:10px;text-transform:uppercase;margin:20px 0 7px">Experience timeline</div>'+scenes.map((x,i)=>'<button class="layer '+(S.scene===i?"active":"")+'" style="width:100%;text-align:left;border:0" onclick="S.scene='+i+';render()"><b style="font-size:9px">'+x[0]+'</b><span style="flex:1">'+x[1]+'</span><i>'+x[2]+'</i></button>').join("")+'<div class="prop"><button class="btn sm" style="width:100%" onclick="toast(\\'Scene picker opened\\')">+ Add scene</button></div></aside><main class="stage"><div><div class="toolbar"><button class="device active">Desktop</button><button class="device">Mobile</button><button class="device" onclick="play()">▶ Play as guest</button><button class="device" onclick="toast(\\'Version snapshot saved\\')">Save version</button></div><div class="desktop">'+experienceSite(false)+'</div></div></main><aside class="inspector"><div class="inspector-head"><div><b>Scene '+String(S.scene+1).padStart(2,"0")+'</b><div class="muted small">'+scenes[S.scene][1]+'</div></div><span class="tag">Live</span></div><div class="prop"><label>Trigger</label><select class="field"><option>On load</option><option>On scroll</option><option>On click</option><option>After previous scene</option></select></div><div class="prop"><label>Animation</label><select class="field"><option>Fade + scale</option><option>Type-on</option><option>Slide</option><option>Parallax</option><option>None</option></select></div><div class="prop"><label>Media</label><div class="tags">'+mediaTypes.slice(0,6).map(x=>'<button class="tag" onclick="toast(\\''+x+' picker\\')">'+x+'</button>').join("")+'</div></div><div class="prop"><label>Interaction</label><select class="field"><option>None</option><option>Tap reveal</option><option>Quiz</option><option>Choose a path</option><option>RSVP</option></select></div><div class="prop"><label>Timing</label><div class="grid g2"><input class="field" value="2.8s"><select class="field"><option>Ease out</option><option>Spring</option><option>Linear</option></select></div></div><div class="prop"><label>AI actions</label><div class="grid g2"><button class="btn sm" onclick="toast(\\'Scene rewritten\\')">Rewrite</button><button class="btn sm" onclick="toast(\\'Motion remixed\\')">Remix motion</button><button class="btn sm" onclick="toast(\\'Scene duplicated\\')">Duplicate</button><button class="btn sm" onclick="toast(\\'Media suggestions generated\\')">Suggest media</button></div></div><div class="notice"><b>Experience check</b><div class="muted small" style="margin-top:4px">✓ Touch target · ✓ Reduced motion · ✓ Mobile crop · ✓ Scene transition</div></div></aside><div class="publish"><small>Draft · version 4 · 6 scenes</small><button class="btn sm" onclick="publish()">Publish experience</button></div></div>','Experience editor');
 }
-function quickPrompt(type){S.step=Math.min(3,S.step+1);render();toast(type==='warm'?'Warmth added to the direction':type==='cinematic'?'Cinematic motion increased':'Visual system simplified')}
-function send() {
-  if (!$("chat").value.trim()) return;
-  S.step = Math.min(3, S.step + 1);
-  render();
-  toast("AI updated the invitation");
+
+function publish(){S.modal='<div class="modal-bg"><div class="modal"><button class="close" onclick="S.modal=\\'\\';render()">×</button><div class="eyebrow">Pre-publish review</div><h2>Ready to publish the experience?</h2><p class="muted">Your invitation will keep its stable public URL. This creates a new immutable version.</p><div class="grid g2"><div class="notice">✓ Mobile experience<br>✓ Desktop experience<br>✓ Accessibility<br>✓ Media checks</div><div class="notice">✓ RSVP endpoint<br>✓ Stable URL<br>✓ QR destination<br>✓ Reduced motion</div></div><div class="modal-actions"><button class="btn" onclick="S.modal=\\'\\';render()">Back</button><button class="btn accent" onclick="S.modal=\\'\\';go(\\'published\\');toast(\\'Experience published\\')">Publish v5</button></div></div></div>';render()}
+
+function templatesPage(){
+  return shell(page('<div style="display:flex;justify-content:space-between;align-items:end"><div><div class="eyebrow">Templates</div><h1>Start from a story.</h1><p class="muted">Templates are experience recipes with a strong starting direction.</p></div><button class="btn dark" onclick="go(\\'experiences\\')">Browse mechanics</button></div><div class="grid templates" style="margin-top:25px">'+[
+    ["The Movie Date","Cinematic","cinema","Opening → memories → clue → reveal"],
+    ["The Secret Letter","Proposal","reveal","Envelope → letter → photos → question"],
+    ["The Wedding Film","Wedding","timeline","Credits → story → timeline → event → RSVP"],
+    ["The Game Night","Party","quiz","Start → quest → choices → final reveal"],
+    ["The Memory Tape","Anniversary","gif","VHS → GIF beats → voice note → message"],
+    ["The Editorial Invite","Event","scroll","Typography → scroll reveal → details → RSVP"]
+  ].map(x=>'<div class="card"><div class="template-cover"><div class="paper '+x[2]+'"><small>'+x[1]+'</small><div class="big">'+x[0]+'</div><small>'+x[3]+'</small></div></div><div class="meta"><h3>'+x[0]+'</h3><div class="tags"><span class="tag">'+x[1]+'</span><span class="tag">Experience</span></div><button class="btn sm accent" style="margin-top:12px" onclick="toast(\\'Template loaded into AI\\');go(\\'create\\')">Use template</button></div></div>').join("")+'</div>'),"Templates");
 }
-function choice() {
-  S.step = Math.min(3, S.step + 1);
-  render();
-  toast("Design direction updated");
+function invitations(){
+  return shell(page('<div style="display:flex;justify-content:space-between;align-items:end"><div><div class="eyebrow">Invitations</div><h1>Your experiences.</h1><p class="muted">Every invitation is a versioned, playable experience.</p></div><button class="btn dark" onclick="go(\\'create\\')">＋ New</button></div><div class="grid g3" style="margin-top:25px">'+invites.map((x,i)=>'<div class="card"><div class="cover '+(i===1?"blue":i===2?"sun":"olive")+'"><div><span class="status '+x[3]+'">'+x[3]+'</span><div class="cover-title">'+x[0]+'</div></div></div><div class="meta"><div style="display:flex;justify-content:space-between"><b>'+x[1]+'</b><span class="tag">'+x[4]+'</span></div><div class="muted small" style="margin-top:5px">'+x[2]+' · '+(i===1?"6 scenes · 3 interactions":"5 scenes · RSVP")+'</div><div class="row-actions" style="margin-top:12px"><button class="btn sm" onclick="go(\\'editor\\')">Edit</button><button class="btn sm" onclick="go(\\'published\\')">Open</button><button class="btn sm" onclick="share()">Share</button></div></div></div>').join("")+'</div>'),"Invitations");
 }
-function templatesPage() {
-  return shell(
-    "Templates",
-    '<div class="page"><div class="section"><div><div class="eyebrow">Template library</div><h1>Start with a feeling.</h1><span class="muted">AI can reshape every starting point around your story.</span></div><button class="btn dark" onclick="go(\&quot;create\&quot;)">Create from scratch ✦</button></div><div class="grid templates">' +
-      templates
-        .map(
-          (t, i) =>
-            '<div class="card"><div class="template-cover ' +
-            t[3] +
-            '" style="background:' +
-            [
-              "linear-gradient(135deg,#382d42,#b18a9b)",
-              "linear-gradient(135deg,#2a3930,#a0a277)",
-              "linear-gradient(135deg,#172b3e,#a9bdcd)",
-              "linear-gradient(135deg,#7a4a2d,#e1a36b)",
-            ][i % 4] +
-            '"><div class="paper"><small>' +
-            t[2] +
-            '</small><div class="big">' +
-            t[0] +
-            "</div><small>" +
-            t[1] +
-            '</small></div></div><div class="pad"><b>' +
-            t[0] +
-            '</b><p class="muted" style="font-size:12px">A polished ' +
-            t[2].toLowerCase() +
-            " starting point.</p><div class='tags'><span class='tag'>" +
-            t[1] +
-            "</span><span class='tag'>" +
-            t[2] +
-            '</span><span class="tag">Responsive</span></div><div style="margin-top:14px"><button class="btn sm" onclick="useTemplate(\&quot;&quot; +
-            t[0] +
-            &quot;\&quot;)">Use template</button> <button class="btn sm" onclick="previewTemplate(\&quot;&quot; +
-            t[0] +
-            "')\">Preview</button></div></div></div>",
-        )
-        .join("") +
-      "</div></div>",
-  );
+function campaignsPage(){return campaignsScreen()}
+function campaignsScreen(){
+  return shell(page('<div style="display:flex;justify-content:space-between;align-items:end"><div><div class="eyebrow">Campaign studio</div><h1>One experience. Hundreds of guests.</h1><p class="muted">Keep the experience shared while personalizing names, photos, codes, messages and responses.</p></div><button class="btn dark" onclick="toast(\\'Campaign wizard opened\\')">＋ New campaign</button></div><div class="card pad" style="margin-top:24px"><div class="grid g4"><div><span class="muted small">Master experience</span><h3>Cinematic Wedding Film</h3></div><div><span class="muted small">Recipients</span><h3>128</h3></div><div><span class="muted small">Variables</span><h3>14</h3></div><div><span class="muted small">Shared artifact</span><h3 style="color:var(--good)">✓ Reused</h3></div></div></div><div class="section"><h2>Campaigns</h2></div><div class="card"><table class="table"><thead><tr><th>Campaign</th><th>Recipients</th><th>Open rate</th><th>RSVP</th><th>Status</th><th></th></tr></thead><tbody>'+campaigns.map(x=>'<tr><td><b>'+x[0]+'</b></td><td>'+x[1]+'</td><td>'+x[2]+'</td><td>'+x[3]+'</td><td><span class="status '+(x[4]==="Active"?"live":"draft")+'">'+x[4]+'</span></td><td><button class="btn sm" onclick="toast(\\'Campaign opened\\')">Manage</button></td></tr>').join("")+'</tbody></table></div><div class="section"><h2>Personalization variables</h2></div><div class="grid g3">'+["{{guest.name}}","{{guest.photo}}","{{guest.message}}","{{guest.code}}","{{guest.table}}","{{guest.rsvpUrl}}"].map(x=>'<div class="card pad"><code>'+x+'</code><div class="muted small" style="margin-top:5px">Safe recipient variable</div></div>').join("")+'</div>'),"Campaigns")}
+
+function assets(){return shell(page('<div style="display:flex;justify-content:space-between;align-items:end"><div><div class="eyebrow">Media intelligence</div><h1>Your creative library.</h1><p class="muted">Upload photos, GIFs, video, audio, voice notes, screenshots and maps. AI can suggest where they belong.</p></div><button class="btn dark" onclick="toast(\\'Upload picker opened\\')">＋ Upload media</button></div><div class="section"><h2>AI suggestions</h2></div><div class="grid g3"><div class="card pad"><span class="tag">7 assets</span><h3>Memory timeline</h3><p class="muted small">These photos work well as a chronological film strip.</p><button class="btn sm" onclick="go(\\'editor\\')">Place in scene</button></div><div class="card pad"><span class="tag">3 GIFs</span><h3>Looping moments</h3><p class="muted small">Use as short memory beats between story scenes.</p><button class="btn sm" onclick="useExperience(2)">Build GIF experience</button></div><div class="card pad"><span class="tag">1 voice note</span><h3>Personal audio</h3><p class="muted small">A voice note could become the final reveal.</p><button class="btn sm" onclick="toast(\\'Voice note added to reveal\\')">Use in reveal</button></div></div><div class="section"><h2>Media types</h2></div><div class="grid g4">'+mediaTypes.map((x,i)=>'<div class="card pad"><div style="font-size:25px">'+["▧","GIF","▶","♫","◉","✦","⌖","▣"][i]+'</div><b>'+x+'</b><div class="muted small" style="margin-top:4px">'+(i+2)*3+' assets</div></div>').join("")+'</div>'),"Media")}
+
+function analytics(){return shell(page('<div style="display:flex;justify-content:space-between;align-items:end"><div><div class="eyebrow">Experience analytics</div><h1>See where guests feel it.</h1><p class="muted">Analytics follow the guest journey, not just page views.</p></div><button class="btn sm" onclick="toast(\\'Date range changed\\')">Last 30 days ▾</button></div><div class="grid g4" style="margin-top:24px"><div class="card stat"><span class="muted small">Sessions</span><div class="num">8,421</div><div class="trend">+18.2%</div></div><div class="card stat"><span class="muted small">Completed</span><div class="num">6,307</div><div class="trend">74.9%</div></div><div class="card stat"><span class="muted small">RSVP</span><div class="num">4,012</div><div class="trend">63.6%</div></div><div class="card stat"><span class="muted small">Avg. experience</span><div class="num">3:42</div><div class="trend">+22 sec</div></div></div><div class="section"><h2>Experience funnel</h2></div><div class="card pad"><div class="grid g4">'+[["Opening","100%"],["Memory","94%"],["Quiz","81%"],["Reveal","76%"],["RSVP","63%"]].map((x,i)=>'<div class="notice"><b>'+x[0]+'</b><div class="num" style="font-size:22px;margin-top:7px">'+x[1]+'</div><div class="usage" style="margin-top:8px"><i style="width:'+parseInt(x[1])+'%"></i></div></div>').join("")+'</div></div><div class="section"><h2>Interaction performance</h2></div><div class="card"><table class="table"><thead><tr><th>Interaction</th><th>Started</th><th>Completed</th><th>Conversion</th></tr></thead><tbody>'+[["Choose your path","6,120","5,201","85%"],["Envelope reveal","6,307","5,843","93%"],["RSVP","6,307","4,012","64%"],["Guestbook","1,203","642","53%"]].map(x=>'<tr>'+x.map((v,i)=>'<td>'+(i===0?"<b>"+v+"</b>":v)+'</td>').join("")+'</tr>').join("")+'</tbody></table></div>'),"Analytics")}
+
+function settings(){return shell(page('<div class="eyebrow">Workspace</div><h1>Settings</h1><div class="grid g2" style="margin-top:24px">'+card("Workspace identity","Andrei’s workspace · Personal") + card("Public defaults","Stable URLs, social preview and guest analytics") + card("AI preferences","Creative director, safe generation, media suggestions") + card("Notifications","Generation, RSVP, campaign and billing alerts") + card("Security","Sessions, API access and account protection") + card("Domains","invite.md public URLs and custom domains")+'</div>'),"Settings")}
+function account(){return shell(page('<div class="eyebrow">Account</div><h1>Andrei’s workspace</h1><p class="muted">Creator identity, team access and account controls.</p><div class="account-grid" style="margin-top:24px"><div class="card pad"><h3>Profile</h3><div class="billing-row"><span>Name</span><b>Andrei S.</b></div><div class="billing-row"><span>Email</span><b>andrei@invite.md</b></div><button class="btn sm" style="margin-top:12px">Edit profile</button></div><div class="card pad"><h3>Plan</h3><div class="price">Creator <span>monthly</span></div><p class="muted small">200 AI generations · 100 published experiences · campaigns</p><button class="btn sm accent" onclick="go(\\'billing\\')">Manage billing</button></div></div>'),"Account & plan")}
+function billing(){return shell(page('<div class="eyebrow">Billing</div><h1>Plans that scale with your creativity.</h1><p class="muted">Choose the workspace capacity you need. Your published experiences keep their stable URLs.</p><div class="grid g3" style="margin-top:25px">'+[
+    ["Starter","$0","25 AI generations","3 published experiences","Basic analytics"],
+    ["Creator","$18","200 AI generations","100 published experiences","Campaigns + interactions"],
+    ["Studio","$49","1,000 AI generations","Unlimited experiences","Advanced analytics + team"]
+  ].map((x,i)=>'<div class="card pad plan-card '+(i===1?"current":"")+'">'+(i===1?'<span class="plan-badge">Current</span>':"")+'<h2>'+x[0]+'</h2><div class="price">'+x[1]+' <span>/ month</span></div><div class="feature-list"><div>✓ '+x[2]+'</div><div>✓ '+x[3]+'</div><div>✓ '+x[4]+'</div><div>✓ Experience recipes</div></div><button class="btn '+(i===1?"":"dark")+'" style="width:100%" onclick="toast(\\''+(i===1?"Already on Creator":"Plan selection opened")+'\\')">'+(i===1?"Current plan":"Choose "+x[0])+'</button></div>').join("")+'</div><div class="section"><h2>Usage & billing</h2></div><div class="grid g2"><div class="card pad"><b>AI generation usage</b><div class="usage" style="margin-top:13px"><i style="width:34%"></i></div><div class="muted small" style="margin-top:6px">68 of 200 generations used</div></div><div class="card pad"><b>Payment method</b><div class="billing-row"><span>Visa ending 4242</span><button class="btn sm">Update</button></div><div class="billing-row"><span>Next invoice</span><b>Nov 01 · $18</b></div></div></div>'),"Billing")}
+function published(){return '<div style="background:#171516;min-height:calc(100vh - 70px)"><div style="padding:12px 20px;background:#111;color:#fff;display:flex;justify-content:space-between;position:sticky;top:0;z-index:3"><span style="font-size:11px">Published · invite.md/i/a-little-surprise</span><div><button class="btn sm" onclick="play()">▶ Play</button> <button class="btn sm" onclick="share()">Share</button> <button class="btn sm" onclick="go(\\'editor\\')">Edit</button></div></div><div style="display:flex;justify-content:center;padding:28px"><div class="desktop">'+experienceSite(false)+'</div></div></div>'}
+function share(){S.modal='<div class="modal-bg"><div class="modal"><button class="close" onclick="S.modal=\\'\\';render()">×</button><div class="eyebrow">Share experience</div><h2>Your stable public link.</h2><p class="muted">QR codes point to the logical invitation URL, never to a build or storage URL.</p><div class="card pad"><b>invite.md/i/a-little-surprise</b><div class="muted small" style="margin-top:5px">Published · version 5 · '+S.experience+'</div></div><div style="display:grid;place-items:center;padding:20px"><div style="width:150px;height:150px;background:repeating-linear-gradient(45deg,#222 0 4px,#fff 4px 8px);border:12px solid #fff"></div></div><div class="grid g2"><button class="btn" onclick="toast(\\'QR download prepared\\')">Download QR</button><button class="btn" onclick="toast(\\'Public URL copied\\')">Copy URL</button></div></div></div>';render()}
+function onboard(){return '<div class="onboard"><div class="onboard-box"><div class="onboard-copy"><div class="brand" style="padding:0 0 28px"><span class="mark">i.</span><span>invite.md</span></div><div class="eyebrow">AI experience studio</div><h1>Make something they’ll remember.</h1><p class="muted" style="font-size:16px;line-height:1.65">Create cinematic invitations, interactive stories, games, reveals and personalized guest journeys. Start with a conversation — not a blank page.</p><div style="display:flex;gap:7px;flex-wrap:wrap;margin:22px 0"><span class="tag">AI creative director</span><span class="tag">Experience builder</span><span class="tag">Interactive scenes</span><span class="tag">Campaigns</span><span class="tag">Stable links</span></div><div style="margin-top:25px"><button class="btn dark lg" onclick="S.onboard=false;go(\\'create\\')">Create your workspace ✦</button> <button class="btn lg" onclick="S.onboard=false;go(\\'experiences\\')">Explore experiences</button></div><div class="muted small" style="margin-top:14px">Free workspace · No credit card required</div></div><div class="onboard-art"><div class="paper"><small>CINEMATIC EXPERIENCE</small><div class="big">For you,<br>always.</div><small>6 scenes · 3 interactions</small></div></div></div></div>'}
+
+function render(){
+  if(S.onboard){$("app").innerHTML=onboard();return}
+  const screens={home,create,experiences:experiencesPage,templates:templatesPage,invitations,campaigns:campaignsPage,assets,analytics,settings,account,billing,editor,published};
+  $("app").innerHTML=shellless(screens[S.screen]?screens[S.screen]():home());
+  if(S.modal){const match=S.modal.match(/^experience:(\\d+)$/);if(match)$("app").insertAdjacentHTML("beforeend",experienceModal(Number(match[1])));else $("app").insertAdjacentHTML("beforeend",S.modal)}
 }
-function useTemplate() {
-  S.screen = "create";
-  S.step = 2;
-  toast("Template loaded into AI workspace");
-  render();
-}
-function previewTemplate(n) {
-  S.modal =
-    '<div class="modal-bg"><div class="modal"><button class="close" onclick="S.modal=\&quot;\&quot;;render()">×</button><div class="eyebrow">Template preview</div><h2>' +
-    n +
-    '</h2><p class="muted">This is a starting point; AI can reshape it.</p><div style="display:flex;justify-content:center"><div class="phone">' +
-    site() +
-    '</div></div><button class="btn dark" onclick="useTemplate(\&quot;&quot; +
-    n +
-    "')\">Use this template</button></div></div>";
-  render();
-}
-function invitations() {
-  return shell(
-    "Invitations",
-    '<div class="page"><div class="section"><div><div class="eyebrow">Your invitations</div><h1>Stories in progress.</h1><span class="muted">Draft, publish and revise every invitation.</span></div><button class="btn dark" onclick="go(\&quot;create\&quot;)">+ New invitation</button></div><div class="card">' +
-      invites
-        .map(
-          (x) =>
-            '<div class="row"><div><b>' +
-            x[0] +
-            '</b><div class="muted" style="font-size:12px">' +
-            x[1] +
-            " · " +
-            x[2] +
-            '</div></div><div><span class="status ' +
-            x[3] +
-            '">' +
-            x[3] +
-            '</span> <button class="btn sm" onclick="go(\&quot;editor\&quot;)">Edit</button> <button class="btn sm" onclick="go(\&quot;published\&quot;)">View</button></div></div>',
-        )
-        .join("") +
-      "</div></div>",
-  );
-}
-function campaigns() {
-  return shell(
-    "Campaigns",
-    '<div class="page"><div class="section"><div><div class="eyebrow">Personalized at scale</div><h1>Campaigns.</h1><span class="muted">One design. Hundreds of personalized invitations.</span></div><button class="btn dark" onclick="newCampaign()">+ New campaign</button></div><div class="grid g3">' +
-      campaign(
-        "Daniel & Maria — Wedding",
-        "248",
-        "94%",
-        "Live",
-        "Velvet Letter",
-      ) +
-      campaign("Company holiday party", "84", "76%", "Draft", "Olive Garden") +
-      campaign("Birthday guest list", "32", "—", "Live", "Golden Hour") +
-      '</div><div class="section"><h2>Campaign flow</h2></div><div class="grid g3"><div class="card pad"><div class="eyebrow">01 · Template</div><h3>Shared creative system</h3><span class="muted">Structure, media, typography and motion are reused safely.</span></div><div class="card pad"><div class="eyebrow">02 · Variables</div><h3>Personal content</h3><span class="muted">Names, tables and RSVP tokens use approved fields.</span></div><div class="card pad"><div class="eyebrow">03 · Delivery</div><h3>Stable links + QR</h3><span class="muted">Each recipient gets a unique public URL.</span></div></div></div>',
-  );
-}
-function campaign(a, b, c, d, e) {
-  return (
-    '<div class="card pad"><span class="status ' +
-    (d == "Live" ? "live" : "draft") +
-    '">' +
-    d +
-    '</span><span class="muted" style="float:right;font-size:11px">' +
-    e +
-    '</span><h3 style="margin-top:18px">' +
-    a +
-    '</h3><div class="grid g3"><div><b>' +
-    b +
-    '</b><div class="muted" style="font-size:10px">recipients</div></div><div><b>' +
-    c +
-    '</b><div class="muted" style="font-size:10px">RSVP</div></div><div><b>✓</b><div class="muted" style="font-size:10px">stable</div></div></div><button class="btn sm" style="margin-top:16px" onclick="toast(\&quot;Campaign opened\&quot;)">Manage</button></div>'
-  );
-}
-function newCampaign() {
-  S.modal =
-    '<div class="modal-bg"><div class="modal"><button class="close" onclick="S.modal=\&quot;\&quot;;render()">×</button><div class="eyebrow">New campaign</div><h2>Personalize at scale.</h2><p class="muted">Create the template first. Recipient CSV import comes next.</p><label>Campaign name</label><input class="field" value="My wedding guests" style="margin:7px 0 14px"><label>Template</label><select class="field" style="margin:7px 0 18px"><option>Velvet Letter</option><option>Golden Hour</option></select><button class="btn dark" onclick="S.modal=\&quot;\&quot;;toast(\&quot;Campaign created as draft\&quot;);render()">Create campaign</button></div></div>';
-  render();
-}
-function assets() {
-  return shell(
-    "Media",
-    '<div class="page"><div class="section"><div><div class="eyebrow">Media library</div><h1>Your visual ingredients.</h1><span class="muted">Images, videos and audio are processed into device-ready variants.</span></div><button class="btn dark" onclick="toast(\&quot;Upload dialog opened\&quot;)">Upload media</button></div><div class="grid g4">' +
-      [
-        "Couple portrait",
-        "Venue sunset",
-        "Old postcard",
-        "Dinner table",
-        "City at night",
-        "Garden detail",
-        "Polaroid memory",
-        "Texture",
-      ]
-        .map(
-          (x, i) =>
-            '<div class="card"><div style="height:150px;background:' +
-            [
-              "linear-gradient(135deg,#382d42,#b18a9b)",
-              "linear-gradient(135deg,#2a3930,#a0a277)",
-              "linear-gradient(135deg,#172b3e,#a9bdcd)",
-              "linear-gradient(135deg,#7a4a2d,#e1a36b)",
-            ][i % 4] +
-            ';display:grid;place-items:center;color:#fff;font-size:28px">◒</div><div class="pad"><b style="font-size:12px">' +
-            x +
-            '</b><div class="muted" style="font-size:10px;margin-top:4px">4K · optimized · WebP</div></div></div>',
-        )
-        .join("") +
-      "</div></div>",
-  );
-}
-function analytics() {
-  return shell(
-    "Analytics",
-    '<div class="page"><div><div class="eyebrow">Analytics</div><h1>See how the story travels.</h1><span class="muted">Aggregated public activity.</span></div><div class="grid g4" style="margin-top:24px">' +
-      stat("1,284", "Views", "Last 30 days") +
-      stat("892", "Unique visitors", "Last 30 days") +
-      stat("248", "RSVPs", "Last 30 days") +
-      stat("3m 42s", "Avg. time", "Across pages") +
-      '</div><div class="grid g2" style="margin-top:18px"><div class="card"><div class="pad"><h3>Public visits</h3><span class="muted">Last 14 days</span></div><div class="chart">' +
-      [38, 50, 44, 67, 58, 72, 62, 80, 74, 91, 86, 70, 95, 88]
-        .map((x) => '<i class="bar" style="height:' + x + '%"></i>')
-        .join("") +
-      '</div></div><div class="card pad"><h3>Invitation performance</h3><table class="table"><tr><th>Invitation</th><th>Views</th><th>RSVP</th></tr><tr><td>Maya & Daniel</td><td>892</td><td>94%</td></tr><tr><td>Leo turns 30</td><td>314</td><td>—</td></tr><tr><td>A little surprise</td><td>78</td><td>—</td></tr></table></div></div></div>',
-  );
-}
-function settings() {
-  return shell(
-    "Settings",
-    '<div class="page"><div><div class="eyebrow">Workspace</div><h1>Settings.</h1><span class="muted">Account, defaults and publishing preferences.</span></div><div class="grid g2" style="margin-top:24px"><div class="card pad"><h3>Profile</h3><div class="prop" style="border:0"><label>Name</label><input class="field" value="Andrei Sîrbu"></div><div class="prop"><label>Email</label><input class="field" value="andrei@example.com"></div><button class="btn dark" onclick="toast(\&quot;Profile saved\&quot;)">Save changes</button></div><div class="card pad"><h3>Creation defaults</h3><div class="prop" style="border:0"><label>Language</label><select class="field"><option>Romanian</option><option>English</option><option>Russian</option></select></div><div class="prop"><label>Motion</label><select class="field"><option>Subtle</option><option>Moderate</option><option>Cinematic</option></select></div><button class="btn" onclick="toast(\&quot;Defaults saved\&quot;)">Save defaults</button></div></div></div>',
-  );
-}
-function account(){
-  return shell("Account & plan", '<div class="page"><div class="section"><div><div class="eyebrow">Account</div><h1>Your creative workspace.</h1><span class="muted">Profile, plan, usage and workspace identity in one place.</span></div><button class="btn dark" onclick="go(&quot;billing&quot;)">Manage billing</button></div><div class="account-grid"><div class="card pad"><div class="section-title"><div class="avatar">AS</div><div><b>Andrei Sîrbu</b><div class="muted small">andrei@example.com</div></div></div><div class="prop" style="border:0"><label>Display name</label><input class="field" value="Andrei Sîrbu"></div><div class="prop"><label>Workspace</label><input class="field" value="Andrei's invitations"></div><button class="btn dark" onclick="toast(&quot;Account profile saved&quot;)">Save profile</button></div><div class="card pad"><div style="display:flex;justify-content:space-between"><div><div class="eyebrow">Current plan</div><h3>Creator</h3></div><span class="status live">Active</span></div><div class="price">$19 <span>/ month</span></div><div class="muted small" style="margin-top:5px">Renews on 14 Nov 2026</div><div class="usage" style="margin-top:18px"><i></i></div><div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px"><span>38 generations used</span><span>100 included</span></div><button class="btn soft" style="margin-top:15px" onclick="go(&quot;billing&quot;)">View plan & billing</button></div></div><div class="section"><h2>Security</h2></div><div class="card"><div class="billing-row pad"><div><b>Password & authentication</b><div class="muted small">Password, sessions and sign-in methods.</div></div><button class="btn sm" onclick="toast(&quot;Security settings opened&quot;)">Manage</button></div><div class="billing-row pad"><div><b>Active sessions</b><div class="muted small">2 trusted devices.</div></div><button class="btn sm" onclick="toast(&quot;All sessions are active&quot;)">Review</button></div></div></div>');
-}
-function billing(){
-  return shell("Billing", '<div class="page"><div class="section"><div><div class="eyebrow">Billing & plans</div><h1>Choose the workspace that fits.</h1><span class="muted">Plans control creation capacity and collaboration features — your published invitations stay yours.</span></div><div class="seg"><button class="on">Monthly</button><button onclick="toast(&quot;Annual pricing selected&quot;)">Annual · save 20%</button></div></div><div class="grid g3"><div class="card pad plan-card"><div class="eyebrow">Free</div><h2>Starter</h2><div class="price">$0 <span>/ month</span></div><p class="muted small">Explore the invitation studio.</p><div class="feature-list"><div><span class="check">✓</span>3 active invitations</div><div><span class="check">✓</span>Basic templates</div><div><span class="check">✓</span>Community media limits</div><div><span class="check">✓</span>Public sharing</div></div><button class="btn" style="width:100%" onclick="toast(&quot;Starter is available&quot;)">Current limits</button></div><div class="card pad plan-card current"><span class="plan-badge">Current</span><div class="eyebrow">For creators</div><h2>Creator</h2><div class="price">$19 <span>/ month</span></div><p class="muted small">For polished invitations and campaigns.</p><div class="feature-list"><div><span class="check">✓</span>100 AI generations / month</div><div><span class="check">✓</span>Unlimited drafts</div><div><span class="check">✓</span>Premium templates</div><div><span class="check">✓</span>Campaigns + personalization</div><div><span class="check">✓</span>Custom public links</div></div><button class="btn dark" style="width:100%" onclick="toast(&quot;You are already on Creator&quot;)">Manage subscription</button></div><div class="card pad plan-card"><div class="eyebrow">Teams</div><h2>Studio</h2><div class="price">$49 <span>/ month</span></div><p class="muted small">For agencies and collaborative creative teams.</p><div class="feature-list"><div><span class="check">✓</span>500 AI generations / month</div><div><span class="check">✓</span>5 workspace members</div><div><span class="check">✓</span>Advanced campaigns</div><div><span class="check">✓</span>Shared asset library</div><div><span class="check">✓</span>Priority generation queue</div></div><button class="btn" style="width:100%" onclick="toast(&quot;Studio plan selected&quot;)">Choose Studio</button></div></div><div class="section"><div><h2>Billing history</h2><span class="muted small">Invoices and payment method.</span></div><button class="btn sm" onclick="toast(&quot;Payment method editor opened&quot;)">Update payment method</button></div><div class="card pad"><div class="billing-row"><div><b>Visa ending in 4242</b><div class="muted small">Default payment method</div></div><span class="status live">Active</span></div><div class="invoice"><b>14 Oct 2026</b> · Creator monthly · $19.00 <button class="btn sm" style="float:right" onclick="toast(&quot;Invoice downloaded&quot;)">Invoice</button></div><div class="invoice"><b>14 Sep 2026</b> · Creator monthly · $19.00 <button class="btn sm" style="float:right" onclick="toast(&quot;Invoice downloaded&quot;)">Invoice</button></div></div></div>');
-}
-function editor() {
-  return (
-    '<div class="editor"><aside class="editor-side"><div class="eyebrow">Editor</div><h3>A little surprise</h3><button class="btn sm" onclick="go(\&quot;create\&quot;)">← Back to AI</button><div class="muted" style="font-size:10px;text-transform:uppercase;margin:20px 0 7px">Page structure</div><div class="layer active">Hero · For you, always</div><div class="layer">Story · Chapter one</div><div class="layer">Date · 28 October</div><div class="layer">Quote · Memory</div><div class="layer">Reveal · Destination</div><div class="layer">Footer · RSVP</div><div class="prop"><button class="btn sm" style="width:100%" onclick="toast(\&quot;Section picker opened\&quot;)">+ Add section</button></div></aside><main class="stage"><div><div class="toolbar"><button class="device active">Desktop</button><button class="device">Mobile</button><button class="device">Full page</button></div><div class="desktop">' +
-    site() +
-    '</div></div></main><aside class="inspector"><b>Hero section</b><div class="prop"><label>Headline</label><textarea class="field" rows="3">For you, always.</textarea></div><div class="prop"><label>Eyebrow</label><input class="field" value="A little secret"></div><div class="prop"><label>Theme</label><select class="field"><option>Cinematic</option><option>Romantic</option><option>Editorial</option></select></div><div class="prop"><label>Motion</label><select class="field"><option>Subtle</option><option>Moderate</option><option>Cinematic</option></select></div><div class="prop"><label>AI actions</label><button class="btn sm" onclick="go(\&quot;create\&quot;)">Make it warmer</button> <button class="btn sm" onclick="toast(\&quot;Three alternatives generated\&quot;)">3 alternatives</button></div></aside><div class="publish"><small>Draft · saved just now</small><button class="btn accent sm" onclick="publish()">Publish invitation</button></div></div>'
-  );
-}
-function publish() {
-  invites[1][3] = "live";
-  toast("Published · invite.md/i/a-little-surprise");
-  setTimeout(() => go("published"), 600);
-}
-function published() {
-  return (
-    '<div style="background:#1e1b1d;min-height:calc(100vh - 70px)"><div style="padding:12px 20px;background:#171516;color:#fff;display:flex;justify-content:space-between;position:sticky;top:0;z-index:3"><span style="font-size:11px">Published · invite.md/i/a-little-surprise</span><div><button class="btn sm" onclick="share()">Share</button> <button class="btn sm" onclick="go(\&quot;editor\&quot;)">Edit</button></div></div><div style="display:flex;justify-content:center;padding:28px"><div class="desktop">' +
-    site() +
-    "</div></div></div>"
-  );
-}
-function share() {
-  S.modal =
-    '<div class="modal-bg"><div class="modal"><button class="close" onclick="S.modal=\&quot;\&quot;;render()">×</button><div class="eyebrow">Share invitation</div><h2>Your stable public link.</h2><p class="muted">QR codes always point to this logical URL, never to a build or storage URL.</p><div class="card pad"><b>invite.md/i/a-little-surprise</b><div class="muted" style="font-size:11px;margin-top:5px">Published · version 4</div></div><div style="display:grid;place-items:center;padding:20px"><div style="width:150px;height:150px;background:repeating-linear-gradient(45deg,#222 0 4px,#fff 4px 8px);border:12px solid #fff"></div></div><button class="btn dark" onclick="S.modal=\&quot;\&quot;;toast(\&quot;Public URL copied\&quot;);render()">Copy public URL</button></div></div>';
-  render();
-}
-function onboard() {
-  return '<div class="onboard"><div class="onboard-box"><div class="onboard-copy"><div class="brand" style="padding:0 0 28px"><span class="mark">i.</span><span>invite.md</span></div><div class="eyebrow">AI invitation studio</div><h1>Make something they’ll remember.</h1><p class="muted" style="font-size:16px;line-height:1.65">A professional creative workspace for invitations that feel personal. Start with a conversation, choose a direction, refine the experience, then publish.</p><div style="display:flex;gap:7px;flex-wrap:wrap;margin:22px 0"><span class="tag">AI creative director</span><span class="tag">Live preview</span><span class="tag">Campaigns</span><span class="tag">Stable links</span></div><div style="margin-top:25px"><button class="btn dark lg" onclick="S.onboard=false;go(&quot;create&quot;)">Create your workspace ✦</button> <button class="btn lg" onclick="S.onboard=false;go(&quot;home&quot;)">Explore demo</button></div><div class="muted small" style="margin-top:14px">Free workspace · No credit card required</div></div><div class="onboard-art"><div class="paper"><small>A LITTLE SECRET</small><div class="big">For you,<br>always.</div><small>28 October · 19:30</small></div></div></div></div>';
-}
-function render() {
-  if (S.onboard) {
-    $("app").innerHTML = onboard();
-    return;
-  }
-  let b = {
-    home: home,
-    create: create,
-    templates: templatesPage,
-    invitations: invitations,
-    campaigns: campaigns,
-    assets: assets,
-    analytics: analytics,
-    settings: settings,
-    account: account,
-    billing: billing,
-    experiences: experiencesPage,
-    editor: editor,
-    published: published,
-  }[S.screen]();
-  $("app").innerHTML = b;
-  if (S.modal) {
-    const match = S.modal.match(/^experience:(\\d+)$/);
-    if (match) $("app").insertAdjacentHTML("beforeend", experienceModal(Number(match[1])));
-    else $("app").insertAdjacentHTML("beforeend", S.modal);
-  }
-}
+function shellless(x){return x}
 render();
