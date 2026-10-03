@@ -38,6 +38,8 @@ function nav() {
     ["assets", "▧", "Media"],
     ["analytics", "↗", "Analytics"],
     ["settings", "⚙", "Settings"],
+    ["account", "◎", "Account & plan"],
+    ["billing", "▤", "Billing"],
   ];
   return (
     '<aside class="side"><div class="brand"><span class="mark">i.</span><span>invite.md</span></div><div class="nav">' +
@@ -55,14 +57,14 @@ function nav() {
           "</span></button>",
       )
       .join("") +
-    '</div><div class="profile"><div class="avatar">AS</div><div><b>Andrei S.</b><div class="muted" style="font-size:11px">Personal workspace</div></div></div></aside>'
+    '</div><div class="side-bottom"><div class="plan-mini"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:11px">Creator plan</b><span style="font-size:9px;color:#bdb4ff">PRO</span></div><div class="bar"><i></i></div><div style="font-size:9px;color:#aaa49b">38 / 100 generations</div><button class="btn sm" style="width:100%;margin-top:9px;background:#fff;color:#211f1c" onclick="go('billing')">Manage plan</button></div><div class="profile"><div class="avatar">AS</div><div class="profile-copy"><b>Andrei S.</b><span>andrei@example.com</span></div><button class="icon-btn" style="width:30px;height:30px" onclick="go('account')">⋯</button></div></div></aside>'
   );
 }
 function topBar(t) {
   return (
-    '<header class="top"><span class="muted">Workspace / <b style="color:var(--ink)">' +
+    '<header class="top"><span class="crumb">Workspace / <b>' +
     t +
-    '</b></span><div><button class="btn sm" onclick="toast(\'No new notifications\')">⌁</button> <button class="btn dark sm" onclick="go(\'create\')">+ New invitation</button></div></header>'
+    '</b></span><div class="top-actions"><button class="icon-btn" title="Search" onclick="toast('Search is ready')">⌕</button><button class="icon-btn" title="Notifications" onclick="toast('You are all caught up')">⌁</button><button class="btn soft sm" onclick="go('billing')">Creator · 38%</button><button class="btn dark sm" onclick="go('create')">+ New invitation</button></div></header>'
   );
 }
 function shell(t, b) {
@@ -131,30 +133,16 @@ function site() {
 }
 function create() {
   let m =
-    '<div class="msg ai">Hi! Tell me what you are making. It can be vague — “a surprise date that feels like a movie” is enough.</div>';
+    '<div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI · Creative director</div>Hi! I’ll turn your idea into a complete invitation. You can be vague — I’ll ask only what matters.</div>';
   if (S.step > 0)
-    m +=
-      '<div class="msg user">A romantic surprise date. Cinematic but personal.</div><div class="msg ai">I am hearing <b>intimate, cinematic, understated</b>. What should they discover?</div><div class="choices"><button class="choice" onclick="choice()">A story only we know</button><button class="choice" onclick="choice()">A secret destination</button><button class="choice" onclick="choice()">A playful challenge</button></div>';
+    m += '<div class="msg user">A romantic surprise date. Cinematic but personal.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div>I’m hearing <b>intimate, cinematic, understated</b>. I’ve prepared a direction with a dark editorial palette, slow reveals and a story-first structure.<div class="choices" style="margin-top:9px"><button class="choice" onclick="choice()">A story only we know <span>→</span></button><button class="choice" onclick="choice()">A secret destination <span>→</span></button><button class="choice" onclick="choice()">A playful challenge <span>→</span></button></div></div>';
   if (S.step > 1)
-    m +=
-      '<div class="msg user">A secret destination. We always talked about going there.</div><div class="msg ai">I will build around <b>memory → clue → reveal</b> with a dark editorial theme and slow reveals.</div><div class="choices"><button class="choice" onclick="choice()">Keep this direction</button><button class="choice" onclick="choice()">Make it warmer</button></div>';
+    m += '<div class="msg user">A secret destination. We always talked about going there.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div>Perfect. The experience now follows <b>memory → clue → reveal</b>. I’ve also added a final RSVP moment so the invitation has a clear payoff.</div><div class="choices"><button class="choice" onclick="choice()">Keep this direction <span>✓</span></button><button class="choice" onclick="choice()">Make it warmer <span>→</span></button></div>';
   if (S.step > 2)
-    m +=
-      '<div class="msg user">Keep this direction.</div><div class="msg ai">First version ready. Open the full editor when you want to refine sections, type, media and motion.</div>';
-  return (
-    '<div class="create"><section class="chat"><div class="chat-head"><div class="eyebrow">Create with AI</div><h2>Let’s make something personal.</h2><span class="muted">Answer naturally. The system handles design language.</span></div><div class="messages">' +
-    m +
-    '</div><div class="chat-input"><input id="chat" placeholder="Tell me anything…" onkeydown="if(event.key===\'Enter\')send()"><button class="btn dark" onclick="send()">Send</button></div></section><section class="preview"><div><div class="toolbar"><button class="device ' +
-    (S.device == "phone" ? "active" : "") +
-    '" onclick="S.device=\'phone\';render()">Phone</button><button class="device ' +
-    (S.device == "desktop" ? "active" : "") +
-    '" onclick="S.device=\'desktop\';render()">Desktop</button><button class="device" onclick="toast(\'Preview synced\')">↻ Sync</button></div><div class="' +
-    (S.device == "phone" ? "phone" : "desktop") +
-    '">' +
-    site() +
-    "</div></div></section></div>"
-  );
+    m += '<div class="msg user">Keep this direction.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✦</span> Invite AI</div><b>First concept is ready.</b> You can edit the content, theme, media and motion without leaving this workspace.</div><div class="msg ai"><div class="ai-meta"><span class="ai-orb">✓</span> System</div>Design consistency check passed · Mobile layout passed · Accessibility warnings: 0</div>';
+  return '<div class="create"><section class="chat"><div class="chat-head"><div style="display:flex;justify-content:space-between;align-items:start"><div><div class="eyebrow">Create with AI</div><h2>Let’s make something personal.</h2><span class="muted small">Your AI creative director · always editable</span></div><button class="icon-btn" onclick="toast('AI context panel opened')">i</button></div><div class="ai-status"><span class="ai-dot"></span><b>AI is ready</b><span style="margin-left:auto">Context · 82%</span></div><div class="chat-progress"><i class="on"></i><i class="' + (S.step > 0 ? "on" : "") + '"></i><i class="' + (S.step > 1 ? "on" : "") + '"></i><i class="' + (S.step > 2 ? "on" : "") + '"></i></div></div><div class="messages">' + m + '</div><div class="suggestions"><button class="suggestion" onclick="quickPrompt('warm')">Make it warmer</button><button class="suggestion" onclick="quickPrompt('cinematic')">More cinematic</button><button class="suggestion" onclick="quickPrompt('minimal')">Simplify it</button></div><div class="chat-input"><div class="composer"><div class="composer-tools"><button title="Add media" onclick="toast('Media picker opened')">＋</button><button title="Mention" onclick="toast('Context picker opened')">@</button></div><input id="chat" placeholder="Describe what you want to change…" onkeydown="if(event.key==='Enter')send()"><button class="send" onclick="send()">↑</button></div><div style="display:flex;justify-content:space-between;margin-top:7px;color:#9a958b;font-size:9px"><span>AI can propose copy, structure, design and motion.</span><span>⌘ ↵</span></div></div></section><section class="preview"><div class="preview-inner"><div class="preview-top"><div><b>Live canvas</b><div class="preview-label">Changes update as your direction evolves</div></div><div class="toolbar"><button class="device ' + (S.device == "phone" ? "active" : "") + '" onclick="S.device="phone";render()">Phone</button><button class="device ' + (S.device == "desktop" ? "active" : "") + '" onclick="S.device="desktop";render()">Desktop</button><button class="device" onclick="toast('Preview synced with latest AI version')">↻</button><button class="device" onclick="go('editor')">Open editor ↗</button></div></div><div class="' + (S.device == "phone" ? "phone" : "desktop") + '">' + site() + '</div><div class="preview-footer"><button class="btn sm" onclick="toast('Version saved')">✓ Saved</button><button class="btn sm" onclick="share()">Share preview</button><button class="btn sm accent" onclick="go('editor')">Refine design</button></div></div></section></div>';
 }
+function quickPrompt(type){S.step=Math.min(3,S.step+1);render();toast(type==='warm'?'Warmth added to the direction':type==='cinematic'?'Cinematic motion increased':'Visual system simplified')}
 function send() {
   if (!$("chat").value.trim()) return;
   S.step = Math.min(3, S.step + 1);
@@ -336,6 +324,12 @@ function settings() {
     '<div class="page"><div><div class="eyebrow">Workspace</div><h1>Settings.</h1><span class="muted">Account, defaults and publishing preferences.</span></div><div class="grid g2" style="margin-top:24px"><div class="card pad"><h3>Profile</h3><div class="prop" style="border:0"><label>Name</label><input class="field" value="Andrei Sîrbu"></div><div class="prop"><label>Email</label><input class="field" value="andrei@example.com"></div><button class="btn dark" onclick="toast(\'Profile saved\')">Save changes</button></div><div class="card pad"><h3>Creation defaults</h3><div class="prop" style="border:0"><label>Language</label><select class="field"><option>Romanian</option><option>English</option><option>Russian</option></select></div><div class="prop"><label>Motion</label><select class="field"><option>Subtle</option><option>Moderate</option><option>Cinematic</option></select></div><button class="btn" onclick="toast(\'Defaults saved\')">Save defaults</button></div></div></div>',
   );
 }
+function account(){
+  return shell("Account & plan", '<div class="page"><div class="section"><div><div class="eyebrow">Account</div><h1>Your creative workspace.</h1><span class="muted">Profile, plan, usage and workspace identity in one place.</span></div><button class="btn dark" onclick="go('billing')">Manage billing</button></div><div class="account-grid"><div class="card pad"><div class="section-title"><div class="avatar">AS</div><div><b>Andrei Sîrbu</b><div class="muted small">andrei@example.com</div></div></div><div class="prop" style="border:0"><label>Display name</label><input class="field" value="Andrei Sîrbu"></div><div class="prop"><label>Workspace</label><input class="field" value="Andrei's invitations"></div><button class="btn dark" onclick="toast('Account profile saved')">Save profile</button></div><div class="card pad"><div style="display:flex;justify-content:space-between"><div><div class="eyebrow">Current plan</div><h3>Creator</h3></div><span class="status live">Active</span></div><div class="price">$19 <span>/ month</span></div><div class="muted small" style="margin-top:5px">Renews on 14 Nov 2026</div><div class="usage" style="margin-top:18px"><i></i></div><div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px"><span>38 generations used</span><span>100 included</span></div><button class="btn soft" style="margin-top:15px" onclick="go('billing')">View plan & billing</button></div></div><div class="section"><h2>Security</h2></div><div class="card"><div class="billing-row pad"><div><b>Password & authentication</b><div class="muted small">Password, sessions and sign-in methods.</div></div><button class="btn sm" onclick="toast('Security settings opened')">Manage</button></div><div class="billing-row pad"><div><b>Active sessions</b><div class="muted small">2 trusted devices.</div></div><button class="btn sm" onclick="toast('All sessions are active')">Review</button></div></div></div>');
+}
+function billing(){
+  return shell("Billing", '<div class="page"><div class="section"><div><div class="eyebrow">Billing & plans</div><h1>Choose the workspace that fits.</h1><span class="muted">Plans control creation capacity and collaboration features — your published invitations stay yours.</span></div><div class="seg"><button class="on">Monthly</button><button onclick="toast('Annual pricing selected')">Annual · save 20%</button></div></div><div class="grid g3"><div class="card pad plan-card"><div class="eyebrow">Free</div><h2>Starter</h2><div class="price">$0 <span>/ month</span></div><p class="muted small">Explore the invitation studio.</p><div class="feature-list"><div><span class="check">✓</span>3 active invitations</div><div><span class="check">✓</span>Basic templates</div><div><span class="check">✓</span>Community media limits</div><div><span class="check">✓</span>Public sharing</div></div><button class="btn" style="width:100%" onclick="toast('Starter is available')">Current limits</button></div><div class="card pad plan-card current"><span class="plan-badge">Current</span><div class="eyebrow">For creators</div><h2>Creator</h2><div class="price">$19 <span>/ month</span></div><p class="muted small">For polished invitations and campaigns.</p><div class="feature-list"><div><span class="check">✓</span>100 AI generations / month</div><div><span class="check">✓</span>Unlimited drafts</div><div><span class="check">✓</span>Premium templates</div><div><span class="check">✓</span>Campaigns + personalization</div><div><span class="check">✓</span>Custom public links</div></div><button class="btn dark" style="width:100%" onclick="toast('You are already on Creator')">Manage subscription</button></div><div class="card pad plan-card"><div class="eyebrow">Teams</div><h2>Studio</h2><div class="price">$49 <span>/ month</span></div><p class="muted small">For agencies and collaborative creative teams.</p><div class="feature-list"><div><span class="check">✓</span>500 AI generations / month</div><div><span class="check">✓</span>5 workspace members</div><div><span class="check">✓</span>Advanced campaigns</div><div><span class="check">✓</span>Shared asset library</div><div><span class="check">✓</span>Priority generation queue</div></div><button class="btn" style="width:100%" onclick="toast('Studio plan selected')">Choose Studio</button></div></div><div class="section"><div><h2>Billing history</h2><span class="muted small">Invoices and payment method.</span></div><button class="btn sm" onclick="toast('Payment method editor opened')">Update payment method</button></div><div class="card pad"><div class="billing-row"><div><b>Visa ending in 4242</b><div class="muted small">Default payment method</div></div><span class="status live">Active</span></div><div class="invoice"><b>14 Oct 2026</b> · Creator monthly · $19.00 <button class="btn sm" style="float:right" onclick="toast('Invoice downloaded')">Invoice</button></div><div class="invoice"><b>14 Sep 2026</b> · Creator monthly · $19.00 <button class="btn sm" style="float:right" onclick="toast('Invoice downloaded')">Invoice</button></div></div></div>');
+}
 function editor() {
   return (
     '<div class="editor"><aside class="editor-side"><div class="eyebrow">Editor</div><h3>A little surprise</h3><button class="btn sm" onclick="go(\'create\')">← Back to AI</button><div class="muted" style="font-size:10px;text-transform:uppercase;margin:20px 0 7px">Page structure</div><div class="layer active">Hero · For you, always</div><div class="layer">Story · Chapter one</div><div class="layer">Date · 28 October</div><div class="layer">Quote · Memory</div><div class="layer">Reveal · Destination</div><div class="layer">Footer · RSVP</div><div class="prop"><button class="btn sm" style="width:100%" onclick="toast(\'Section picker opened\')">+ Add section</button></div></aside><main class="stage"><div><div class="toolbar"><button class="device active">Desktop</button><button class="device">Mobile</button><button class="device">Full page</button></div><div class="desktop">' +
@@ -361,7 +355,7 @@ function share() {
   render();
 }
 function onboard() {
-  return '<div class="onboard"><div class="onboard-box"><div class="onboard-copy"><div class="brand" style="padding:0 0 30px"><span class="mark">i.</span><span>invite.md</span></div><div class="eyebrow">AI invitation studio</div><h1>Make something they’ll remember.</h1><p class="muted" style="font-size:16px;line-height:1.6">Describe the moment. Invite.md turns your story into a beautiful, interactive invitation — then lets you refine every detail.</p><div style="margin-top:25px"><button class="btn dark" onclick="S.onboard=false;go(\'create\')">Start creating ✦</button> <button class="btn" onclick="S.onboard=false;go(\'home\')">Explore workspace</button></div></div><div class="onboard-art"><div class="paper"><small>A LITTLE SECRET</small><div class="big">For you,<br>always.</div><small>28 October · 19:30</small></div></div></div></div>';
+  return '<div class="onboard"><div class="onboard-box"><div class="onboard-copy"><div class="brand" style="padding:0 0 28px"><span class="mark">i.</span><span>invite.md</span></div><div class="eyebrow">AI invitation studio</div><h1>Make something they’ll remember.</h1><p class="muted" style="font-size:16px;line-height:1.65">A professional creative workspace for invitations that feel personal. Start with a conversation, choose a direction, refine the experience, then publish.</p><div style="display:flex;gap:7px;flex-wrap:wrap;margin:22px 0"><span class="tag">AI creative director</span><span class="tag">Live preview</span><span class="tag">Campaigns</span><span class="tag">Stable links</span></div><div style="margin-top:25px"><button class="btn dark lg" onclick="S.onboard=false;go('create')">Create your workspace ✦</button> <button class="btn lg" onclick="S.onboard=false;go('home')">Explore demo</button></div><div class="muted small" style="margin-top:14px">Free workspace · No credit card required</div></div><div class="onboard-art"><div class="paper"><small>A LITTLE SECRET</small><div class="big">For you,<br>always.</div><small>28 October · 19:30</small></div></div></div></div>';
 }
 function render() {
   if (S.onboard) {
@@ -377,6 +371,8 @@ function render() {
     assets: assets,
     analytics: analytics,
     settings: settings,
+    account: account,
+    billing: billing,
     editor: editor,
     published: published,
   }[S.screen]();
