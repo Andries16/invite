@@ -1,0 +1,1 @@
+// @invite/invitation-generator entry

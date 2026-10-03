@@ -47,7 +47,7 @@ Unknown components fail validation.
 A spec must not contain:
 
 - JavaScript imports
-- npm package names
+- pnpm package names
 - URLs to executable modules
 - arbitrary JSX
 - arbitrary CSS source

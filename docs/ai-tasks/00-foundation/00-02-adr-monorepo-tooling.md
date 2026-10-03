@@ -13,7 +13,7 @@
 Decide package manager, workspace tool and task runner for the monorepo.
 
 ## Scope
-- Compare pnpm workspaces, npm workspaces and Yarn; Turborepo versus Nx versus plain scripts.
+- Compare pnpm workspaces, and Yarn; Turborepo versus Nx versus plain scripts.
 - Decide TypeScript project references versus bundler-only builds.
 - Decide test runner (Vitest recommended for Vite alignment).
 

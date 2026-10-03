@@ -1,0 +1,1 @@
+// @invite/worker entry
