@@ -1,7 +1,6 @@
 # Generation Pipeline
 
 ## Pipeline
-
 ~~~text
 InvitationSpec
  -> schema validation
@@ -15,46 +14,29 @@ InvitationSpec
 ~~~
 
 ## Validation
-
 Reject unknown schema versions, invalid props, invalid asset references, unsupported interactions and unsafe URLs.
 
 ## Normalization
-
 Canonicalize colors, locales, dates/time zones, defaults and asset references.
 
 ## Rendering
-
 Only trusted application components execute. Renderer has no access to database credentials, AI keys or private service credentials.
 
 ## Build isolation
-
-Treat builds as untrusted code execution.
-
-Apply CPU, memory, timeout, filesystem and output-size limits. Deny network access by default.
+Treat builds as untrusted code execution. Apply CPU, memory, timeout, filesystem and output-size limits. Deny network access by default.
 
 ## Artifact validation
-
 Verify entry points, assets, output limits and absence of secret-like values or forbidden content.
 
 ## Publication
-
-Publication happens only after the artifact passes validation.
+Publication happens only after artifact validation succeeds.
 
 ~~~text
 logical invitation -> immutable artifact/version
 ~~~
 
 ## Rollback
-
 Rollback is a publication pointer change. Never mutate an existing artifact.
 
 ## Versioning
-
-Record:
-- InvitationSpec schema version
-- renderer version
-- component library version
-- theme/token version
-- build version
-
-Existing published artifacts must remain reproducible or immutable regardless of later renderer changes.
+Record InvitationSpec schema version, renderer version, component version, theme/token version and build version. Existing artifacts remain immutable when renderer code changes.
