@@ -29,7 +29,7 @@ const $ = (id) => document.getElementById(id),
     render();
   };
 function nav() {
-  let a = [
+  const a = [
     ["home", "⌂", "Overview"],
     ["create", "✦", "Create"],
     ["templates", "▦", "Templates"],
@@ -41,24 +41,7 @@ function nav() {
     ["account", "◎", "Account & plan"],
     ["billing", "▤", "Billing"],
   ];
-  return (
-    '<aside class="side"><div class="brand"><span class="mark">i.</span><span>invite.md</span></div><div class="nav">' +
-    a
-      .map(
-        (x) =>
-          '<button class="' +
-          (S.screen == x[0] ? "on" : "") +
-          '" onclick="go(\&quot;&quot; +
-          x[0] +
-          "')\"><i>" +
-          x[1] +
-          "</i><span>" +
-          x[2] +
-          "</span></button>",
-      )
-      .join("") +
-    '</div><div class="side-bottom"><div class="plan-mini"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:11px">Creator plan</b><span style="font-size:9px;color:#bdb4ff">PRO</span></div><div class="bar"><i></i></div><div style="font-size:9px;color:#aaa49b">38 / 100 generations</div><button class="btn sm" style="width:100%;margin-top:9px;background:#fff;color:#211f1c" onclick="go(&quot;billing&quot;)">Manage plan</button></div><div class="profile"><div class="avatar">AS</div><div class="profile-copy"><b>Andrei S.</b><span>andrei@example.com</span></div><button class="icon-btn" style="width:30px;height:30px" onclick="go(&quot;account&quot;)">⋯</button></div></div></aside>'
-  );
+  return \`<aside class="side"><div class="brand"><span class="mark">i.</span><span>invite.md</span></div><div class="workspace"><div class="avatar">AS</div><div class="ws-copy"><b>Andrei's workspace</b><span>Personal</span></div><span class="chev">⌄</span></div><div class="nav-label">Workspace</div><div class="nav">\${a.map((x) => \`<button class="\${S.screen == x[0] ? "on" : ""}" onclick="go('\${x[0]}')"><i>\${x[1]}</i><span>\${x[2]}</span></button>\`).join("")}</div><div class="side-bottom"><div class="plan-mini"><div style="display:flex;justify-content:space-between;align-items:center"><b style="font-size:11px">Creator plan</b><span style="font-size:9px;color:#bdb4ff">PRO</span></div><div class="bar"><i></i></div><div style="font-size:9px;color:#aaa49b">38 / 100 generations</div><button class="btn sm" style="width:100%;margin-top:9px;background:#fff;color:#211f1c" onclick="go('billing')">Manage plan</button></div><div class="profile"><div class="avatar">AS</div><div class="profile-copy"><b>Andrei S.</b><span>andrei@example.com</span></div><button class="icon-btn" style="width:30px;height:30px" onclick="go('account')">⋯</button></div></div></aside>\`;
 }
 function topBar(t) {
   return (
