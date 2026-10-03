@@ -631,3 +631,61 @@ The user should feel that they created something uniquely theirs.
 Underneath, the system should be strict, componentized, validated and deterministic.
 
 The experience should feel unrestricted on top while remaining controlled underneath.
+
+
+## 37. Experience design system
+
+Invite.md treats an experience as a sequence of intentional moments rather than a collection of landing-page sections.
+
+~~~text
+01 Opening
+02 Memory
+03 Interaction
+04 Reveal
+05 Event details
+06 Final action
+~~~
+
+Each scene exposes trigger, media, motion, interaction and timing. The scene editor should make these concepts understandable without exposing implementation details.
+
+## 38. Experience mechanics
+
+Supported mechanics include title sequences, typewriter text, GIF beats, scroll reveal, parallax, quizzes, branching choices, envelope reveals, timelines, video scenes, countdowns, maps, guestbooks, RSVP and celebration effects.
+
+Mechanics are reusable primitives. Visual language is selected independently so the same quiz can look like a game UI, a cinematic mystery or an editorial card.
+
+## 39. Visual language
+
+The visual language layer controls typography, composition, decorative treatment, media framing, transitions and atmosphere. Initial directions include film trailer, terminal/code, VHS memory, scrapbook, luxury editorial, music video, chat story, game UI, rom-com opening and dark cinematic.
+
+## 40. Guest playback
+
+Creator preview provides Play as guest. Playback hides creator controls and runs the experience sequence using the same normalized representation used by production. This is the primary fidelity check before publishing.
+
+## 41. Scene editor
+
+The editor consists of:
+- scene timeline
+- live stage
+- scene inspector
+- media picker
+- trigger control
+- animation control
+- interaction control
+- timing control
+- AI remix actions
+- accessibility and performance checks
+
+The editor supports duplicate, reorder, add, remove and AI-remix scene operations.
+
+## 42. Audio and media
+
+Media is part of art direction. The system supports images, GIFs, video, audio, voice notes, stickers, maps and screenshots. Audio is optional and never required for basic navigation. Video requires poster imagery and mobile-conscious loading.
+
+## 43. Personalization
+
+Guest variables are visible as safe tokens in the creator UI. A creator should understand where guest.name, guest.photo or guest.message will appear without editing code.
+
+## 44. Interaction feedback
+
+Every interactive element needs clear idle, focused, active, completed and unavailable states where applicable. Motion should reinforce state changes rather than decorate every interaction.
