@@ -7,36 +7,36 @@ A user describes an occasion through a conversational AI interface. The system g
 ## Architecture
 
 ~~~text
-User
-  -> Creator
-  -> API / Application Services
-       -> Database
-       -> AI Provider
-       -> Object Storage
-       -> Job Queue
-  -> Generation Worker
-       -> InvitationSpec validation
-       -> React renderer
-       -> static build
-       -> artifact validation
-  -> CDN / Edge
-  -> stable invite.md URL
+User -> Creator -> API -> Database / AI / Queue / Storage
+                         |
+                         v
+                    Generation Worker
+                         |
+                Spec -> Renderer -> Build
+                         |
+                         v
+                  Immutable Artifact
+                         |
+                         v
+                     CDN / Edge
+                         |
+                         v
+                  invite.md public URL
 ~~~
 
 ## AI implementation instructions
+- AGENTS.md
+- docs/PRODUCT.md
+- docs/ARCHITECTURE.md
+- docs/AI.md
+- docs/DATA.md
+- docs/GENERATION.md
+- docs/INFRASTRUCTURE.md
+- docs/API.md
+- docs/SECURITY.md
+- docs/TESTING.md
+- docs/CONVENTIONS.md
+- docs/domains/
+- docs/adr/
 
-- [AGENTS.md](AGENTS.md)
-- [Product](docs/PRODUCT.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [AI architecture](docs/AI.md)
-- [Data model](docs/DATA.md)
-- [Generation](docs/GENERATION.md)
-- [Infrastructure](docs/INFRASTRUCTURE.md)
-- [API](docs/API.md)
-- [Security](docs/SECURITY.md)
-- [Testing](docs/TESTING.md)
-- [Conventions](docs/CONVENTIONS.md)
-- [Domain docs](docs/domains/README.md)
-- [ADRs](docs/adr/README.md)
-
-This repository is intentionally architecture-first. Documents marked Proposed are design direction, not irreversible decisions.
+Documents marked Proposed are design direction, not irreversible decisions.
