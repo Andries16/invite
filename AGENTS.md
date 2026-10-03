@@ -12,6 +12,14 @@ The user describes an invitation conversationally. AI converts that intent into 
 
 Do not make unrestricted LLM-generated production code the normal path.
 
+## Coding rules
+Follow docs/CONVENTIONS.md. Mandatory:
+- React components are `const` arrow functions only.
+- Atomic files, maximum 500 lines each.
+- File and folder names are kebab-case.
+- No comments in code.
+- Never use `any` or `as any`; use strong, strict TypeScript typing.
+
 ## Rules
 - TypeScript-first and strict typing.
 - Keep AI orchestration separate from deterministic rendering.
