@@ -129,3 +129,21 @@ Dynamic interactions such as RSVP, quizzes, guestbook and analytics are separate
 ## Performance
 
 Experience generation must produce mobile-conscious media derivatives, poster images, lazy-loaded non-critical assets and reduced-motion behavior. A complex experience must not become an excuse for shipping all media in the initial request.
+
+
+## Experience runtime
+
+The experience layer sits between AI composition and deterministic rendering:
+
+~~~text
+Conversation -> Storyboard -> Validated ExperienceSpec
+             -> Scenes + Design + Interactions + Media + Variables
+             -> Creator Preview / Guest Playback / Static Generation
+             -> Immutable Artifact -> CDN / Edge
+~~~
+
+The same normalized representation drives preview, guest playback and production generation. Scene execution evaluates validated triggers, resolves safe content and variables, loads media according to performance policy, applies deterministic motion and emits privacy-aware analytics.
+
+Campaigns reuse a master artifact where possible. Recipient values are constrained to a safe variable model. Dynamic RSVP, quiz, guestbook and analytics services remain separate from static content delivery.
+
+Experience generation must remain mobile-conscious: use media derivatives, poster images, lazy loading and reduced-motion behavior.
