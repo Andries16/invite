@@ -3,7 +3,6 @@
 The transport may be REST or typed RPC. Domain rules are transport-independent.
 
 ## Rules
-
 - Validate all external input.
 - Authenticate before authorization.
 - Authorize every tenant-owned resource.
@@ -13,8 +12,7 @@ The transport may be REST or typed RPC. Domain rules are transport-independent.
 - Keep long-running operations asynchronous.
 
 ## Generation
-
-A generation request should return a job ID rather than hold an HTTP request open.
+A generation request returns a job ID instead of holding an HTTP request open.
 
 ~~~text
 POST /invitations/:id/generations
@@ -25,13 +23,9 @@ GET /generation-jobs/:jobId
 ~~~
 
 ## Public interactions
-
-RSVP/quiz/message APIs are separate from ordinary static serving.
-
-Anonymous endpoints require validation, rate limits and abuse protection.
+RSVP/quiz/message APIs are separate from ordinary static serving. Anonymous endpoints require validation, rate limits and abuse protection.
 
 ## Errors
-
 ~~~json
 {
   "code": "INVITATION_SPEC_INVALID",
@@ -43,5 +37,4 @@ Anonymous endpoints require validation, rate limits and abuse protection.
 Do not leak database, filesystem or provider internals.
 
 ## Versioning
-
-Breaking public changes require a migration/versioning plan. Internal contracts should also be versioned when independently deployed.
+Breaking public changes require a migration/versioning plan.
