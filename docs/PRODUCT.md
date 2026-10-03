@@ -56,3 +56,44 @@ RSVP, quizzes, guest messages and analytics may use separate public APIs. Ordina
 5. Campaigns can reuse templates.
 6. Rendering is deterministic for a fixed spec and renderer version.
 7. AI is outside the deterministic rendering stage.
+
+
+## Experience-first product model
+
+Invite.md is not limited to landing pages. The primary product artifact is an Experience: a structured, playable guest journey composed from scenes, content, media, motion, audio, triggers and interactions.
+
+An invitation is a use case for an Experience. Other supported formats include date stories, proposals, love declarations, birthdays, anniversaries, announcements, party games and custom interactive experiences.
+
+### Experience capabilities
+- Cinematic title sequences and scene transitions
+- Typewriter and progressive text experiences
+- GIF and memory beats
+- Scroll reveals and parallax storytelling
+- Quizzes and branching choose-your-path flows
+- Envelope and letter reveals
+- Film timelines
+- Video scenes and overlays
+- Celebration moments with confetti and sound
+- RSVP, countdown, guestbook and map interactions
+- Personalized guest variables for campaigns
+- AI remixing of story, scenes, motion, media and interaction
+
+### Creation model
+The user describes the desired feeling in natural language. Invite AI acts as creative director, UX designer, copywriter, art director and experience director. It produces a storyboard before or alongside the normalized ExperienceSpec and keeps later changes as structured patches.
+
+### Experience library
+Recipes are reusable interaction patterns, not fixed pages. A recipe defines capabilities and defaults; AI adapts it to the user's story, visual language, media and audience.
+
+Initial recipes: Cinematic intro, Typewriter story, GIF memory beats, Scroll reveal, Choose your path, Envelope reveal, Film timeline, Video scene and Celebration mode.
+
+### Visual languages
+Experience mechanics are independent from visual language. Initial directions include film trailer, terminal/code, VHS memory, scrapbook, luxury editorial, music video, chat story, game UI, rom-com opening and dark cinematic.
+
+### Guest journey
+Published experiences are playable. Creator preview therefore has a Play as guest mode that removes creator controls and follows the same scene sequence guests receive.
+
+### Campaigns
+A campaign uses one master experience artifact and injects safe recipient data such as guest name, photo, message, code, table and RSVP URL. Recipient personalization is data-driven rather than separate application generation whenever possible.
+
+### Analytics
+Analytics are modeled around the experience funnel: session start, scene reached, interaction started, interaction completed, reveal, RSVP and completion. Creators can identify where guests drop out and which interactions perform.
