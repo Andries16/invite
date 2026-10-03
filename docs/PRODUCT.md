@@ -97,3 +97,16 @@ A campaign uses one master experience artifact and injects safe recipient data s
 
 ### Analytics
 Analytics are modeled around the experience funnel: session start, scene reached, interaction started, interaction completed, reveal, RSVP and completion. Creators can identify where guests drop out and which interactions perform.
+
+
+## Experience-first product model
+
+The primary product artifact is a playable Experience, not only a landing page. Experiences combine scenes, content, media, motion, audio, triggers and interactions.
+
+Supported recipes include cinematic intro, typewriter story, GIF memory beats, scroll reveal, choose-your-path, envelope reveal, film timeline, video scene and celebration mode.
+
+Visual language is independent from mechanics. Initial directions include film trailer, terminal/code, VHS memory, scrapbook, luxury editorial, music video, chat story, game UI, rom-com opening and dark cinematic.
+
+The creator can use AI to compose a storyboard, scenes, media placement, interactions and motion. Preview includes Play as guest so the creator can experience the published journey before publishing.
+
+Campaigns reuse a master experience and personalize safe guest values such as name, photo, message, code, table and RSVP URL. Analytics follow the guest journey: session start, scene reached, interaction, reveal, RSVP and completion.
