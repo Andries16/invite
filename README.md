@@ -40,3 +40,17 @@ User -> Creator -> API -> Database / AI / Queue / Storage
 - docs/adr/
 
 Documents marked Proposed are design direction, not irreversible decisions.
+
+
+## Experience platform direction
+
+Invite.md is an AI-powered platform for creating interactive experiences, with invitations as the core use case. A published artifact can behave like a movie, story, game, letter, memory album, interactive quiz or celebration.
+
+The core flow is:
+
+~~~text
+Intent -> Conversation -> Storyboard -> ExperienceSpec -> Scenes
+      -> Preview / Play -> Validation -> Generation -> Publish
+~~~
+
+The creator can choose experience mechanics, visual languages, media, personalization, RSVP, guestbook, countdown and analytics. The public invitation is a finished guest experience with no creator SaaS chrome.
