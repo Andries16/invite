@@ -9,3 +9,6 @@
 - [public interactions](public-interactions.md)
 
 Domain documents describe business invariants independently of frameworks.
+
+
+- [Experiences](experiences.md) — playable scenes, recipes, interactions, media, personalization and guest playback.
