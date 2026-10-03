@@ -1,33 +1,13 @@
 # AI Architecture
 
 ## Role
-
 AI interprets intent and proposes structured changes. It is not the source of truth for authorization, safety, schema validity or publication.
 
-AI handles:
-- conversational discovery
-- clarification questions
-- copy/content drafting
-- creative direction
-- theme/layout recommendations
-- component selection
-- interaction planning
-- InvitationSpec patches
+AI handles conversational discovery, clarification questions, copy, creative direction, theme/layout recommendations, component selection, interaction planning and InvitationSpec patches.
 
-Code handles:
-- authentication
-- authorization
-- schema validation
-- persistence
-- asset access
-- job execution
-- builds
-- artifact validation
-- publication
-- quotas
+Code handles authentication, authorization, validation, persistence, assets, jobs, builds, artifact validation and publication.
 
 ## Conversation model
-
 Keep conversation history separate from invitation state.
 
 Conceptual entities:
@@ -40,7 +20,6 @@ Conceptual entities:
 Do not reconstruct the entire invitation by replaying the transcript on every request.
 
 ## Structured interaction protocol
-
 AI responses may contain typed blocks:
 - message
 - single choice
@@ -57,8 +36,7 @@ AI responses may contain typed blocks:
 The creator renders these blocks. The model does not directly manipulate browser APIs.
 
 ## Tools
-
-Expose narrow application tools such as:
+Expose narrow tools such as:
 - get invitation draft
 - update invitation draft
 - list assets
@@ -71,11 +49,9 @@ Expose narrow application tools such as:
 Do not expose arbitrary database queries, shell commands or privileged filesystem access.
 
 ## Spec editing
-
 Prefer structured operations over full-document regeneration.
 
 Examples:
-
 ~~~text
 set theme.palette.primary
 insert section after hero
@@ -88,7 +64,6 @@ add media asset
 Every operation is validated against the current schema.
 
 ## Provider abstraction
-
 Keep the application independent from one model vendor.
 
 ~~~ts
@@ -97,20 +72,13 @@ interface AiProvider {
 }
 ~~~
 
-The concrete provider adapter owns provider-specific API details.
-
 ## Prompt rules
+Prompts describe product purpose, current spec, available components, interaction protocol, design constraints and output contract.
 
-Prompts should describe the product, current spec, available components, interaction protocol, design constraints and output contract.
-
-Critical business rules must exist in application code and schemas too.
+Critical business rules must also exist in code and schemas.
 
 ## AI safety
-
 Model output is untrusted. Never execute arbitrary model-generated server code, trust model-generated authorization decisions, or allow generated invitations to access platform secrets.
 
 ## Evaluation
-
-Maintain fixture conversations for simple invitations, weddings, romantic declarations, interactive dates, campaigns, multilingual cases and malicious/invalid output.
-
-Assert structured correctness and invariant preservation rather than exact prose.
+Maintain fixture conversations for simple invitations, weddings, declarations, interactive dates, campaigns, multilingual cases and malicious output. Assert structured correctness and invariant preservation rather than exact prose.
