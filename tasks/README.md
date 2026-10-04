@@ -1,13 +1,9 @@
-# Invite.md Task System
+# Task System
 
-Tasks are grouped by product capability and architectural boundary.
+Implementation tasks map 1:1 to the prototype capabilities. Each task is a vertical slice specifying:
+1. **Schema**: Cross-package typing (`packages/*-schema`)
+2. **API**: Control plane boundaries (`apps/api/src/domains/*`)
+3. **Creator UI**: SaaS UI using MUI 9.4.0 (`apps/creator` & `packages/design-system`)
+4. **Worker / Runtime**: Async processing (`apps/worker`) and public rendering (`apps/public`)
 
-Rules:
-
-- Name the domain/package affected.
-- Identify schema/API/runtime implications.
-- Include acceptance criteria.
-- Cross-cutting architectural changes require an ADR.
-- Do not bypass ExperienceSpec, trusted runtime, stable publication or public interaction boundaries.
-
-Groups: 00-foundation, 01-experience-core, 02-ai, 03-design-system, 04-media, 05-generation-publication, 06-public-interactions, 07-campaigns, 08-story-intelligence, 09-localization-export, 10-distribution, 11-collaboration-commerce, 12-ecosystem, 13-quality-security-performance.
+See subdirectories for specific phase breakdowns.

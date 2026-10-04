@@ -1,15 +1,18 @@
-# Quality, Security and Performance Tasks
+# Phase 13: Quality & Security
 
-- Schema fuzz testing
-- Runtime determinism tests
-- Artifact security scanning
-- Upload abuse controls
-- AI prompt/output safety
-- Public endpoint rate limits
-- Privacy review
-- Accessibility audit
-- Mobile performance budgets
-- Load testing
-- Observability dashboards
-- Backup/restore drills
-- Disaster recovery
+## Prototype Mapping
+Maps to prototype capability: **Analytics**
+
+## Architectural Boundaries
+
+### 1. Schema (`packages/*`)
+- N/A
+
+### 2. API Domain (`apps/api/src/domains/*`)
+- `analytics`
+
+### 3. Creator UI (`apps/creator` & `packages/design-system`)
+- Funnel charts, interaction performance
+
+### 4. Worker & Runtime (`apps/worker` & `apps/public`)
+- Event pipeline, analytics aggregation

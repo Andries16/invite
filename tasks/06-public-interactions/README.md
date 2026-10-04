@@ -1,14 +1,18 @@
-# Public Interaction Tasks
+# Phase 6: Public Interactions
 
-- Public interaction API
-- RSVP flow
-- Plus-one and dietary data
-- Quiz responses
-- Branching state
-- Guestbook
-- Voting
-- Photo submissions
-- Rate limiting
-- Spam mitigation
-- Privacy and retention
-- Interaction analytics
+## Prototype Mapping
+Maps to prototype capability: **RSVP, Quiz, Guestbook, Branching**
+
+## Architectural Boundaries
+
+### 1. Schema (`packages/interaction-schema`)
+- Defines schemas for incoming submissions and outgoing questions.
+
+### 2. API Domain (`apps/api/src/domains/interactions`)
+- Safe endpoints for guest submissions. Rate limiting, spam protection, privacy rules.
+
+### 3. Creator UI (`apps/creator`)
+- Configuration panels for interaction limits, RSVP structures.
+
+### 4. Worker & Runtime (`apps/public`)
+- Renders the interactive elements based safely on schemas, never arbitrary JS.

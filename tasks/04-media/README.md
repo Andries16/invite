@@ -1,12 +1,18 @@
-# Media Tasks
+# Phase 4: Media
 
-- Upload sessions
-- Media validation
-- Image derivatives
-- Video poster/thumbnail generation
-- GIF processing
-- Audio metadata
-- Asset library
-- Focal points/crops
-- Media references in ExperienceSpec
-- AI media suggestions
+## Prototype Mapping
+Maps to prototype capability: **Media Library (Images, GIFs, Audio, Video)**
+
+## Architectural Boundaries
+
+### 1. Schema (`packages/media`)
+- Asset schemas mapping to original files and derivatives.
+
+### 2. API Domain (`apps/api/src/domains/media`)
+- Pre-signed URLs for upload, asset inspection endpoints.
+
+### 3. Creator UI (`apps/creator`)
+- Media picker, upload progress states, asset AI suggestions.
+
+### 4. Worker & Runtime (`apps/worker`)
+- Background jobs for processing video processing, image resizing, SVG sanitization.
