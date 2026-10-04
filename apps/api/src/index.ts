@@ -1,1 +1,1 @@
-// @invite/api entry
+export { AppModule } from "./app.module";
