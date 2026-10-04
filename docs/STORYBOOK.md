@@ -53,3 +53,40 @@ pnpm storybook:build
 ```
 
 When a reusable primitive changes, review its component stories first, then review the affected prototype-parity pages.
+
+## Platform contract primitives
+
+The platform catalog should prefer shared primitives from `@invite/design-system` over page-local MUI compositions. The current platform layer includes:
+
+- `CreatorShell` — workspace navigation, identity, plan usage and creator chrome.
+- `EditorShell` — three-region experience editor composition.
+- `GuestFrame` — public guest preview boundary backed by `PreviewFrame`.
+- `PrototypeTable` — compact creator data-table composition.
+- `SceneRail` — storyboard scene navigation.
+- `FlowStatus` — lifecycle status rows backed by `StatusChip`.
+- `PrototypeSection` — repeated page section composition.
+- `EmptyState`, `LoadingState`, `PermissionGate` — standardized platform states.
+- `PublishStepper` — publication workflow composition.
+- `MediaTileGrid` — reusable media-library grid.
+- `ConversationPanel` — AI interview/conversation composition.
+
+These primitives are intentionally creator-oriented. They are not public invitation-runtime components and must not introduce dependencies on API, database, worker, or AI implementation details.
+
+## Testing contract
+
+Storybook has an interaction-test project through `@storybook/addon-vitest` and Playwright. The prototype-contract stories include assertions for creator navigation, scene timelines and lifecycle statuses.
+
+Run locally after installing dependencies:
+
+```bash
+pnpm --filter @invite/storybook test
+pnpm --filter @invite/storybook test:ci
+pnpm --filter @invite/storybook typecheck
+pnpm storybook:build
+```
+
+The Storybook test project uses `apps/storybook/.storybook/vitest.setup.ts` so the same preview/theme configuration is applied to tests. The visual catalog remains the primary parity contract; interaction tests verify that important platform structure is present and discoverable.
+
+## Parity migration rule
+
+When a repeated pattern appears in more than one prototype page or flow, extract it into `@invite/design-system` before adding another local implementation. Existing page-specific composition may remain local when it represents genuinely unique art direction or a one-off workflow, but navigation, page headers, metrics, statuses, cards, previews, tables, empty states, loading states and common workflow shells should remain centralized.
