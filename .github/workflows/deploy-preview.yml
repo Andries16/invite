@@ -1,0 +1,21 @@
+name: Preview Deployment
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Preview deployment contract
+        run: |
+          echo "Preview deployment is scaffolded."
+          echo "Connect this job to the chosen hosting provider and publish:"
+          echo "creator, public and Storybook preview URLs."
