@@ -13,6 +13,56 @@ import {
 import { ArrowBack, DesktopWindows, PhoneIphone, Preview, Publish } from "@mui/icons-material";
 
 type AppPage = PlatformPage;
+type FlowStep = "create" | "interview" | "storyboard";
+const interviewMessages = [
+  { role: "assistant" as const, text: "What are you creating, and what should the guest feel when they open it?" },
+  { role: "user" as const, text: "A romantic date invitation. I want it to feel cinematic, playful and personal." },
+  { role: "assistant" as const, text: "Great. What is the moment, date or place we are inviting them to?" },
+  { role: "user" as const, text: "September 28, sunset at Valea Morilor. Keep the exact location hidden until the reveal." },
+];
+
+function CreationFlow({ onComplete }: { onComplete: () => void }) {
+  const [step, setStep] = React.useState<FlowStep>("interview");
+  const [input, setInput] = React.useState("");
+  const [messages, setMessages] = React.useState(interviewMessages);
+  const [selectedRecipe, setSelectedRecipe] = React.useState("Cinematic");
+
+  if (step === "storyboard") {
+    return (
+      <PlatformShell page="create" title="Storyboard ready" subtitle="AI transformed the interview into an editable ExperienceSpec.">
+        <Stack spacing={2}>
+          <Card><CardContent><Chip color="success" label="ExperienceSpec validated" /><Typography variant="h3" mt={1}>A little surprise</Typography><Typography color="text.secondary">7 scenes · 3 interactions · cinematic visual recipe · hidden location reveal.</Typography></CardContent></Card>
+          <Grid container spacing={1.5}>{scenes.map((scene, i) => <Grid key={scene.id} size={{ xs: 12, sm: 6, lg: 4 }}><Card><CardContent><Typography variant="caption">0{i+1}</Typography><Typography fontWeight={800}>{scene.title}</Typography><Typography variant="body2" color="text.secondary">{scene.type} · {scene.duration}</Typography></CardContent></Card></Grid>)}</Grid>
+          <Stack direction="row" justifyContent="flex-end"><Button variant="contained" onClick={onComplete}>Open in editor</Button></Stack>
+        </Stack>
+      </PlatformShell>
+    );
+  }
+
+  return (
+    <PlatformShell page="create" title="Create with AI" subtitle={step === "interview" ? "A short conversation becomes a structured experience plan." : "Choose a creative direction."}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Card><CardContent>
+            {step === "interview" ? <Stack spacing={1.5}>
+              {messages.map((message, i) => <Paper key={i} variant="outlined" sx={{ p: 1.5, alignSelf: message.role === "user" ? "flex-end" : "stretch", maxWidth: "88%", bgcolor: message.role === "user" ? "secondary.main" : "background.paper", color: message.role === "user" ? "#fff" : "text.primary" }}>{message.text}</Paper>)}
+              <TextField fullWidth multiline minRows={2} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Tell the creative director more..." />
+              <Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">{messages.length} messages · AI keeps the structured story separate from generated code.</Typography><Button variant="accent" onClick={() => { if (input.trim()) { setMessages([...messages, { role: "user", text: input.trim() }]); setInput(""); } else setStep("storyboard"); }}>Continue</Button></Stack>
+            </Stack> : <Stack spacing={2}>
+              <Typography variant="h3">Choose the visual recipe</Typography>
+              <Grid container spacing={1}>{["Cinematic", "Warm minimal", "Editorial", "Playful"].map((recipe) => <Grid key={recipe} size={{ xs: 6 }}><Button fullWidth variant={selectedRecipe === recipe ? "contained" : "outlined"} onClick={() => setSelectedRecipe(recipe)}>{recipe}</Button></Grid>)}</Grid>
+              <Button variant="accent" onClick={() => setStep("storyboard")}>Generate storyboard</Button>
+            </Stack>}
+          </CardContent></Card>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card><CardContent><Typography fontWeight={800}>Creation contract</Typography><Stack spacing={1.25} mt={2}>{["Structured story", "Visual recipe", "Interaction schema", "Responsive scenes", "Accessibility defaults"].map((x) => <Stack key={x} direction="row" spacing={1}><CheckCircle color="success" fontSize="small" /><Typography variant="body2">{x}</Typography></Stack>)}</Stack></CardContent></Card>
+        </Grid>
+      </Grid>
+    </PlatformShell>
+  );
+}
+
 type Scene = {
   id: string;
   title: string;
@@ -131,6 +181,7 @@ function EditorPage({ onBack }: { onBack: () => void }) {
 
 function FullPlatform() {
   const [page, setPage] = React.useState<AppPage>("dashboard");
+  const [creationFlow, setCreationFlow] = React.useState(false);
 
   const pageTitles: Record<AppPage, string> = {
     dashboard: "Overview", experiences: "Experiences", invitations: "Invitations",
@@ -145,7 +196,7 @@ function FullPlatform() {
     dashboard: <DashboardPage />,
     experiences: <ExperiencesPage />,
     invitations: <InvitationsPage />,
-    create: <CreatePage />,
+    create: <CreatePage onStartAI={() => setCreationFlow(true)} />,
     templates: <TemplatesPage />,
     campaigns: <CampaignsPage />,
     media: <MediaPage />,
