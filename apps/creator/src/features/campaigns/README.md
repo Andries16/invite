@@ -1,0 +1,1 @@
+Recipient imports, personalization variables, campaign generation and delivery status.
