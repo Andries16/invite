@@ -5,15 +5,19 @@ Storybook is the visual contract and component workshop for the Invite.md creato
 ## Four layers
 
 ### Design-system primitives
+
 Buttons, inputs, cards, chips, navigation, dialogs, drawers, feedback and accessibility states.
 
 ### Platform surfaces
+
 Dashboard, experiences, invitations, templates, campaigns, media, analytics, settings, billing, marketplace and collaboration.
 
 ### Product flows
+
 AI interview, storyboard editor, visual recipe builder, interaction builder, preview, RSVP, quiz, campaign personalization, review, publishing and QR distribution.
 
 ### Quality states
+
 Loading, empty, error, success, locked/entitlement, responsive, keyboard and accessibility states.
 
 ## Source of truth

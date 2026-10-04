@@ -1,43 +1,1136 @@
+import {
+  CreatorShell,
+  MetricGrid,
+  PageHeader,
+  PreviewFrame,
+  PrototypeTable,
+  RecipeCard,
+  ResponsiveGrid,
+  SectionHeader,
+} from "@invite/design-system";
+import { PlayArrow } from "@mui/icons-material";
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  LinearProgress,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import type { Meta, StoryObj } from "@storybook/react";
 import * as React from "react";
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { CreatorShell, EditorShell, GuestFrame, MetricGrid, PreviewFrame, PrototypeSection, PrototypeTable, RecipeCard, ResponsiveGrid, ExperienceCard, PageHeader, SectionHeader, StatusChip } from "@invite/design-system";
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, Divider, IconButton, LinearProgress, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from "@mui/material";
-import { Add, AutoAwesome, Dashboard, Edit, Event, Extension, Image, Insights, Link as LinkIcon, Lock, PlayArrow, Public, Settings, Share, SmartToy, Timeline, UploadFile } from "@mui/icons-material";
 
-const meta={title:"HTML Prototype/Parity",parameters:{layout:"fullscreen"}} satisfies Meta;
-export default meta; type Story=StoryObj<typeof meta>;
-const recipes=[["Cinematic intro","Movie-like opening with title cards, dramatic pacing, scene transitions and a final reveal.","Scenes · Titles · Transitions"],["Typewriter story","Progressive story revealed line by line like a film title or personal letter.","Text · Type-on · Pause"],["GIF memory beats","Looping memories punctuated by captions, stickers and rhythmic transitions.","GIF · Gallery · Loop"],["Scroll reveal","A cinematic scroll journey where content appears, shifts and transforms.","Scroll · Parallax · Reveal"],["Choose your path","Questions, branching choices and a personalized reveal.","Quiz · Branching · Progress"],["Envelope reveal","A tactile opening moment that hides a letter, destination, message or RSVP.","Tap · Reveal · Letter"],["Film timeline","Photos, clips and captions arranged like a personal film timeline.","Timeline · Photos · Captions"],["Video scene","Poster, video, overlay copy and scene transitions.","Video · Scenes · Overlay"],["Celebration mode","Confetti, stickers, music moments and a strong final CTA.","Confetti · Audio · CTA"]];
-const visuals=[["Film trailer","Dark title cards, credits, dramatic cuts"],["Terminal / code","Monospace text, commands, scanlines"],["VHS memory","Timestamp overlays, grain, playful glitches"],["Scrapbook","Tape, paper, polaroids and handwritten notes"],["Luxury editorial","Serif typography, whitespace, art direction"],["Music video","Rhythm, bold type, media-led transitions"],["Chat story","Messages, typing states and conversational reveals"],["Game UI","Progress, quests, choices and unlocks"],["Rom-com opening","Warm palette, playful copy, scene changes"],["Dark cinematic","Minimal light, slow motion, high contrast"]];
-const media=["Images","GIFs","Video","Audio","Voice","Stickers","Maps","Screenshots"];
-const scenes=[["01","Opening scene","Cinematic title","On load","2.8s"],["02","Memory beat","GIF / image","After scroll","3.5s"],["03","The question","Interactive choice","On click","Until answered"],["04","The reveal","Letter / destination","After choice","4.0s"],["05","The event","Details + map","Scroll","Persistent"],["06","Final moment","RSVP + message","On reveal","Persistent"]];
+const meta = {
+  title: "HTML Prototype/Parity",
+  parameters: { layout: "fullscreen" },
+} satisfies Meta;
+export default meta;
+type Story = StoryObj<typeof meta>;
+const recipes = [
+  [
+    "Cinematic intro",
+    "Movie-like opening with title cards, dramatic pacing, scene transitions and a final reveal.",
+    "Scenes · Titles · Transitions",
+  ],
+  [
+    "Typewriter story",
+    "Progressive story revealed line by line like a film title or personal letter.",
+    "Text · Type-on · Pause",
+  ],
+  [
+    "GIF memory beats",
+    "Looping memories punctuated by captions, stickers and rhythmic transitions.",
+    "GIF · Gallery · Loop",
+  ],
+  [
+    "Scroll reveal",
+    "A cinematic scroll journey where content appears, shifts and transforms.",
+    "Scroll · Parallax · Reveal",
+  ],
+  [
+    "Choose your path",
+    "Questions, branching choices and a personalized reveal.",
+    "Quiz · Branching · Progress",
+  ],
+  [
+    "Envelope reveal",
+    "A tactile opening moment that hides a letter, destination, message or RSVP.",
+    "Tap · Reveal · Letter",
+  ],
+  [
+    "Film timeline",
+    "Photos, clips and captions arranged like a personal film timeline.",
+    "Timeline · Photos · Captions",
+  ],
+  ["Video scene", "Poster, video, overlay copy and scene transitions.", "Video · Scenes · Overlay"],
+  [
+    "Celebration mode",
+    "Confetti, stickers, music moments and a strong final CTA.",
+    "Confetti · Audio · CTA",
+  ],
+];
+const visuals = [
+  ["Film trailer", "Dark title cards, credits, dramatic cuts"],
+  ["Terminal / code", "Monospace text, commands, scanlines"],
+  ["VHS memory", "Timestamp overlays, grain, playful glitches"],
+  ["Scrapbook", "Tape, paper, polaroids and handwritten notes"],
+  ["Luxury editorial", "Serif typography, whitespace, art direction"],
+  ["Music video", "Rhythm, bold type, media-led transitions"],
+  ["Chat story", "Messages, typing states and conversational reveals"],
+  ["Game UI", "Progress, quests, choices and unlocks"],
+  ["Rom-com opening", "Warm palette, playful copy, scene changes"],
+  ["Dark cinematic", "Minimal light, slow motion, high contrast"],
+];
+const media = ["Images", "GIFs", "Video", "Audio", "Voice", "Stickers", "Maps", "Screenshots"];
+const scenes = [
+  ["01", "Opening scene", "Cinematic title", "On load", "2.8s"],
+  ["02", "Memory beat", "GIF / image", "After scroll", "3.5s"],
+  ["03", "The question", "Interactive choice", "On click", "Until answered"],
+  ["04", "The reveal", "Letter / destination", "After choice", "4.0s"],
+  ["05", "The event", "Details + map", "Scroll", "Persistent"],
+  ["06", "Final moment", "RSVP + message", "On reveal", "Persistent"],
+];
 
 const Shell = CreatorShell;
 const Header = PageHeader;
 const Section = SectionHeader;
-const Grid = ({ children, n = 3 }: { children: React.ReactNode; n?: number }) => <ResponsiveGrid columns={n}>{children}</ResponsiveGrid>;
-function TableView({headers,rows}:{headers:string[];rows:string[][]}){return <PrototypeTable headers={headers} rows={rows}/ >}
-function Cover({title,status="Draft"}:{title:string;status?:string}){return <Card sx={{overflow:"hidden"}}><Box height={210} p={2} display="flex" alignItems="flex-end" sx={{background:"linear-gradient(135deg,#26354b,#8e9bb0)",color:"#fff"}}><Box><Chip label={status} size="small"/><Typography variant="h2" sx={{color:"#fff"}}>{title}</Typography><Typography fontSize={10}>Cinematic reveal · 6 scenes</Typography></Box></Box><CardContent><b>Last edited 8 min ago</b><Typography variant="caption" display="block" color="text.secondary">3 interactions · 7 media assets</Typography><Button size="small" sx={{mt:1}}>Continue</Button></CardContent></Card>}
+const Grid = ({ children, n = 3 }: { children: React.ReactNode; n?: number }) => (
+  <ResponsiveGrid columns={n}>{children}</ResponsiveGrid>
+);
+function TableView({ headers, rows }: { headers: string[]; rows: string[][] }) {
+  return <PrototypeTable headers={headers} rows={rows} />;
+}
+function Cover({ title, status = "Draft" }: { title: string; status?: string }) {
+  return (
+    <Card sx={{ overflow: "hidden" }}>
+      <Box
+        sx={{
+          height: 210,
+          p: 2,
+          display: "flex",
+          alignItems: "flex-end",
+          ...{ background: "linear-gradient(135deg,#26354b,#8e9bb0)", color: "#fff" },
+        }}
+      >
+        <Box>
+          <Chip label={status} size="small" />
+          <Typography variant="h2" sx={{ color: "#fff" }}>
+            {title}
+          </Typography>
+          <Typography sx={{ fontSize: 10 }}>Cinematic reveal · 6 scenes</Typography>
+        </Box>
+      </Box>
+      <CardContent>
+        <b>Last edited 8 min ago</b>
+        <Typography variant="caption" sx={{ display: "block", color: "text.secondary" }}>
+          3 interactions · 7 media assets
+        </Typography>
+        <Button size="small" sx={{ mt: 1 }}>
+          Continue
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 
-export function Overview(){return <Shell title="Overview"><Paper sx={{p:{xs:3,md:5},bgcolor:"#211f1c",color:"#fff",borderRadius:3}}><Typography color="#b9aaff" variant="overline">AI experience studio</Typography><Typography variant="h1" sx={{color:"#fff"}}>Create invitations people actually experience.</Typography><Typography color="#bcb7af" maxWidth={650}>Build cinematic stories, interactive reveals, quizzes, GIF memories and personalized guest journeys — not just another landing page.</Typography><Stack direction="row" spacing={1} mt={2}><Button variant="contained">Create with AI ✦</Button><Button variant="outlined" sx={{color:"#fff"}}>Explore experiences</Button></Stack></Paper><Section title="Today"/><MetricGrid items={[{label:"Published",value:"12",delta:"+3 this month"},{label:"Experiences",value:"27",delta:"8 interactive"},{label:"Guest sessions",value:"8.4k",delta:"+18.2%"},{label:"RSVP rate",value:"74%",delta:"+6.4 pts"}]}/><Section title="Your latest experience"/><Grid n={2}><Cover title="A little surprise"/><Card sx={{p:2}}><Typography variant="overline" color="primary">AI activity</Typography><Typography variant="h3">Creative director</Typography><Typography color="text.secondary">Your AI has enough context to continue designing the guest journey.</Typography><Alert sx={{mt:2}} severity="info">Suggested next step: add a reveal after the quiz and personalize the final RSVP.</Alert></Card></Grid></Shell>}
-export function Experiences(){return <Shell title="Experiences"><Header eyebrow="Experience library" title="Build a moment, not a page." body="Choose the mechanics guests will actually experience. Invite AI can combine them into scenes, transitions, media and interactions."/><Section title="Experience recipes"/><Grid>{recipes.map(r=><RecipeCard key={r[0]} title={r[0]} description={r[1]} tags={<Chip size="small" label={r[2]}/>}/>)}</Grid><Section title="Visual language"/><Grid n={4}>{visuals.slice(0,8).map(x=><Card key={x[0]} sx={{p:2}}><b>{x[0]}</b><Typography variant="body2" color="text.secondary">{x[1]}</Typography></Card>)}</Grid></Shell>}
-export function Templates(){const x=[["The Movie Date","Cinematic","Opening → memories → clue → reveal"],["The Secret Letter","Proposal","Envelope → letter → photos → question"],["The Wedding Film","Wedding","Credits → story → timeline → event → RSVP"],["The Game Night","Party","Start → quest → choices → final reveal"],["The Memory Tape","Anniversary","VHS → GIF beats → voice note → message"],["The Editorial Invite","Event","Typography → scroll reveal → details → RSVP"]];return <Shell title="Templates"><Header eyebrow="Templates" title="Start from a story." body="Templates are experience recipes with a strong starting direction."/><Grid>{x.map(a=><RecipeCard key={a[0]} title={a[0]} description={a[2]} tags={<Chip size="small" label={a[1]}/>}/>)}</Grid></Shell>}
-export function Invitations(){const x=[["Maya & Daniel","Wedding","14 June 2027","Live","Editorial"],["A little surprise","Date","28 October 2026","Draft","Cinematic"],["Leo turns 30","Birthday","02 December 2026","Live","Playful"]];return <Shell title="Invitations"><Header eyebrow="Invitations" title="Your experiences." body="Every invitation is a versioned, playable experience."/><Grid>{x.map((a,i)=><Card key={a[0]}><Box height={180} bgcolor={["#89967c","#3d506b","#c98f57"][i]} p={2}><Chip label={a[3]}/></Box><CardContent><Typography variant="h3">{a[0]}</Typography><Typography color="text.secondary">{a[1]} · {a[2]}</Typography><Stack direction="row" spacing={1} mt={2}><Button size="small">Edit</Button><Button size="small">Open</Button><Button size="small">Share</Button></Stack></CardContent></Card>)}</Grid></Shell>}
-export function Create(){return <Shell title="Create"><Box display="grid" gap={2} sx={{gridTemplateColumns:{xs:"1fr",lg:"430px minmax(0,1fr)"}}}><Card><CardContent><Typography variant="overline" color="primary">Create with AI</Typography><Typography variant="h2">Let’s make something personal.</Typography><Chip label="AI is ready · Context 82%" sx={{mt:1}}/><Stack spacing={1.5} mt={3}><Paper variant="outlined" sx={{p:1.5}}>Hi! I’ll turn your idea into a complete invitation experience.</Paper><Paper sx={{p:1.5,bgcolor:"#211f1c",color:"#fff"}}>A romantic surprise date. Cinematic but personal.</Paper><Paper variant="outlined" sx={{p:1.5}}>I’m hearing intimate, cinematic, understated. I’ve prepared a dark editorial direction.</Paper><Typography fontWeight={800}>How should the guest experience it?</Typography>{recipes.slice(0,4).map(r=><Button key={r[0]} variant="outlined" sx={{justifyContent:"space-between"}}>{r[0]} <span>Use</span></Button>)}</Stack></CardContent><Box p={2} borderTop="1px solid #e5e1d8"><TextField fullWidth placeholder="Tell AI what you want…"/><Stack direction="row" spacing={1} mt={1}><Chip label="Make it warmer"/><Chip label="More cinematic"/><Chip label="Add a game"/></Stack></Box></Card><Preview/></Box></Shell>}
-function Preview(){return <Card sx={{p:2,bgcolor:"#eeece7"}}><Stack direction="row" justifyContent="space-between"><b>Live experience canvas</b><Stack direction="row"><Button size="small">Phone</Button><Button size="small">Desktop</Button><Button size="small" startIcon={<PlayArrow/>}>Play</Button></Stack></Stack><Box mx="auto" mt={2}><PreviewFrame><Box><Typography variant="overline">INVITE FILM · CHAPTER I</Typography><Typography fontSize={56} fontWeight={900} lineHeight={.9}>For you,<br/>always.</Typography><Typography variant="caption">SCENE 01 · A LITTLE SECRET</Typography></Box></PreviewFrame></Box><Stack direction="row" justifyContent="space-between" mt={2}><Chip label="✓ Saved"/><Button>Share preview</Button><Button variant="contained">Refine experience</Button></Stack></Card>}
-export function Media(){return <Shell title="Media"><Header eyebrow="Media intelligence" title="Your creative library." body="Upload photos, GIFs, video, audio, voice notes, screenshots and maps. AI can suggest where they belong."/><Section title="AI suggestions"/><Grid n={3}>{["Memory timeline","Looping moments","Personal audio"].map(x=><Card key={x} sx={{p:2}}><Chip label="AI suggestion"/><Typography variant="h3">{x}</Typography><Typography color="text.secondary">AI can place these assets into the current story.</Typography><Button sx={{mt:1}}>Place in scene</Button></Card>)}</Grid><Section title="Media types"/><Grid n={4}>{media.map(x=><Card key={x} sx={{p:2}}><Typography variant="h3">{x}</Typography><Typography color="text.secondary">6 assets</Typography></Card>)}</Grid></Shell>}
-export function StoryAI(){return <Shell title="Story & AI"><Header eyebrow="Story intelligence" title="Give AI the story behind the invitation." body="Paste memories, upload documents, or add notes. Invite AI extracts people, moments, inside jokes, dates and emotional beats before designing the experience."/><Section title="What AI knows"/><Grid n={3}>{[["12 facts","People & relationship"],["7 moments","Memory timeline"],["94% confidence","Creative direction"]].map(x=><Card key={x[1]} sx={{p:2}}><Chip label={x[0]}/><Typography variant="h3">{x[1]}</Typography><Typography color="text.secondary">Nostalgic, intimate, cinematic, understated.</Typography></Card>)}</Grid><Section title="Source material"/><TableView headers={["Source","Extracted","Confidence","Provenance"]} rows={[["Our story.txt","18 facts · 6 moments","98%","User provided"],["photos.zip","23 photos · 4 duplicates","91%","Media library"],["voice-note.m4a","3 memories · 1 quote","87%","Transcription"]]}/><Section title="AI memory board"/><Grid n={4}>{["First date · 2022","Rainy train trip","Andy’s Pizza","The stolen hoodie","Our song","Secret destination","First “I love you”","Summer in Rome"].map(x=><Card key={x} sx={{p:2}}><Chip size="small" label="Memory"/><Typography fontWeight={800}>{x}</Typography></Card>)}</Grid></Shell>}
-export function Interactions(){const x=[["RSVP","Attendance, plus-one, dietary requirements","Live"],["Quiz","Questions and scored choices","Live"],["Branching","Different paths and reveals","Ready"],["Guestbook","Messages from guests","Ready"],["Voting","Choose songs, menus or options","Beta"],["Photo upload","Collect guest memories","Beta"],["Hidden reveal","Unlock a secret message","Live"],["Countdown","Time-based event reveal","Live"]];return <Shell title="Interactions"><Header eyebrow="Public interaction studio" title="Design what guests can do." body="Interactions are trusted, typed mechanics. Configure them here; the public runtime executes only validated interaction definitions."/><Grid n={4}>{x.map(a=><Card key={a[0]} sx={{p:2}}><Chip size="small" label={a[2]}/><Typography variant="h3">{a[0]}</Typography><Typography color="text.secondary">{a[1]}</Typography><Button sx={{mt:1}}>Configure</Button></Card>)}</Grid><Section title="RSVP flow"/><Card sx={{p:2}}><Stack direction={{xs:"column",md:"row"}} spacing={1}>{["Start","Will you come?","Plus one","Dietary needs","Confirmation"].map((x,i)=><Paper key={x} variant="outlined" sx={{p:1.5,flex:1}}><b>0{i+1}</b><Typography>{x}</Typography><Typography variant="caption" color="text.secondary">{i===1?"Choice":i===2?"Conditional":"Step"}</Typography></Paper>)}</Stack></Card></Shell>}
-export function Campaigns(){return <Shell title="Campaigns"><Header eyebrow="Campaign studio" title="One experience. Hundreds of guests." body="Keep the experience shared while personalizing names, photos, codes, messages and responses."/><Card sx={{p:2,mt:3}}><Grid n={4}>{[["Master experience","Cinematic Wedding Film"],["Recipients","128"],["Variables","14"],["Shared artifact","✓ Reused"]].map(x=><Box key={x[0]}><Typography variant="caption">{x[0]}</Typography><Typography variant="h3">{x[1]}</Typography></Box>)}</Grid></Card><Section title="Campaigns"/><TableView headers={["Campaign","Recipients","Open rate","RSVP","Status"]} rows={[["Wedding guests","128 recipients","84% opened","74% RSVP","Active"],["Birthday launch","64 recipients","91% opened","63% RSVP","Active"],["Team celebration","42 recipients","76% opened","—","Draft"]]}/><Section title="Personalization variables"/><Grid n={3}>{["{{guest.name}}","{{guest.photo}}","{{guest.message}}","{{guest.code}}","{{guest.table}}","{{guest.rsvpUrl}}"].map(x=><Card key={x} sx={{p:2}}><Typography fontFamily="monospace">{x}</Typography><Typography variant="caption" color="text.secondary">Safe recipient variable</Typography></Card>)}</Grid></Shell>}
-export function Analytics(){return <Shell title="Analytics"><Header eyebrow="Experience analytics" title="See where guests feel it." body="Analytics follow the guest journey, not just page views."/><Grid n={4}>{[["Sessions","8,421","+18.2%"],["Completed","6,307","74.9%"],["RSVP","4,012","63.6%"],["Avg. experience","3:42","+22 sec"]].map(x=><Card key={x[0]} sx={{p:2}}><Typography color="text.secondary">{x[0]}</Typography><Typography variant="h2">{x[1]}</Typography><Typography color="success.main">{x[2]}</Typography></Card>)}</Grid><Section title="Experience funnel"/><Card sx={{p:2}}><Grid n={5}>{[["Opening",100],["Memory",94],["Quiz",81],["Reveal",76],["RSVP",63]].map(x=><Paper key={String(x[0])} sx={{p:1.5}}><b>{x[0]}</b><Typography variant="h3">{x[1]}%</Typography><LinearProgress value={Number(x[1])} variant="determinate"/></Paper>)}</Grid></Card><Section title="Interaction performance"/><TableView headers={["Interaction","Started","Completed","Conversion"]} rows={[["Choose your path","6,120","5,201","85%"],["Envelope reveal","6,307","5,843","93%"],["RSVP","6,307","4,012","64%"],["Guestbook","1,203","642","53%"]]}/></Shell>}
-export function Distribution(){return <Shell title="Distribution"><Header eyebrow="Distribution" title="Take the experience everywhere." body="Stable URLs are the identity. Artifacts, storage providers, QR codes and custom domains are implementation details behind that identity."/><Section title="Public delivery"/><Grid n={3}><Card sx={{p:2}}><Chip label="Published"/><Typography variant="h3">Stable URL</Typography><Alert>invite.md/i/a-little-surprise</Alert><Button>Copy</Button></Card><Card sx={{p:2,textAlign:"center"}}><Chip label="QR"/><Typography variant="h3">Physical sharing</Typography><Box mx="auto" my={2} width={110} height={110} sx={{background:"repeating-linear-gradient(45deg,#222 0 4px,#fff 4px 8px)",border:"8px solid #fff"}}/><Button>Print QR</Button></Card><Card sx={{p:2}}><Chip label="Custom domain"/><Typography variant="h3">elena-andrei.md</Typography><Typography color="text.secondary">DNS verification pending</Typography><Button variant="contained">Connect domain</Button></Card></Grid><Section title="Physical outputs"/><Grid n={4}>{["Save the date","Wedding card","Table card","Menu","Thank-you card","Poster","Social card","QR sticker"].map(x=><Card key={x} sx={{p:2}}><b>{x}</b><Typography variant="caption" display="block">Uses the same visual system</Typography></Card>)}</Grid></Shell>}
-export function Team(){return <Shell title="Team"><Header eyebrow="Workspace" title="Collaborate on experiences." body="Roles, review, comments and activity stay in the control plane. Published experiences remain independently servable."/><Section title="Members"/><TableView headers={["Member","Role","Access","Last active"]} rows={[["Andrei S.","Owner","Everything","Now"],["Maria P.","Designer","Experiences + media","12 min ago"],["Elena R.","Reviewer","Review only","Yesterday"]]}/><Section title="Review workflow"/><Grid n={3}>{[["Draft","AI and creator edits"],["In review","Comments and approval"],["Published","Immutable version"]].map(x=><Card key={x[0]} sx={{p:2}}><Typography variant="h3">{x[0]}</Typography><Typography color="text.secondary">{x[1]}</Typography></Card>)}</Grid></Shell>}
-export function Settings(){return <Shell title="Settings"><Header eyebrow="Workspace" title="Settings" body="Workspace identity, public defaults, AI preferences, notifications, security and domains."/><Grid n={2}>{[["Workspace identity","Andrei’s workspace · Personal"],["Public defaults","Stable URLs, social preview and guest analytics"],["AI preferences","Creative director, safe generation, media suggestions"],["Notifications","Generation, RSVP, campaign and billing alerts"],["Security","Sessions, API access and account protection"],["Domains","invite.md public URLs and custom domains"]].map(x=><Card key={x[0]} sx={{p:2}}><Typography variant="h3">{x[0]}</Typography><Typography color="text.secondary">{x[1]}</Typography><Button sx={{mt:1}}>Configure</Button></Card>)}</Grid></Shell>}
-export function Billing(){return <Shell title="Billing"><Header eyebrow="Billing" title="Plans that scale with your creativity." body="Choose the workspace capacity you need. Your published experiences keep their stable URLs."/><Section title="Plans"/><Grid n={3}>{[["Starter","$0","25 AI generations","3 published experiences"],["Creator","$18","200 AI generations","100 published experiences"],["Studio","$49","1,000 AI generations","Unlimited experiences"]].map((x,i)=><Card key={x[0]} sx={{p:2,border:i===1?"2px solid #7057e8":undefined}}><Chip label={i===1?"Current":"Plan"}/><Typography variant="h2">{x[0]}</Typography><Typography variant="h1">{x[1]}</Typography><Typography>✓ {x[2]}</Typography><Typography>✓ {x[3]}</Typography><Button fullWidth sx={{mt:2}} variant="contained">{i===1?"Current plan":"Choose "+x[0]}</Button></Card>)}</Grid><Section title="Usage & billing"/><Grid n={2}><Card sx={{p:2}}><b>AI generation usage</b><LinearProgress value={34} variant="determinate" sx={{my:2}}/>68 of 200 generations used</Card><Card sx={{p:2}}><b>Payment method</b><Typography mt={2}>Visa ending 4242</Typography><Divider sx={{my:1}}/>Next invoice · Nov 01 · $18</Card></Grid></Shell>}
-export function Marketplace(){return <Shell title="Marketplace"><Header eyebrow="Experience ecosystem" title="Extend the creative vocabulary." body="Recipes and themes are versioned capabilities, not arbitrary third-party code."/><Section title="Featured recipes"/><Grid>{["90s Romance","The Secret Letter","Game Night","Luxury Editorial","Chat Story","Wedding Film"].map(x=><Card key={x}><Box height={120} sx={{background:"linear-gradient(135deg,#27242c,#8b6d8c)"}}/><CardContent><Typography variant="h3">{x}</Typography><Typography color="text.secondary">Community + Invite original</Typography><Chip label="★ 4.9 · 12.4k uses" size="small"/><Button sx={{mt:1}} variant="contained">Use recipe</Button></CardContent></Card>)}</Grid><Section title="Creator program"/><Card sx={{p:3}}><Grid n={3}>{["Publish recipes","Version safely","Earn revenue"].map(x=><Box key={x}><b>{x}</b><Typography color="text.secondary">Reusable, versioned creative capabilities</Typography></Box>)}</Grid></Card></Shell>}
-export function Exports(){return <Shell title="Exports"><Header eyebrow="Export studio" title="One experience. Every format." body="The ExperienceSpec is the source of truth. Export channels are generated from the same validated creative direction."/><Grid>{[["Interactive website","Immutable static artifact","Ready"],["ZIP","Downloadable static site","Ready"],["PDF / print","Invitation + QR layouts","Beta"],["Social card","OpenGraph / share image","Ready"],["Short video","30–60s experience trailer","Beta"],["MP4 guest version","Linearized experience","Planned"]].map(x=><Card key={x[0]} sx={{p:2}}><Chip label={x[2]}/><Typography variant="h3">{x[0]}</Typography><Typography color="text.secondary">{x[1]}</Typography><Button sx={{mt:1}}>Export</Button></Card>)}</Grid><Section title="Localization"/><Card sx={{p:2}}><Stack direction="row" flexWrap="wrap" gap={1}>{["Romanian","English","Russian","French","German","Italian"].map(x=><Chip key={x} label={x}/>)}</Stack></Card></Shell>}
-export function Account(){return <Shell title="Account & plan"><Header eyebrow="Account" title="Andrei’s workspace" body="Creator identity, team access and account controls."/><Grid n={2}><Card sx={{p:3}}><Typography variant="h3">Profile</Typography><Divider sx={{my:2}}/><Typography>Name <b style={{float:"right"}}>Andrei S.</b></Typography><Typography mt={2}>Email <b style={{float:"right"}}>andrei@invite.md</b></Typography></Card><Card sx={{p:3}}><Typography variant="h3">Plan</Typography><Typography variant="h2">Creator</Typography><Typography color="text.secondary">200 AI generations · 100 published experiences · campaigns</Typography><Button variant="contained">Manage billing</Button></Card></Grid></Shell>}
-export function Editor(){return <Box minHeight="100vh" bgcolor="#171516" color="#fff" display="grid" sx={{gridTemplateColumns:{xs:"1fr",lg:"260px minmax(0,1fr) 300px"}}}><Box bgcolor="#211f1c" p={2} sx={{display:{xs:"none",lg:"block"}}}><Typography variant="overline" color="#b9aaff">Experience editor</Typography><Typography variant="h3" color="#fff">A little surprise</Typography><Stack spacing={.5} mt={2}>{scenes.map(s=><Button key={s[0]} sx={{justifyContent:"flex-start",color:"#fff",textTransform:"none"}}><b>{s[0]}</b>&nbsp; {s[1]}</Button>)}</Stack></Box><Box p={2} bgcolor="#292729"><Stack direction="row" spacing={1} mb={2}><Button size="small">Desktop</Button><Button size="small">Mobile</Button><Button size="small" startIcon={<PlayArrow/>}>Play as guest</Button><Button size="small">Save version</Button></Stack><Box minHeight="75vh" borderRadius={3} display="grid" placeItems="center" textAlign="center" color="#fff" sx={{background:"linear-gradient(135deg,#161419,#4d3946)"}}><Box><Typography variant="overline">INVITE FILM · CHAPTER I</Typography><Typography fontSize={64} fontWeight={900} lineHeight={.9}>For you,<br/>always.</Typography><Typography>SCENE 01 · A LITTLE SECRET</Typography></Box></Box></Box><Box bgcolor="#fff" color="#171614" p={2} sx={{display:{xs:"none",lg:"block"}}}><b>Scene 01</b><Typography variant="caption" display="block">Opening scene</Typography><Divider sx={{my:2}}/><TextField fullWidth label="Trigger" value="On load" slotProps={{input:{readOnly:true}}}/><TextField fullWidth label="Animation" value="Fade + scale" slotProps={{input:{readOnly:true}}} sx={{mt:2}}/><Typography variant="caption" display="block" mt={2}>Media</Typography><Stack direction="row" flexWrap="wrap" gap={.5}>{media.slice(0,6).map(x=><Chip key={x} size="small" label={x}/>)}</Stack><Alert severity="success" sx={{mt:2}}>Touch target · Reduced motion · Mobile crop · Scene transition</Alert></Box></Box>}
-export function Published(){return <Box minHeight="100vh" bgcolor="#171516"><Box p={1.5} px={3} bgcolor="#111" color="#fff" display="flex" justifyContent="space-between"><Typography variant="caption">Published · invite.md/i/a-little-surprise</Typography><Stack direction="row"><Button size="small" sx={{color:"#fff"}}>Play</Button><Button size="small" sx={{color:"#fff"}}>Share</Button><Button size="small" sx={{color:"#fff"}}>Edit</Button></Stack></Box><Box p={4} display="grid" placeItems="center"><Box width="min(900px,100%)" minHeight="75vh" borderRadius={3} display="grid" placeItems="center" textAlign="center" color="#fff" sx={{background:"linear-gradient(135deg,#15141a,#594052)"}}><Typography fontSize={72} fontWeight={900} lineHeight={.9}>For you,<br/>always.</Typography></Box></Box></Box>}
-export function Onboarding(){return <Box minHeight="100vh" display="grid" sx={{gridTemplateColumns:{xs:"1fr",md:"1fr 1fr"}}}><Box p={{xs:4,md:8}} display="flex" flexDirection="column" justifyContent="center"><b>i. invite.md</b><Typography variant="overline" color="primary" mt={6}>AI experience studio</Typography><Typography variant="h1">Make something they’ll remember.</Typography><Typography fontSize={18} color="text.secondary">Create cinematic invitations, interactive stories, games, reveals and personalized guest journeys. Start with a conversation — not a blank page.</Typography><Stack direction="row" flexWrap="wrap" gap={1} my={3}>{["AI creative director","Experience builder","Interactive scenes","Campaigns","Stable links"].map(x=><Chip key={x} label={x}/>)}</Stack><Stack direction="row" spacing={1}><Button variant="contained" size="large">Create your workspace ✦</Button><Button size="large">Explore experiences</Button></Stack></Box><Box bgcolor="#211f1c" display="grid" placeItems="center"><Paper sx={{p:5,width:"min(420px,80%)",aspectRatio:"4/5",bgcolor:"#e9e2d5",display:"flex",flexDirection:"column",justifyContent:"space-between"}}><Typography variant="overline">CINEMATIC EXPERIENCE</Typography><Typography fontSize={64} fontWeight={900}>For you,<br/>always.</Typography><Typography variant="caption">6 scenes · 3 interactions</Typography></Paper></Box></Box>}
+export function Overview() {
+  return (
+    <Shell title="Overview">
+      <Paper sx={{ p: { xs: 3, md: 5 }, bgcolor: "#211f1c", color: "#fff", borderRadius: 3 }}>
+        <Typography variant="overline" sx={{ color: "#b9aaff" }}>
+          AI experience studio
+        </Typography>
+        <Typography variant="h1" sx={{ color: "#fff" }}>
+          Create invitations people actually experience.
+        </Typography>
+        <Typography sx={{ color: "#bcb7af", maxWidth: 650 }}>
+          Build cinematic stories, interactive reveals, quizzes, GIF memories and personalized guest
+          journeys — not just another landing page.
+        </Typography>
+        <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+          <Button variant="contained">Create with AI ✦</Button>
+          <Button variant="outlined" sx={{ color: "#fff" }}>
+            Explore experiences
+          </Button>
+        </Stack>
+      </Paper>
+      <Section title="Today" />
+      <MetricGrid
+        items={[
+          { label: "Published", value: "12", delta: "+3 this month" },
+          { label: "Experiences", value: "27", delta: "8 interactive" },
+          { label: "Guest sessions", value: "8.4k", delta: "+18.2%" },
+          { label: "RSVP rate", value: "74%", delta: "+6.4 pts" },
+        ]}
+      />
+      <Section title="Your latest experience" />
+      <Grid n={2}>
+        <Cover title="A little surprise" />
+        <Card sx={{ p: 2 }}>
+          <Typography variant="overline" sx={{ color: "primary" }}>
+            AI activity
+          </Typography>
+          <Typography variant="h3">Creative director</Typography>
+          <Typography sx={{ color: "text.secondary" }}>
+            Your AI has enough context to continue designing the guest journey.
+          </Typography>
+          <Alert sx={{ mt: 2 }} severity="info">
+            Suggested next step: add a reveal after the quiz and personalize the final RSVP.
+          </Alert>
+        </Card>
+      </Grid>
+    </Shell>
+  );
+}
+export function Experiences() {
+  return (
+    <Shell title="Experiences">
+      <Header
+        eyebrow="Experience library"
+        title="Build a moment, not a page."
+        body="Choose the mechanics guests will actually experience. Invite AI can combine them into scenes, transitions, media and interactions."
+      />
+      <Section title="Experience recipes" />
+      <Grid>
+        {recipes.map((r) => (
+          <RecipeCard
+            key={r[0]}
+            title={r[0]}
+            description={r[1]}
+            tags={<Chip size="small" label={r[2]} />}
+          />
+        ))}
+      </Grid>
+      <Section title="Visual language" />
+      <Grid n={4}>
+        {visuals.slice(0, 8).map((x) => (
+          <Card key={x[0]} sx={{ p: 2 }}>
+            <b>{x[0]}</b>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              {x[1]}
+            </Typography>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Templates() {
+  const x = [
+    ["The Movie Date", "Cinematic", "Opening → memories → clue → reveal"],
+    ["The Secret Letter", "Proposal", "Envelope → letter → photos → question"],
+    ["The Wedding Film", "Wedding", "Credits → story → timeline → event → RSVP"],
+    ["The Game Night", "Party", "Start → quest → choices → final reveal"],
+    ["The Memory Tape", "Anniversary", "VHS → GIF beats → voice note → message"],
+    ["The Editorial Invite", "Event", "Typography → scroll reveal → details → RSVP"],
+  ];
+  return (
+    <Shell title="Templates">
+      <Header
+        eyebrow="Templates"
+        title="Start from a story."
+        body="Templates are experience recipes with a strong starting direction."
+      />
+      <Grid>
+        {x.map((a) => (
+          <RecipeCard
+            key={a[0]}
+            title={a[0]}
+            description={a[2]}
+            tags={<Chip size="small" label={a[1]} />}
+          />
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Invitations() {
+  const x = [
+    ["Maya & Daniel", "Wedding", "14 June 2027", "Live", "Editorial"],
+    ["A little surprise", "Date", "28 October 2026", "Draft", "Cinematic"],
+    ["Leo turns 30", "Birthday", "02 December 2026", "Live", "Playful"],
+  ];
+  return (
+    <Shell title="Invitations">
+      <Header
+        eyebrow="Invitations"
+        title="Your experiences."
+        body="Every invitation is a versioned, playable experience."
+      />
+      <Grid>
+        {x.map((a, i) => (
+          <Card key={a[0]}>
+            <Box sx={{ height: 180, bgcolor: ["#89967c", "#3d506b", "#c98f57"][i], p: 2 }}>
+              <Chip label={a[3]} />
+            </Box>
+            <CardContent>
+              <Typography variant="h3">{a[0]}</Typography>
+              <Typography sx={{ color: "text.secondary" }}>
+                {a[1]} · {a[2]}
+              </Typography>
+              <Stack direction="row" spacing={1} sx={{ mt: 2 }}>
+                <Button size="small">Edit</Button>
+                <Button size="small">Open</Button>
+                <Button size="small">Share</Button>
+              </Stack>
+            </CardContent>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Create() {
+  return (
+    <Shell title="Create">
+      <Box
+        sx={{
+          display: "grid",
+          gap: 2,
+          ...{ gridTemplateColumns: { xs: "1fr", lg: "430px minmax(0,1fr)" } },
+        }}
+      >
+        <Card>
+          <CardContent>
+            <Typography variant="overline" sx={{ color: "primary" }}>
+              Create with AI
+            </Typography>
+            <Typography variant="h2">Let’s make something personal.</Typography>
+            <Chip label="AI is ready · Context 82%" sx={{ mt: 1 }} />
+            <Stack spacing={1.5} sx={{ mt: 3 }}>
+              <Paper variant="outlined" sx={{ p: 1.5 }}>
+                Hi! I’ll turn your idea into a complete invitation experience.
+              </Paper>
+              <Paper sx={{ p: 1.5, bgcolor: "#211f1c", color: "#fff" }}>
+                A romantic surprise date. Cinematic but personal.
+              </Paper>
+              <Paper variant="outlined" sx={{ p: 1.5 }}>
+                I’m hearing intimate, cinematic, understated. I’ve prepared a dark editorial
+                direction.
+              </Paper>
+              <Typography sx={{ fontWeight: 800 }}>How should the guest experience it?</Typography>
+              {recipes.slice(0, 4).map((r) => (
+                <Button key={r[0]} variant="outlined" sx={{ justifyContent: "space-between" }}>
+                  {r[0]} <span>Use</span>
+                </Button>
+              ))}
+            </Stack>
+          </CardContent>
+          <Box sx={{ p: 2, borderTop: "1px solid #e5e1d8" }}>
+            <TextField fullWidth placeholder="Tell AI what you want…" />
+            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+              <Chip label="Make it warmer" />
+              <Chip label="More cinematic" />
+              <Chip label="Add a game" />
+            </Stack>
+          </Box>
+        </Card>
+        <Preview />
+      </Box>
+    </Shell>
+  );
+}
+function Preview() {
+  return (
+    <Card sx={{ p: 2, bgcolor: "#eeece7" }}>
+      <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+        <b>Live experience canvas</b>
+        <Stack direction="row">
+          <Button size="small">Phone</Button>
+          <Button size="small">Desktop</Button>
+          <Button size="small" startIcon={<PlayArrow />}>
+            Play
+          </Button>
+        </Stack>
+      </Stack>
+      <Box sx={{ mx: "auto", mt: 2 }}>
+        <PreviewFrame>
+          <Box>
+            <Typography variant="overline">INVITE FILM · CHAPTER I</Typography>
+            <Typography sx={{ fontSize: 56, fontWeight: 900, lineHeight: 0.9 }}>
+              For you,
+              <br />
+              always.
+            </Typography>
+            <Typography variant="caption">SCENE 01 · A LITTLE SECRET</Typography>
+          </Box>
+        </PreviewFrame>
+      </Box>
+      <Stack direction="row" sx={{ justifyContent: "space-between", mt: 2 }}>
+        <Chip label="✓ Saved" />
+        <Button>Share preview</Button>
+        <Button variant="contained">Refine experience</Button>
+      </Stack>
+    </Card>
+  );
+}
+export function Media() {
+  return (
+    <Shell title="Media">
+      <Header
+        eyebrow="Media intelligence"
+        title="Your creative library."
+        body="Upload photos, GIFs, video, audio, voice notes, screenshots and maps. AI can suggest where they belong."
+      />
+      <Section title="AI suggestions" />
+      <Grid n={3}>
+        {["Memory timeline", "Looping moments", "Personal audio"].map((x) => (
+          <Card key={x} sx={{ p: 2 }}>
+            <Chip label="AI suggestion" />
+            <Typography variant="h3">{x}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>
+              AI can place these assets into the current story.
+            </Typography>
+            <Button sx={{ mt: 1 }}>Place in scene</Button>
+          </Card>
+        ))}
+      </Grid>
+      <Section title="Media types" />
+      <Grid n={4}>
+        {media.map((x) => (
+          <Card key={x} sx={{ p: 2 }}>
+            <Typography variant="h3">{x}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>6 assets</Typography>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function StoryAI() {
+  return (
+    <Shell title="Story & AI">
+      <Header
+        eyebrow="Story intelligence"
+        title="Give AI the story behind the invitation."
+        body="Paste memories, upload documents, or add notes. Invite AI extracts people, moments, inside jokes, dates and emotional beats before designing the experience."
+      />
+      <Section title="What AI knows" />
+      <Grid n={3}>
+        {[
+          ["12 facts", "People & relationship"],
+          ["7 moments", "Memory timeline"],
+          ["94% confidence", "Creative direction"],
+        ].map((x) => (
+          <Card key={x[1]} sx={{ p: 2 }}>
+            <Chip label={x[0]} />
+            <Typography variant="h3">{x[1]}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>
+              Nostalgic, intimate, cinematic, understated.
+            </Typography>
+          </Card>
+        ))}
+      </Grid>
+      <Section title="Source material" />
+      <TableView
+        headers={["Source", "Extracted", "Confidence", "Provenance"]}
+        rows={[
+          ["Our story.txt", "18 facts · 6 moments", "98%", "User provided"],
+          ["photos.zip", "23 photos · 4 duplicates", "91%", "Media library"],
+          ["voice-note.m4a", "3 memories · 1 quote", "87%", "Transcription"],
+        ]}
+      />
+      <Section title="AI memory board" />
+      <Grid n={4}>
+        {[
+          "First date · 2022",
+          "Rainy train trip",
+          "Andy’s Pizza",
+          "The stolen hoodie",
+          "Our song",
+          "Secret destination",
+          "First “I love you”",
+          "Summer in Rome",
+        ].map((x) => (
+          <Card key={x} sx={{ p: 2 }}>
+            <Chip size="small" label="Memory" />
+            <Typography sx={{ fontWeight: 800 }}>{x}</Typography>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Interactions() {
+  const x = [
+    ["RSVP", "Attendance, plus-one, dietary requirements", "Live"],
+    ["Quiz", "Questions and scored choices", "Live"],
+    ["Branching", "Different paths and reveals", "Ready"],
+    ["Guestbook", "Messages from guests", "Ready"],
+    ["Voting", "Choose songs, menus or options", "Beta"],
+    ["Photo upload", "Collect guest memories", "Beta"],
+    ["Hidden reveal", "Unlock a secret message", "Live"],
+    ["Countdown", "Time-based event reveal", "Live"],
+  ];
+  return (
+    <Shell title="Interactions">
+      <Header
+        eyebrow="Public interaction studio"
+        title="Design what guests can do."
+        body="Interactions are trusted, typed mechanics. Configure them here; the public runtime executes only validated interaction definitions."
+      />
+      <Grid n={4}>
+        {x.map((a) => (
+          <Card key={a[0]} sx={{ p: 2 }}>
+            <Chip size="small" label={a[2]} />
+            <Typography variant="h3">{a[0]}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>{a[1]}</Typography>
+            <Button sx={{ mt: 1 }}>Configure</Button>
+          </Card>
+        ))}
+      </Grid>
+      <Section title="RSVP flow" />
+      <Card sx={{ p: 2 }}>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={1}>
+          {["Start", "Will you come?", "Plus one", "Dietary needs", "Confirmation"].map((x, i) => (
+            <Paper key={x} variant="outlined" sx={{ p: 1.5, flex: 1 }}>
+              <b>0{i + 1}</b>
+              <Typography>{x}</Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                {i === 1 ? "Choice" : i === 2 ? "Conditional" : "Step"}
+              </Typography>
+            </Paper>
+          ))}
+        </Stack>
+      </Card>
+    </Shell>
+  );
+}
+export function Campaigns() {
+  return (
+    <Shell title="Campaigns">
+      <Header
+        eyebrow="Campaign studio"
+        title="One experience. Hundreds of guests."
+        body="Keep the experience shared while personalizing names, photos, codes, messages and responses."
+      />
+      <Card sx={{ p: 2, mt: 3 }}>
+        <Grid n={4}>
+          {[
+            ["Master experience", "Cinematic Wedding Film"],
+            ["Recipients", "128"],
+            ["Variables", "14"],
+            ["Shared artifact", "✓ Reused"],
+          ].map((x) => (
+            <Box key={x[0]}>
+              <Typography variant="caption">{x[0]}</Typography>
+              <Typography variant="h3">{x[1]}</Typography>
+            </Box>
+          ))}
+        </Grid>
+      </Card>
+      <Section title="Campaigns" />
+      <TableView
+        headers={["Campaign", "Recipients", "Open rate", "RSVP", "Status"]}
+        rows={[
+          ["Wedding guests", "128 recipients", "84% opened", "74% RSVP", "Active"],
+          ["Birthday launch", "64 recipients", "91% opened", "63% RSVP", "Active"],
+          ["Team celebration", "42 recipients", "76% opened", "—", "Draft"],
+        ]}
+      />
+      <Section title="Personalization variables" />
+      <Grid n={3}>
+        {[
+          "{{guest.name}}",
+          "{{guest.photo}}",
+          "{{guest.message}}",
+          "{{guest.code}}",
+          "{{guest.table}}",
+          "{{guest.rsvpUrl}}",
+        ].map((x) => (
+          <Card key={x} sx={{ p: 2 }}>
+            <Typography sx={{ fontFamily: "monospace" }}>{x}</Typography>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Safe recipient variable
+            </Typography>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Analytics() {
+  return (
+    <Shell title="Analytics">
+      <Header
+        eyebrow="Experience analytics"
+        title="See where guests feel it."
+        body="Analytics follow the guest journey, not just page views."
+      />
+      <Grid n={4}>
+        {[
+          ["Sessions", "8,421", "+18.2%"],
+          ["Completed", "6,307", "74.9%"],
+          ["RSVP", "4,012", "63.6%"],
+          ["Avg. experience", "3:42", "+22 sec"],
+        ].map((x) => (
+          <Card key={x[0]} sx={{ p: 2 }}>
+            <Typography sx={{ color: "text.secondary" }}>{x[0]}</Typography>
+            <Typography variant="h2">{x[1]}</Typography>
+            <Typography sx={{ color: "success.main" }}>{x[2]}</Typography>
+          </Card>
+        ))}
+      </Grid>
+      <Section title="Experience funnel" />
+      <Card sx={{ p: 2 }}>
+        <Grid n={5}>
+          {[
+            ["Opening", 100],
+            ["Memory", 94],
+            ["Quiz", 81],
+            ["Reveal", 76],
+            ["RSVP", 63],
+          ].map((x) => (
+            <Paper key={String(x[0])} sx={{ p: 1.5 }}>
+              <b>{x[0]}</b>
+              <Typography variant="h3">{x[1]}%</Typography>
+              <LinearProgress value={Number(x[1])} variant="determinate" />
+            </Paper>
+          ))}
+        </Grid>
+      </Card>
+      <Section title="Interaction performance" />
+      <TableView
+        headers={["Interaction", "Started", "Completed", "Conversion"]}
+        rows={[
+          ["Choose your path", "6,120", "5,201", "85%"],
+          ["Envelope reveal", "6,307", "5,843", "93%"],
+          ["RSVP", "6,307", "4,012", "64%"],
+          ["Guestbook", "1,203", "642", "53%"],
+        ]}
+      />
+    </Shell>
+  );
+}
+export function Distribution() {
+  return (
+    <Shell title="Distribution">
+      <Header
+        eyebrow="Distribution"
+        title="Take the experience everywhere."
+        body="Stable URLs are the identity. Artifacts, storage providers, QR codes and custom domains are implementation details behind that identity."
+      />
+      <Section title="Public delivery" />
+      <Grid n={3}>
+        <Card sx={{ p: 2 }}>
+          <Chip label="Published" />
+          <Typography variant="h3">Stable URL</Typography>
+          <Alert>invite.md/i/a-little-surprise</Alert>
+          <Button>Copy</Button>
+        </Card>
+        <Card sx={{ p: 2, textAlign: "center" }}>
+          <Chip label="QR" />
+          <Typography variant="h3">Physical sharing</Typography>
+          <Box
+            sx={{
+              mx: "auto",
+              my: 2,
+              width: 110,
+              height: 110,
+              ...{
+                background: "repeating-linear-gradient(45deg,#222 0 4px,#fff 4px 8px)",
+                border: "8px solid #fff",
+              },
+            }}
+          />
+          <Button>Print QR</Button>
+        </Card>
+        <Card sx={{ p: 2 }}>
+          <Chip label="Custom domain" />
+          <Typography variant="h3">elena-andrei.md</Typography>
+          <Typography sx={{ color: "text.secondary" }}>DNS verification pending</Typography>
+          <Button variant="contained">Connect domain</Button>
+        </Card>
+      </Grid>
+      <Section title="Physical outputs" />
+      <Grid n={4}>
+        {[
+          "Save the date",
+          "Wedding card",
+          "Table card",
+          "Menu",
+          "Thank-you card",
+          "Poster",
+          "Social card",
+          "QR sticker",
+        ].map((x) => (
+          <Card key={x} sx={{ p: 2 }}>
+            <b>{x}</b>
+            <Typography variant="caption" sx={{ display: "block" }}>
+              Uses the same visual system
+            </Typography>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Team() {
+  return (
+    <Shell title="Team">
+      <Header
+        eyebrow="Workspace"
+        title="Collaborate on experiences."
+        body="Roles, review, comments and activity stay in the control plane. Published experiences remain independently servable."
+      />
+      <Section title="Members" />
+      <TableView
+        headers={["Member", "Role", "Access", "Last active"]}
+        rows={[
+          ["Andrei S.", "Owner", "Everything", "Now"],
+          ["Maria P.", "Designer", "Experiences + media", "12 min ago"],
+          ["Elena R.", "Reviewer", "Review only", "Yesterday"],
+        ]}
+      />
+      <Section title="Review workflow" />
+      <Grid n={3}>
+        {[
+          ["Draft", "AI and creator edits"],
+          ["In review", "Comments and approval"],
+          ["Published", "Immutable version"],
+        ].map((x) => (
+          <Card key={x[0]} sx={{ p: 2 }}>
+            <Typography variant="h3">{x[0]}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>{x[1]}</Typography>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Settings() {
+  return (
+    <Shell title="Settings">
+      <Header
+        eyebrow="Workspace"
+        title="Settings"
+        body="Workspace identity, public defaults, AI preferences, notifications, security and domains."
+      />
+      <Grid n={2}>
+        {[
+          ["Workspace identity", "Andrei’s workspace · Personal"],
+          ["Public defaults", "Stable URLs, social preview and guest analytics"],
+          ["AI preferences", "Creative director, safe generation, media suggestions"],
+          ["Notifications", "Generation, RSVP, campaign and billing alerts"],
+          ["Security", "Sessions, API access and account protection"],
+          ["Domains", "invite.md public URLs and custom domains"],
+        ].map((x) => (
+          <Card key={x[0]} sx={{ p: 2 }}>
+            <Typography variant="h3">{x[0]}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>{x[1]}</Typography>
+            <Button sx={{ mt: 1 }}>Configure</Button>
+          </Card>
+        ))}
+      </Grid>
+    </Shell>
+  );
+}
+export function Billing() {
+  return (
+    <Shell title="Billing">
+      <Header
+        eyebrow="Billing"
+        title="Plans that scale with your creativity."
+        body="Choose the workspace capacity you need. Your published experiences keep their stable URLs."
+      />
+      <Section title="Plans" />
+      <Grid n={3}>
+        {[
+          ["Starter", "$0", "25 AI generations", "3 published experiences"],
+          ["Creator", "$18", "200 AI generations", "100 published experiences"],
+          ["Studio", "$49", "1,000 AI generations", "Unlimited experiences"],
+        ].map((x, i) => (
+          <Card key={x[0]} sx={{ p: 2, border: i === 1 ? "2px solid #7057e8" : undefined }}>
+            <Chip label={i === 1 ? "Current" : "Plan"} />
+            <Typography variant="h2">{x[0]}</Typography>
+            <Typography variant="h1">{x[1]}</Typography>
+            <Typography>✓ {x[2]}</Typography>
+            <Typography>✓ {x[3]}</Typography>
+            <Button fullWidth sx={{ mt: 2 }} variant="contained">
+              {i === 1 ? "Current plan" : "Choose " + x[0]}
+            </Button>
+          </Card>
+        ))}
+      </Grid>
+      <Section title="Usage & billing" />
+      <Grid n={2}>
+        <Card sx={{ p: 2 }}>
+          <b>AI generation usage</b>
+          <LinearProgress value={34} variant="determinate" sx={{ my: 2 }} />
+          68 of 200 generations used
+        </Card>
+        <Card sx={{ p: 2 }}>
+          <b>Payment method</b>
+          <Typography sx={{ mt: 2 }}>Visa ending 4242</Typography>
+          <Divider sx={{ my: 1 }} />
+          Next invoice · Nov 01 · $18
+        </Card>
+      </Grid>
+    </Shell>
+  );
+}
+export function Marketplace() {
+  return (
+    <Shell title="Marketplace">
+      <Header
+        eyebrow="Experience ecosystem"
+        title="Extend the creative vocabulary."
+        body="Recipes and themes are versioned capabilities, not arbitrary third-party code."
+      />
+      <Section title="Featured recipes" />
+      <Grid>
+        {[
+          "90s Romance",
+          "The Secret Letter",
+          "Game Night",
+          "Luxury Editorial",
+          "Chat Story",
+          "Wedding Film",
+        ].map((x) => (
+          <Card key={x}>
+            <Box
+              sx={{ height: 120, ...{ background: "linear-gradient(135deg,#27242c,#8b6d8c)" } }}
+            />
+            <CardContent>
+              <Typography variant="h3">{x}</Typography>
+              <Typography sx={{ color: "text.secondary" }}>Community + Invite original</Typography>
+              <Chip label="★ 4.9 · 12.4k uses" size="small" />
+              <Button sx={{ mt: 1 }} variant="contained">
+                Use recipe
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </Grid>
+      <Section title="Creator program" />
+      <Card sx={{ p: 3 }}>
+        <Grid n={3}>
+          {["Publish recipes", "Version safely", "Earn revenue"].map((x) => (
+            <Box key={x}>
+              <b>{x}</b>
+              <Typography sx={{ color: "text.secondary" }}>
+                Reusable, versioned creative capabilities
+              </Typography>
+            </Box>
+          ))}
+        </Grid>
+      </Card>
+    </Shell>
+  );
+}
+export function Exports() {
+  return (
+    <Shell title="Exports">
+      <Header
+        eyebrow="Export studio"
+        title="One experience. Every format."
+        body="The ExperienceSpec is the source of truth. Export channels are generated from the same validated creative direction."
+      />
+      <Grid>
+        {[
+          ["Interactive website", "Immutable static artifact", "Ready"],
+          ["ZIP", "Downloadable static site", "Ready"],
+          ["PDF / print", "Invitation + QR layouts", "Beta"],
+          ["Social card", "OpenGraph / share image", "Ready"],
+          ["Short video", "30–60s experience trailer", "Beta"],
+          ["MP4 guest version", "Linearized experience", "Planned"],
+        ].map((x) => (
+          <Card key={x[0]} sx={{ p: 2 }}>
+            <Chip label={x[2]} />
+            <Typography variant="h3">{x[0]}</Typography>
+            <Typography sx={{ color: "text.secondary" }}>{x[1]}</Typography>
+            <Button sx={{ mt: 1 }}>Export</Button>
+          </Card>
+        ))}
+      </Grid>
+      <Section title="Localization" />
+      <Card sx={{ p: 2 }}>
+        <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
+          {["Romanian", "English", "Russian", "French", "German", "Italian"].map((x) => (
+            <Chip key={x} label={x} />
+          ))}
+        </Stack>
+      </Card>
+    </Shell>
+  );
+}
+export function Account() {
+  return (
+    <Shell title="Account & plan">
+      <Header
+        eyebrow="Account"
+        title="Andrei’s workspace"
+        body="Creator identity, team access and account controls."
+      />
+      <Grid n={2}>
+        <Card sx={{ p: 3 }}>
+          <Typography variant="h3">Profile</Typography>
+          <Divider sx={{ my: 2 }} />
+          <Typography>
+            Name <b style={{ float: "right" }}>Andrei S.</b>
+          </Typography>
+          <Typography sx={{ mt: 2 }}>
+            Email <b style={{ float: "right" }}>andrei@invite.md</b>
+          </Typography>
+        </Card>
+        <Card sx={{ p: 3 }}>
+          <Typography variant="h3">Plan</Typography>
+          <Typography variant="h2">Creator</Typography>
+          <Typography sx={{ color: "text.secondary" }}>
+            200 AI generations · 100 published experiences · campaigns
+          </Typography>
+          <Button variant="contained">Manage billing</Button>
+        </Card>
+      </Grid>
+    </Shell>
+  );
+}
+export function Editor() {
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        bgcolor: "#171516",
+        color: "#fff",
+        display: "grid",
+        ...{ gridTemplateColumns: { xs: "1fr", lg: "260px minmax(0,1fr) 300px" } },
+      }}
+    >
+      <Box sx={{ bgcolor: "#211f1c", p: 2, ...{ display: { xs: "none", lg: "block" } } }}>
+        <Typography variant="overline" sx={{ color: "#b9aaff" }}>
+          Experience editor
+        </Typography>
+        <Typography variant="h3" sx={{ color: "#fff" }}>
+          A little surprise
+        </Typography>
+        <Stack spacing={0.5} sx={{ mt: 2 }}>
+          {scenes.map((s) => (
+            <Button
+              key={s[0]}
+              sx={{ justifyContent: "flex-start", color: "#fff", textTransform: "none" }}
+            >
+              <b>{s[0]}</b>&nbsp; {s[1]}
+            </Button>
+          ))}
+        </Stack>
+      </Box>
+      <Box sx={{ p: 2, bgcolor: "#292729" }}>
+        <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+          <Button size="small">Desktop</Button>
+          <Button size="small">Mobile</Button>
+          <Button size="small" startIcon={<PlayArrow />}>
+            Play as guest
+          </Button>
+          <Button size="small">Save version</Button>
+        </Stack>
+        <Box
+          sx={{
+            placeItems: "center",
+            ...{
+              minHeight: "75vh",
+              borderRadius: 3,
+              display: "grid",
+              textAlign: "center",
+              color: "#fff",
+              ...{ background: "linear-gradient(135deg,#161419,#4d3946)" },
+            },
+          }}
+        >
+          <Box>
+            <Typography variant="overline">INVITE FILM · CHAPTER I</Typography>
+            <Typography sx={{ fontSize: 64, fontWeight: 900, lineHeight: 0.9 }}>
+              For you,
+              <br />
+              always.
+            </Typography>
+            <Typography>SCENE 01 · A LITTLE SECRET</Typography>
+          </Box>
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          bgcolor: "#fff",
+          color: "#171614",
+          p: 2,
+          ...{ display: { xs: "none", lg: "block" } },
+        }}
+      >
+        <b>Scene 01</b>
+        <Typography variant="caption" sx={{ display: "block" }}>
+          Opening scene
+        </Typography>
+        <Divider sx={{ my: 2 }} />
+        <TextField
+          fullWidth
+          label="Trigger"
+          value="On load"
+          slotProps={{ input: { readOnly: true } }}
+        />
+        <TextField
+          fullWidth
+          label="Animation"
+          value="Fade + scale"
+          slotProps={{ input: { readOnly: true } }}
+          sx={{ mt: 2 }}
+        />
+        <Typography variant="caption" sx={{ display: "block", mt: 2 }}>
+          Media
+        </Typography>
+        <Stack direction="row" sx={{ flexWrap: "wrap", gap: 0.5 }}>
+          {media.slice(0, 6).map((x) => (
+            <Chip key={x} size="small" label={x} />
+          ))}
+        </Stack>
+        <Alert severity="success" sx={{ mt: 2 }}>
+          Touch target · Reduced motion · Mobile crop · Scene transition
+        </Alert>
+      </Box>
+    </Box>
+  );
+}
+export function Published() {
+  return (
+    <Box sx={{ minHeight: "100vh", bgcolor: "#171516" }}>
+      <Box
+        sx={{
+          p: 1.5,
+          px: 3,
+          bgcolor: "#111",
+          color: "#fff",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="caption">Published · invite.md/i/a-little-surprise</Typography>
+        <Stack direction="row">
+          <Button size="small" sx={{ color: "#fff" }}>
+            Play
+          </Button>
+          <Button size="small" sx={{ color: "#fff" }}>
+            Share
+          </Button>
+          <Button size="small" sx={{ color: "#fff" }}>
+            Edit
+          </Button>
+        </Stack>
+      </Box>
+      <Box sx={{ placeItems: "center", ...{ p: 4, display: "grid" } }}>
+        <Box
+          sx={{
+            placeItems: "center",
+            ...{
+              width: "min(900px,100%)",
+              minHeight: "75vh",
+              borderRadius: 3,
+              display: "grid",
+              textAlign: "center",
+              color: "#fff",
+              ...{ background: "linear-gradient(135deg,#15141a,#594052)" },
+            },
+          }}
+        >
+          <Typography sx={{ fontSize: 72, fontWeight: 900, lineHeight: 0.9 }}>
+            For you,
+            <br />
+            always.
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+export function Onboarding() {
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "grid",
+        ...{ gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" } },
+      }}
+    >
+      <Box
+        sx={{
+          p: { xs: 4, md: 8 },
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <b>i. invite.md</b>
+        <Typography variant="overline" sx={{ color: "primary", mt: 6 }}>
+          AI experience studio
+        </Typography>
+        <Typography variant="h1">Make something they’ll remember.</Typography>
+        <Typography sx={{ fontSize: 18, color: "text.secondary" }}>
+          Create cinematic invitations, interactive stories, games, reveals and personalized guest
+          journeys. Start with a conversation — not a blank page.
+        </Typography>
+        <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1, my: 3 }}>
+          {[
+            "AI creative director",
+            "Experience builder",
+            "Interactive scenes",
+            "Campaigns",
+            "Stable links",
+          ].map((x) => (
+            <Chip key={x} label={x} />
+          ))}
+        </Stack>
+        <Stack direction="row" spacing={1}>
+          <Button variant="contained" size="large">
+            Create your workspace ✦
+          </Button>
+          <Button size="large">Explore experiences</Button>
+        </Stack>
+      </Box>
+      <Box sx={{ placeItems: "center", ...{ bgcolor: "#211f1c", display: "grid" } }}>
+        <Paper
+          sx={{
+            p: 5,
+            width: "min(420px,80%)",
+            aspectRatio: "4/5",
+            bgcolor: "#e9e2d5",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography variant="overline">CINEMATIC EXPERIENCE</Typography>
+          <Typography sx={{ fontSize: 64, fontWeight: 900 }}>
+            For you,
+            <br />
+            always.
+          </Typography>
+          <Typography variant="caption">6 scenes · 3 interactions</Typography>
+        </Paper>
+      </Box>
+    </Box>
+  );
+}
 
-export const OverviewStory:Story={render:()=> <Overview/>}; export const CreateStory:Story={render:()=> <Create/>}; export const ExperiencesStory:Story={render:()=> <Experiences/>}; export const TemplatesStory:Story={render:()=> <Templates/>}; export const InvitationsStory:Story={render:()=> <Invitations/>}; export const CampaignsStory:Story={render:()=> <Campaigns/>}; export const MediaStory:Story={render:()=> <Media/>}; export const StoryAndAIStory:Story={render:()=> <StoryAI/>}; export const InteractionsStory:Story={render:()=> <Interactions/>}; export const AnalyticsStory:Story={render:()=> <Analytics/>}; export const DistributionStory:Story={render:()=> <Distribution/>}; export const SettingsStory:Story={render:()=> <Settings/>}; export const AccountStory:Story={render:()=> <Account/>}; export const TeamStory:Story={render:()=> <Team/>}; export const BillingStory:Story={render:()=> <Billing/>}; export const MarketplaceStory:Story={render:()=> <Marketplace/>}; export const ExportsStory:Story={render:()=> <Exports/>}; export const ExperienceEditorStory:Story={render:()=> <Editor/>}; export const PublishedExperienceStory:Story={render:()=> <Published/>}; export const OnboardingStory:Story={render:()=> <Onboarding/>};
+export const OverviewStory: Story = { render: () => <Overview /> };
+export const CreateStory: Story = { render: () => <Create /> };
+export const ExperiencesStory: Story = { render: () => <Experiences /> };
+export const TemplatesStory: Story = { render: () => <Templates /> };
+export const InvitationsStory: Story = { render: () => <Invitations /> };
+export const CampaignsStory: Story = { render: () => <Campaigns /> };
+export const MediaStory: Story = { render: () => <Media /> };
+export const StoryAndAIStory: Story = { render: () => <StoryAI /> };
+export const InteractionsStory: Story = { render: () => <Interactions /> };
+export const AnalyticsStory: Story = { render: () => <Analytics /> };
+export const DistributionStory: Story = { render: () => <Distribution /> };
+export const SettingsStory: Story = { render: () => <Settings /> };
+export const AccountStory: Story = { render: () => <Account /> };
+export const TeamStory: Story = { render: () => <Team /> };
+export const BillingStory: Story = { render: () => <Billing /> };
+export const MarketplaceStory: Story = { render: () => <Marketplace /> };
+export const ExportsStory: Story = { render: () => <Exports /> };
+export const ExperienceEditorStory: Story = { render: () => <Editor /> };
+export const PublishedExperienceStory: Story = { render: () => <Published /> };
+export const OnboardingStory: Story = { render: () => <Onboarding /> };

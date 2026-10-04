@@ -1,16 +1,21 @@
 Andrei
+autodocs
 autoplay
 chev
 Chişinău
+Chișinău
 componentized
 Evals
 EXIF
+Gridless
 invite
 invite.md
+Morilor
 playbar
 Pulumi
 renderable
 sandboxed
+scanlines
 scriptable
 Segoe
 Sîrbu
@@ -20,4 +25,5 @@ Topbars
 unpublication
 unpublishing
 unvalidated
+Valea
 WCAG

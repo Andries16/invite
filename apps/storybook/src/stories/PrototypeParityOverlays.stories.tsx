@@ -1,15 +1,162 @@
-import * as React from "react";
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Button, Card, CardContent, Chip, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, Typography } from "@mui/material";
 import { Close, ContentCopy, Download, PlayArrow } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/material";
+import type { Meta, StoryObj } from "@storybook/react";
+import * as React from "react";
 
-const meta={title:"HTML Prototype/Overlays & Playback",parameters:{layout:"fullscreen"}} satisfies Meta;
-export default meta; type Story=StoryObj<typeof meta>;
+const meta = {
+  title: "HTML Prototype/Overlays & Playback",
+  parameters: { layout: "fullscreen" },
+} satisfies Meta;
+export default meta;
+type Story = StoryObj<typeof meta>;
 
-function ShareDialog(){const [open,setOpen]=React.useState(true);return <><Button variant="contained" onClick={()=>setOpen(true)}>Share experience</Button><Dialog open={open} onClose={()=>setOpen(false)} maxWidth="sm" fullWidth><DialogTitle>Share experience <IconButton onClick={()=>setOpen(false)} sx={{float:"right"}}><Close/></IconButton></DialogTitle><DialogContent><Typography color="text.secondary">Your stable public link.</Typography><Card variant="outlined" sx={{mt:2}}><CardContent><Typography fontWeight={800}>invite.md/i/a-little-surprise</Typography><Typography variant="caption" color="text.secondary">Published · version 5 · Cinematic intro</Typography></CardContent></Card><Stack alignItems="center" my={3}><Chip label="QR CODE" sx={{width:160,height:160,borderRadius:0,fontSize:20}}/></Stack><Stack direction="row" spacing={1}><Button fullWidth startIcon={<Download/>}>Download QR</Button><Button fullWidth startIcon={<ContentCopy/>}>Copy URL</Button></Stack></DialogContent><DialogActions><Button onClick={()=>setOpen(false)}>Close</Button><Button variant="contained">Share</Button></DialogActions></Dialog></>}
+function ShareDialog() {
+  const [open, setOpen] = React.useState(true);
+  return (
+    <>
+      <Button variant="contained" onClick={() => setOpen(true)}>
+        Share experience
+      </Button>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          Share experience{" "}
+          <IconButton onClick={() => setOpen(false)} sx={{ float: "right" }}>
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Typography sx={{ color: "text.secondary" }}>Your stable public link.</Typography>
+          <Card variant="outlined" sx={{ mt: 2 }}>
+            <CardContent>
+              <Typography sx={{ fontWeight: 800 }}>invite.md/i/a-little-surprise</Typography>
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Published · version 5 · Cinematic intro
+              </Typography>
+            </CardContent>
+          </Card>
+          <Stack sx={{ alignItems: "center", my: 3 }}>
+            <Chip label="QR CODE" sx={{ width: 160, height: 160, borderRadius: 0, fontSize: 20 }} />
+          </Stack>
+          <Stack direction="row" spacing={1}>
+            <Button fullWidth startIcon={<Download />}>
+              Download QR
+            </Button>
+            <Button fullWidth startIcon={<ContentCopy />}>
+              Copy URL
+            </Button>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Close</Button>
+          <Button variant="contained">Share</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+}
 
-function RecipeModal(){const [open,setOpen]=React.useState(true);return <><Button variant="contained" onClick={()=>setOpen(true)}>Preview recipe</Button><Dialog open={open} onClose={()=>setOpen(false)} maxWidth="md" fullWidth><DialogTitle>Experience recipe <IconButton onClick={()=>setOpen(false)} sx={{float:"right"}}><Close/></IconButton></DialogTitle><DialogContent><Typography variant="h2">Cinematic intro</Typography><Typography color="text.secondary">Movie-like opening with title cards, dramatic pacing, scene transitions and a final reveal.</Typography><Card sx={{my:2,p:4,minHeight:280,bgcolor:"#171516",color:"#fff",display:"grid",placeItems:"center",textAlign:"center"}}><Box><Typography variant="overline">INVITE FILM · CHAPTER I</Typography><Typography fontSize={52} fontWeight={900}>For you,<br/>always.</Typography><Typography variant="caption">SCENE 01</Typography></Box></Card><Stack direction="row" spacing={1}><Chip label="Scenes"/><Chip label="Titles"/><Chip label="Transitions"/></Stack></DialogContent><DialogActions><Button onClick={()=>setOpen(false)}>Close</Button><Button variant="contained">Use this experience</Button></DialogActions></Dialog></>}
+function RecipeModal() {
+  const [open, setOpen] = React.useState(true);
+  return (
+    <>
+      <Button variant="contained" onClick={() => setOpen(true)}>
+        Preview recipe
+      </Button>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>
+          Experience recipe{" "}
+          <IconButton onClick={() => setOpen(false)} sx={{ float: "right" }}>
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="h2">Cinematic intro</Typography>
+          <Typography sx={{ color: "text.secondary" }}>
+            Movie-like opening with title cards, dramatic pacing, scene transitions and a final
+            reveal.
+          </Typography>
+          <Card
+            sx={{
+              my: 2,
+              p: 4,
+              minHeight: 280,
+              bgcolor: "#171516",
+              color: "#fff",
+              display: "grid",
+              placeItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <Box>
+              <Typography variant="overline">INVITE FILM · CHAPTER I</Typography>
+              <Typography sx={{ fontSize: 52, fontWeight: 900 }}>
+                For you,
+                <br />
+                always.
+              </Typography>
+              <Typography variant="caption">SCENE 01</Typography>
+            </Box>
+          </Card>
+          <Stack direction="row" spacing={1}>
+            <Chip label="Scenes" />
+            <Chip label="Titles" />
+            <Chip label="Transitions" />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Close</Button>
+          <Button variant="contained">Use this experience</Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+}
 
-export const ShareExperience:Story={render:()=> <ShareDialog/>};
-export const ExperienceRecipePreview:Story={render:()=> <RecipeModal/>};
-export const GuestPlayback:Story={render:()=> <Card sx={{minHeight:"90vh",bgcolor:"#171516",color:"#fff",display:"grid",placeItems:"center",textAlign:"center",p:4}}><Box><Typography variant="overline">SCENE 03 · THE QUESTION</Typography><Typography fontSize={{xs:38,md:64}} fontWeight={900}>Where did we say<br/>we would go someday?</Typography><Stack direction="row" spacing={1} justifyContent="center" mt={3}><Button variant="contained">Paris · Always</Button><Button variant="outlined" sx={{color:"#fff",borderColor:"#ffffff44"}}>Somewhere unexpected</Button></Stack><Button startIcon={<PlayArrow/>} sx={{mt:3,color:"#aaa"}}>Guest playback controls</Button></Box></Card>};
+export const ShareExperience: Story = { render: () => <ShareDialog /> };
+export const ExperienceRecipePreview: Story = { render: () => <RecipeModal /> };
+export const GuestPlayback: Story = {
+  render: () => (
+    <Card
+      sx={{
+        minHeight: "90vh",
+        bgcolor: "#171516",
+        color: "#fff",
+        display: "grid",
+        placeItems: "center",
+        textAlign: "center",
+        p: 4,
+      }}
+    >
+      <Box>
+        <Typography variant="overline">SCENE 03 · THE QUESTION</Typography>
+        <Typography sx={{ fontSize: { xs: 38, md: 64 }, fontWeight: 900 }}>
+          Where did we say
+          <br />
+          we would go someday?
+        </Typography>
+        <Stack direction="row" spacing={1} sx={{ justifyContent: "center", mt: 3 }}>
+          <Button variant="contained">Paris · Always</Button>
+          <Button variant="outlined" sx={{ color: "#fff", borderColor: "#ffffff44" }}>
+            Somewhere unexpected
+          </Button>
+        </Stack>
+        <Button startIcon={<PlayArrow />} sx={{ mt: 3, color: "#aaa" }}>
+          Guest playback controls
+        </Button>
+      </Box>
+    </Card>
+  ),
+};

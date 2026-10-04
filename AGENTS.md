@@ -18,11 +18,13 @@ Do not make unrestricted LLM-generated production code the normal path.
 
 Follow docs/CONVENTIONS.md. Mandatory:
 
-- React components are `const` arrow functions only.
-- Atomic files, maximum 500 lines each.
-- File and folder names are kebab-case.
-- No comments in code.
-- Never use `any` or `as any`; use strong, strict TypeScript typing.
+- **React Components**: Must be `const` arrow functions only (e.g., `export const MyComponent = () => {}`). Never use `export function`.
+- **Component Isolation**: One component per file strictly. Never group multiple components in a single file (like `components.tsx`). Group related atomic files into a directory with a barrel `index.ts` file for clean re-exports.
+- **File Naming**: All file and folder names must be strictly `kebab-case` (e.g., `experience-card.tsx`).
+- **File Size limit**: Atomic files only, maximum 500 lines each. If a configuration or component grows larger, modularize it immediately.
+- **Code Comments**: Absolutely no comments in code. Code must be self-documenting.
+- **TypeScript**: Never use `any` or `as any`. You must use strong, strict TypeScript typing (e.g., exact interfaces or `React.ComponentProps<typeof Box>`).
+- **Validation**: Before marking a task complete, always verify your changes compile correctly by running `pnpm run typecheck` and `pnpm run format`. Ensure no unused imports or broken module links are left behind.
 
 ## Rules
 
