@@ -1,7 +1,6 @@
 import { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
 import { getOrderedScenes } from "@invite/invitation-runtime";
 import { getSceneDescription, getSceneDisplayType, getSceneDurationLabel, getSceneTitle, sampleExperience } from "@invite/story";
-import type { ExperienceSpec } from "@invite/invitation-schema";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DesktopWindowsIcon from "@mui/icons-material/DesktopWindows";
@@ -326,9 +325,11 @@ function PublishPage({ onBack }: { onBack: () => void }) {
 }
 
 function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () => void }) {
-  const [selectedId, setSelectedId] = React.useState<string>(String(getOrderedScenes(sampleExperience)[0]?.id));
+  const orderedScenes = getOrderedScenes(sampleExperience);
+  const [selectedId, setSelectedId] = React.useState<string>(String(orderedScenes[0]?.id));
   const [device, setDevice] = React.useState<"desktop" | "phone">("desktop");
-  const selected = getOrderedScenes(sampleExperience).find((scene) => scene.id === selectedId) ?? getOrderedScenes(sampleExperience)[0];
+  const selected = orderedScenes.find((scene) => scene.id === selectedId) ?? orderedScenes[0];
+  if (!selected) return null;
   const [description, setDescription] = React.useState(getSceneDescription(selected));
 
   const [prevId, setPrevId] = React.useState(selectedId);
@@ -428,7 +429,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
 
           <Box>
             <Chip
-              label={`${getSceneDisplayType(selected)} · Scene ${String(getOrderedScenes(sampleExperience).indexOf(selected) + 1).padStart(2, "0")}`}
+              label={`${getSceneDisplayType(selected)} · Scene ${String(orderedScenes.indexOf(selected) + 1).padStart(2, "0")}`}
               sx={{ color: "primary" }}
             />
             <Typography variant="h2" sx={{ color: "#fff", mt: 1 }}>
@@ -469,7 +470,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
 
           <SceneRail scenes={getOrderedScenes(sampleExperience).map((scene) => getSceneTitle(scene))} />
           <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-            {getOrderedScenes(sampleExperience).map((scene) => (
+            {orderedScenes.map((scene) => (
               <Button
                 key={scene.id}
                 size="small"
