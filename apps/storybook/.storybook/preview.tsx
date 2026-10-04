@@ -12,7 +12,7 @@ const preview: Preview = {
     ),
   ],
   parameters: {
-    layout: "centered",
+    layout: "fullscreen",
     a11y: { test: "todo" },
   },
   tags: ["autodocs"],
