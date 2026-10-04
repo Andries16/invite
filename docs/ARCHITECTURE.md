@@ -147,3 +147,40 @@ The same normalized representation drives preview, guest playback and production
 Campaigns reuse a master artifact where possible. Recipient values are constrained to a safe variable model. Dynamic RSVP, quiz, guestbook and analytics services remain separate from static content delivery.
 
 Experience generation must remain mobile-conscious: use media derivatives, poster images, lazy loading and reduced-motion behavior.
+
+
+## Repository structure
+
+```text
+invite/
+├── apps/
+│   ├── creator/        # authenticated creator studio
+│   ├── api/            # control-plane application API
+│   ├── worker/         # asynchronous AI/media/generation jobs
+│   └── public/         # public experience runtime
+├── packages/
+│   ├── contracts/      # API and ExperienceSpec contracts
+│   ├── domain/         # domain entities and invariants
+│   ├── experience-runtime/ # deterministic scene/runtime primitives
+│   ├── ai/             # AI orchestration contracts and adapters
+│   ├── database/       # persistence boundary
+│   ├── storage/        # object-storage boundary
+│   ├── ui/             # shared creator UI primitives
+│   └── config/         # shared typed configuration
+├── docs/
+│   ├── domains/        # bounded-context documentation
+│   └── adr/            # architectural decisions
+└── html-prototype/     # standalone product/design prototype
+```
+
+### Dependency direction
+
+```text
+creator -> contracts/domain/runtime/ui
+api     -> contracts/domain/database/storage
+worker  -> contracts/domain/ai/database/storage
+public  -> contracts/runtime
+runtime -> contracts
+```
+
+The public runtime must not depend on the creator, API application or database implementation. The API must not become the rendering layer. AI packages produce structured proposals; deterministic runtime packages execute validated specifications.
