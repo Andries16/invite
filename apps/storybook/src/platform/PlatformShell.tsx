@@ -1,4 +1,3 @@
-// @ts-nocheck
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import CampaignIcon from "@mui/icons-material/Campaign";
@@ -97,7 +96,6 @@ export function PlatformShell({
   actions,
   children,
   onNavigate,
-  embedded = false,
 }: {
   page?: PlatformPage;
   title?: string;
@@ -105,7 +103,6 @@ export function PlatformShell({
   actions?: React.ReactNode;
   children: React.ReactNode;
   onNavigate?: (page: PlatformPage) => void;
-  embedded?: boolean;
 }) {
   const parent = React.useContext(PlatformContext);
   const navigate = onNavigate ?? parent.onNavigate;

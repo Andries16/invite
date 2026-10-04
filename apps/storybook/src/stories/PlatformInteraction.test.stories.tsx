@@ -12,7 +12,7 @@ type Story = StoryObj<typeof meta>;
 
 export const FormSubmission: Story = {
   render: () => <TestForm />,
-  play: async ({ canvasElement }: any) => {
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
     await userEvent.type(canvas.getByLabelText("Guest name"), "Maria");
     await userEvent.click(canvas.getByRole("button", { name: "Continue" }));
@@ -29,7 +29,7 @@ export const KeyboardFlow: Story = {
       <Button variant="contained">Continue</Button>
     </Stack>
   ),
-  play: async ({ canvasElement }: any) => {
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByLabelText("First field"));
     await userEvent.tab();

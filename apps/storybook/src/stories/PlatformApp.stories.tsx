@@ -393,9 +393,11 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
   const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
   const [description, setDescription] = React.useState(selected.description);
 
-  React.useEffect(() => {
+  const [prevId, setPrevId] = React.useState(selectedId);
+  if (selectedId !== prevId) {
+    setPrevId(selectedId);
     setDescription(selected.description);
-  }, [selectedId, selected.description]);
+  }
 
   return (
     <PlatformShell

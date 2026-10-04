@@ -2,10 +2,10 @@ import { Box } from "@mui/material";
 import * as React from "react";
 
 export const PermissionGate = ({
-  title,
-  body,
-  action,
-  children,
+  title: _title,
+  body: _body,
+  action: _action,
+  children: _children,
   ...props
 }: {
   title?: string;

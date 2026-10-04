@@ -20,7 +20,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const CreatorNavigation: Story = {
-  play: async ({ canvasElement }: any) => {
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText("Experiences")).toBeInTheDocument();
     await expect(canvas.getByText("invite.md")).toBeInTheDocument();
@@ -65,7 +65,7 @@ export const EditorComposition: Story = {
 };
 
 export const SceneTimeline: Story = {
-  play: async ({ canvasElement }: any) => {
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText("Storyboard scenes")).toBeInTheDocument();
     await expect(canvas.getByText("The question")).toBeInTheDocument();
@@ -90,7 +90,7 @@ export const SceneTimeline: Story = {
 };
 
 export const InteractionStatuses: Story = {
-  play: async ({ canvasElement }: any) => {
+  play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText("Needs attention")).toBeInTheDocument();
     await expect(canvas.getByText("Live")).toBeInTheDocument();

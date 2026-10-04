@@ -796,21 +796,21 @@ export function CreatePage({ onStartAI }: { onStartAI?: () => void }) {
   );
 }
 
-export function StoryIntelligencePage(props: any) {
+export function StoryIntelligencePage(props: React.ComponentProps<"div">) {
   return <div {...props} />;
 }
-export function TeamPage(props: any) {
+export function TeamPage(props: React.ComponentProps<"div">) {
   return <div {...props} />;
 }
-export function ExportPage(props: any) {
+export function ExportPage(props: React.ComponentProps<"div">) {
   return <div {...props} />;
 }
-export function DesignSystemPage(props: any) {
+export function DesignSystemPage(props: React.ComponentProps<"div">) {
   return <div {...props} />;
 }
-export function CustomDomainPage(props: any) {
+export function CustomDomainPage(props: React.ComponentProps<"div">) {
   return <div {...props} />;
 }
-export function PublishPage(props: any) {
+export function PublishPage(props: React.ComponentProps<"div">) {
   return <div {...props} />;
 }

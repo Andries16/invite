@@ -2,11 +2,11 @@ import { Box } from "@mui/material";
 import * as React from "react";
 
 export const EmptyState = ({
-  title,
-  body,
-  action,
-  actions,
-  icon,
+  title: _title,
+  body: _body,
+  action: _action,
+  actions: _actions,
+  icon: _icon,
   ...props
 }: {
   title?: string;

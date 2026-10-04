@@ -6,7 +6,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck lint",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,html,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,html,css}\"",
     "spellcheck": "cspell \"**/*.{ts,tsx,md,mdx,json,html,css}\"",
@@ -27,6 +27,15 @@
     "turbo": "^2.11.7",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.71.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.25.0",
+      "vite": "^6.4.3",
+      "@vitest/browser": "^4.1.11",
+      "vitest": "^4.1.11",
+      "@vitest/mocker": "^4.1.11"
+    }
   },
   "engines": {
     "node": ">=24.0.0",
