@@ -9,5 +9,12 @@
       "path": "./.cspell/invite.txt"
     }
   ],
-  "ignorePaths": ["node_modules", "dist", "build", "pnpm-lock.yaml", ".git"]
+  "ignorePaths": [
+    "node_modules",
+    "dist",
+    "build",
+    "pnpm-lock.yaml",
+    ".git",
+    "apps/storybook/storybook-static"
+  ]
 }
