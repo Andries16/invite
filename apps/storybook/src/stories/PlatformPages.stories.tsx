@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   AnalyticsPage, BillingPage, CampaignsPage, CreatePage, DashboardPage, ExperiencesPage,
-  InvitationsPage, MarketplacePage, MediaPage, SettingsPage, TemplatesPage,
+  InvitationsPage, MarketplacePage, MediaPage, SettingsPage, TemplatesPage, StoryIntelligencePage, InteractionsPage, DistributionPage, TeamPage, ExportsPage,
 } from "../platform/PlatformPages";
 
 const meta = {
@@ -23,3 +23,9 @@ export const Analytics: Story = { render: () => <AnalyticsPage /> };
 export const Settings: Story = { render: () => <SettingsPage /> };
 export const Billing: Story = { render: () => <BillingPage /> };
 export const Marketplace: Story = { render: () => <MarketplacePage /> };
+
+export const StoryIntelligence: Story = { render: () => <StoryIntelligencePage /> };
+export const Interactions: Story = { render: () => <InteractionsPage /> };
+export const Distribution: Story = { render: () => <DistributionPage /> };
+export const Team: Story = { render: () => <TeamPage /> };
+export const Exports: Story = { render: () => <ExportsPage /> };
