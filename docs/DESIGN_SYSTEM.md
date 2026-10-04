@@ -250,3 +250,19 @@ motion:
 ```
 
 AI cannot request capabilities outside the manifest.
+
+
+## 36. Storybook contract
+
+The creator design system is developed and reviewed in `apps/storybook`.
+
+Storybook must:
+
+- use the same MUI 9.4.0 and Emotion versions as `@invite/design-system`;
+- document every reusable creator component;
+- demonstrate default, interactive, disabled/error/empty and responsive states where relevant;
+- expose keyboard/focus and accessibility behavior;
+- remain independent from API, database, AI and production storage;
+- never be imported by `apps/public` or invitation-runtime packages.
+
+Storybook is a development/validation surface only. It does not define the generated invitation visual system.
