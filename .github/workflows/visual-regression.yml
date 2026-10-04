@@ -1,0 +1,36 @@
+name: Visual Regression
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "apps/storybook/**"
+      - "packages/design-system/**"
+      - "packages/invitation-components/**"
+
+permissions:
+  contents: read
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Check for visual test configuration
+        run: |
+          if find . -name 'playwright.config.*' | grep -q .; then
+            pnpm exec playwright test --grep @visual
+          else
+            echo "No visual regression suite yet; workflow is scaffolded."
+          fi
