@@ -1,12 +1,29 @@
+        <Drawer open={mobileOpen} onClose={() => setMobileOpen(false)} sx={{ display: { xs: "block", md: "none" } }}>
+          <Box sx={{ width: 280, p: 1.75, height: "100%" }}>
+            <Stack direction="row" alignItems="center" spacing={1} px={1} py={1.25} mb={1}>
+              <Box width={30} height={30} display="grid" sx={{ placeItems: "center", borderRadius: 2, background: "linear-gradient(145deg,#292621,#12110f)", color: "#fff", fontWeight: 850 }}>i</Box>
+              <Typography fontSize={20} fontWeight={850}>Invite.md</Typography>
+            </Stack>
+            <List disablePadding sx={{ display: "grid", gap: 0.35 }}>
+              {[...navigation, ...secondary].map((item) => (
+                <ListItemButton key={item.key} selected={page === item.key} onClick={() => { navigate?.(item.key); setMobileOpen(false); }}>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              ))}
+            </List>
+          </Box>
+        </Drawer>
+
 import * as React from "react";
 import {
-  Avatar, Badge, Box, Button, Divider, IconButton, List, ListItemButton,
+  Avatar, Badge, Box, Button, Divider, Drawer, IconButton, List, ListItemButton,
   ListItemIcon, ListItemText, Paper, Stack, Toolbar, Typography,
 } from "@mui/material";
 import {
   Analytics, AutoAwesome, Campaign, Collections, Dashboard, Explore,
   Extension, FileDownload, Group, HelpOutline, Insights, Logout, NotificationsNone,
-  QrCode2, Settings, ShoppingBag, Tune, Workspaces,
+  Menu, QrCode2, Settings, ShoppingBag, Tune, Workspaces,
 } from "@mui/icons-material";
 
 export type PlatformPage =
@@ -42,7 +59,7 @@ type PlatformContextValue = {
 
 const PlatformContext = React.createContext<PlatformContextValue>({});
 
-export function PlatformShell({
+export function usePlatformNavigation() {\n  return React.useContext(PlatformContext).onNavigate;\n}\n\nexport function PlatformShell({
   page = "dashboard",
   title,
   subtitle,
@@ -158,7 +175,7 @@ export function PlatformShell({
           </Stack>
         </Paper>
 
-        <Box ml="252px" width="calc(100% - 252px)" minWidth={0}>
+        <Box sx={{ ml: { xs: 0, md: "252px" }, width: { xs: "100%", md: "calc(100% - 252px)" } }} minWidth={0}>
           <Paper square elevation={0} component="header" sx={{ height: 70, position: "sticky", top: 0, zIndex: 10, bgcolor: "rgba(251,250,248,.91)", backdropFilter: "blur(14px)", borderTop: 0, borderLeft: 0, borderRight: 0 }}>
             <Toolbar>
               <Stack direction="row" alignItems="center" spacing={1} flex={1}>
