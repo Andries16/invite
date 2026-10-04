@@ -1,6 +1,6 @@
 import { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
 import { getOrderedScenes } from "@invite/invitation-runtime";
-import { getSceneDisplayType, getSceneDurationLabel, sampleExperience } from "@invite/story";
+import { getSceneDescription, getSceneDisplayType, getSceneDurationLabel, getSceneTitle, sampleExperience } from "@invite/story";
 import type { ExperienceSpec } from "@invite/invitation-schema";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -91,7 +91,7 @@ export function CreationFlow({ onComplete }: { onComplete: () => void }) {
                 <Card>
                   <CardContent>
                     <Typography variant="caption">0{i + 1}</Typography>
-                    <Typography sx={{ fontWeight: 800 }}>{scene.title}</Typography>
+                    <Typography sx={{ fontWeight: 800 }}>{getSceneTitle(scene)}</Typography>
                     <Typography variant="body2" sx={{ color: "text.secondary" }}>
                       {getSceneDisplayType(scene)} · {getSceneDurationLabel(scene)}
                     </Typography>
@@ -250,10 +250,10 @@ function PublicPreview({ onBack, onPublish }: { onBack: () => void; onPublish: (
                     {String(index + 1).padStart(2, "0")} · {getSceneDisplayType(scene)}
                   </Typography>
                   <Typography variant="h2" sx={{ fontFamily: "Georgia, serif" }}>
-                    {scene.title}
+                    {getSceneTitle(scene)}
                   </Typography>
                   <Typography sx={{ color: "text.secondary", maxWidth: 500 }}>
-                    {scene.purpose}
+                    {getSceneDescription(scene)}
                   </Typography>
                   {getSceneDisplayType(scene) === "Quiz" && <Button variant="contained">Continue</Button>}
                   {getSceneDisplayType(scene) === "Rsvp" && <Button variant="outlined">RSVP</Button>}
@@ -329,12 +329,12 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
   const [selectedId, setSelectedId] = React.useState<string>(String(getOrderedScenes(sampleExperience)[0]?.id));
   const [device, setDevice] = React.useState<"desktop" | "phone">("desktop");
   const selected = getOrderedScenes(sampleExperience).find((scene) => scene.id === selectedId) ?? getOrderedScenes(sampleExperience)[0];
-  const [description, setDescription] = React.useState(selected.description);
+  const [description, setDescription] = React.useState(getSceneDescription(selected));
 
   const [prevId, setPrevId] = React.useState(selectedId);
   if (selectedId !== prevId) {
     setPrevId(selectedId);
-    setDescription(selected.description);
+    setDescription(getSceneDescription(selected));
   }
 
   return (
@@ -378,7 +378,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
                     color: scene.id === selectedId ? undefined : "#c7c1b8",
                   }}
                 >
-                  {String(index + 1).padStart(2, "0")}&nbsp; {scene.title}
+                  {String(index + 1).padStart(2, "0")}&nbsp; {getSceneTitle(scene)}
                 </Button>
               ))}
             </Stack>
@@ -388,7 +388,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
           <Stack spacing={1.5}>
             <Typography sx={{ fontWeight: 800 }}>Scene inspector</Typography>
             <Chip size="small" label={getSceneDisplayType(selected)} sx={{ alignSelf: "flex-start" }} />
-            <TextField label="Scene title" value={selected.title} fullWidth size="small" disabled />
+            <TextField label="Scene title" value={getSceneTitle(selected)} fullWidth size="small" disabled />
             <TextField
               label="Description"
               value={description}
@@ -432,7 +432,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
               sx={{ color: "primary" }}
             />
             <Typography variant="h2" sx={{ color: "#fff", mt: 1 }}>
-              {selected.title}
+              {getSceneTitle(selected)}
             </Typography>
             <Typography sx={{ color: "#bdb7ae" }}>
               {getSceneDurationLabel(selected)} · Autosaved just now
@@ -460,14 +460,14 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
                 </Typography>
                 <Typography sx={{ color: "text.secondary" }}>{description}</Typography>
                 <Chip
-                  label={getSceneDisplayType(selected) === "Interaction" ? "Guest interaction" : "Animated scene"}
+                  label={["Quiz", "Rsvp"].includes(getSceneDisplayType(selected)) ? "Guest interaction" : "Animated scene"}
                   size="small"
                 />
               </Stack>
             </GuestFrame>
           </Box>
 
-          <SceneRail scenes={getOrderedScenes(sampleExperience).map((scene) => scene.title)} />
+          <SceneRail scenes={getOrderedScenes(sampleExperience).map((scene) => getSceneTitle(scene))} />
           <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
             {getOrderedScenes(sampleExperience).map((scene) => (
               <Button
@@ -476,7 +476,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
                 variant={scene.id === selectedId ? "contained" : "outlined"}
                 onClick={() => setSelectedId(scene.id)}
               >
-                {scene.title}
+                {getSceneTitle(scene)}
               </Button>
             ))}
           </Stack>
