@@ -7,7 +7,7 @@ import {
   Add, ArrowForward, AutoAwesome, BarChart, CheckCircle, ContentCopy, Edit,
   Image, MoreHoriz, PlayArrow, Public, QrCode2, Schedule, Visibility,
 } from "@mui/icons-material";
-import { PlatformShell, type PlatformPage } from "./PlatformShell";
+import { PlatformShell, usePlatformNavigation } from "./PlatformShell";
 
 const invitations = [
   { title: "Elena & Victor", type: "Wedding", status: "Live", cover: "Romantic", date: "Sep 28, 2026" },
@@ -49,10 +49,10 @@ function InvitationCard(item: typeof invitations[number]) {
   return <Card><Box height={170} sx={{ background: item.cover === "Romantic" ? "linear-gradient(135deg,#382d42,#b18a9b)" : item.cover === "Midnight" ? "linear-gradient(135deg,#172b3e,#526b82)" : "linear-gradient(135deg,#75472d,#dfa06a)", display: "flex", alignItems: "end", p: 2.4, color: "#fff" }}><Typography fontFamily="Georgia,serif" fontSize={25}>{item.title}</Typography></Box><CardContent><Stack direction="row" justifyContent="space-between"><Box><Typography fontWeight={800}>{item.title}</Typography><Typography variant="body2" color="text.secondary">{item.type} · {item.date}</Typography></Box><Chip size="small" label={item.status} color={item.status === "Live" ? "success" : item.status === "Scheduled" ? "warning" : "primary"} /></Stack><Stack direction="row" spacing={0.5} mt={2}><IconButton size="small"><Visibility /></IconButton><IconButton size="small"><Edit /></IconButton><IconButton size="small"><MoreHoriz /></IconButton></Stack></CardContent></Card>;
 }
 
-export function ExperiencesPage() {
+export function ExperiencesPage() {\n  const navigate = usePlatformNavigation();
   return <PlatformShell page="experiences" title="Experiences" subtitle="Compose multi-scene invitations and interactive stories." actions={<Button variant="accent" startIcon={<Add />}>Create experience</Button>}>
     <Tabs value={0}><Tab label="All experiences" /><Tab label="Drafts" /><Tab label="Published" /><Tab label="Archived" /></Tabs>
-    <Section title="Your experiences"><Grid container spacing={1.75}>{["Elena & Victor — Wedding Story","A Night Under the Stars","Daniel's Birthday Quest","Our First Date"].map((x,i)=><Card key={x}><Box height={175} sx={{ background: ["linear-gradient(135deg,#3b2c3d,#c99da8)","linear-gradient(135deg,#1e2c3b,#839eb5)","linear-gradient(135deg,#3a3124,#d2a766)","linear-gradient(135deg,#26372e,#9ba37b)"][i], display:"flex", alignItems:"end", p:2.3, color:"#fff" }}><Typography fontFamily="Georgia,serif" fontSize={22}>{x}</Typography></Box><CardContent><Stack direction="row" justifyContent="space-between"><Typography variant="body2" color="text.secondary">{5+i*2} scenes · {i+2} interactions</Typography><Chip size="small" label={i<2 ? "Published":"Draft"} color={i<2 ? "success":"primary"} /></Stack></CardContent></Card>)}</Grid></Section>
+    <Section title="Your experiences"><Grid container spacing={1.75}>{["Elena & Victor — Wedding Story","A Night Under the Stars","Daniel's Birthday Quest","Our First Date"].map((x,i)=><Card key={x}><Box height={175} sx={{ background: ["linear-gradient(135deg,#3b2c3d,#c99da8)","linear-gradient(135deg,#1e2c3b,#839eb5)","linear-gradient(135deg,#3a3124,#d2a766)","linear-gradient(135deg,#26372e,#9ba37b)"][i], display:"flex", alignItems:"end", p:2.3, color:"#fff" }}><Typography fontFamily="Georgia,serif" fontSize={22}>{x}</Typography></Box><CardContent><Stack direction="row" justifyContent="space-between" alignItems="center"><Typography variant="body2" color="text.secondary">{5+i*2} scenes · {i+2} interactions</Typography><Chip size="small" label={i<2 ? "Published":"Draft"} color={i<2 ? "success":"primary"} /></Stack><Button size="small" sx={{ mt: 1 }} onClick={() => navigate?.("editor" as never)}>Open editor</Button></CardContent></Card>)}</Grid></Section>
   </PlatformShell>;
 }
 
