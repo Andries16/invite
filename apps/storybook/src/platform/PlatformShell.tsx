@@ -29,7 +29,7 @@ import {
 export type PlatformPage =
   | "dashboard" | "experiences" | "invitations" | "create" | "templates"
   | "campaigns" | "media" | "analytics" | "settings" | "billing" | "marketplace"
-  | "story" | "interactions" | "distribution" | "team" | "exports";
+  | "story" | "interactions" | "distribution" | "team" | "exports" | "editor";
 
 const navigation: Array<{ key: PlatformPage; label: string; icon: React.ReactNode; badge?: string }> = [
   { key: "dashboard", label: "Overview", icon: <Dashboard /> },
