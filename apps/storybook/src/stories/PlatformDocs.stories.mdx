@@ -1,0 +1,36 @@
+# Invite.md Platform
+
+Storybook is the visual contract for the Invite.md creator platform.
+
+## Product surface
+
+The catalog covers discovery, AI creation, storyboard editing, visual recipes, media, interactions, campaigns, preview, collaboration, publication, QR sharing, analytics, billing, marketplace, security and performance.
+
+## Architecture rules
+
+AI output is structured proposals and ExperienceSpec patches, not arbitrary production JavaScript. Preview, guest playback and production generation consume the same normalized representation. Published artifacts are immutable and public URLs remain stable.
+
+The creator UI may use MUI through the design system. The public invitation runtime must not depend on creator MUI, Storybook, API implementation or database code.
+
+## Story naming
+
+Use Platform/<surface>/<component-or-flow>. Examples include Platform/Components/Actions, Platform/Pages/Experiences, Platform/Overlays/PublishDrawer and Platform/Flows/StoryboardEditor.
+
+## Required states
+
+Reusable components should cover default, interactive, disabled, focus-visible, error, loading, empty, responsive and reduced-motion-sensitive behavior.
+
+## Review checklist
+
+1. Add a Storybook story.
+2. Cover important states.
+3. Check keyboard navigation.
+4. Check accessible names and labels.
+5. Check narrow viewport behavior.
+6. Extract repeated patterns into the design system.
+7. Keep public-runtime components independent from MUI.
+8. Update product tasks/docs when introducing a new capability.
+
+## Validation
+
+Run pnpm install, pnpm storybook:build, pnpm --filter @invite/storybook typecheck, pnpm --filter @invite/storybook lint and pnpm --filter @invite/storybook test.
