@@ -1,0 +1,37 @@
+name: Docker Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "apps/**/Dockerfile*"
+      - "packages/**"
+      - "docker/**"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [api, creator, public, worker]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Detect Dockerfile
+        id: detect
+        run: |
+          if [ -f "apps/${{ matrix.app }}/Dockerfile" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build image
+        if: steps.detect.outputs.exists == 'true'
+        run: docker build -f apps/${{ matrix.app }}/Dockerfile -t invite-${{ matrix.app }}:${{ github.sha }} .
+      - name: No Dockerfile yet
+        if: steps.detect.outputs.exists != 'true'
+        run: echo "apps/${{ matrix.app }}/Dockerfile not present yet; build job is scaffolded."
