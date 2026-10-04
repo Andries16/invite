@@ -8,8 +8,9 @@
     "build": "storybook build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "storybook test --url http://127.0.0.1:6006",
-    "test:ci": "storybook build && storybook test --url http://127.0.0.1:6006"
+    "test": "vitest --project storybook",
+    "test:ci": "vitest --project storybook run",
+    "test:watch": "vitest --project storybook --watch"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -29,6 +30,6 @@
     "storybook": "^10.6.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.2",
-    "@storybook/test": "^10.6.0"
+    "@storybook/addon-vitest": "^10.6.0"
   }
 }
