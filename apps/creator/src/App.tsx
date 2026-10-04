@@ -27,13 +27,13 @@ const experience: ExperienceSpec = {
   variables: [],
 };
 
-function Editor({ scenes, selected }: { scenes: SceneSpec[]; selected: SceneSpec }) {
+function Editor({ scenes, selected, onSelect }: { scenes: SceneSpec[]; selected: SceneSpec; onSelect: (id: SceneSpec["id"]) => void }) {
   const [purpose, setPurpose] = useState(selected.purpose);
   return <Stack spacing={2} sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
     <Typography variant="overline" color="primary">Experience Editor</Typography>
     <Typography variant="h2">A little surprise</Typography>
     <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-      <Card><CardContent><Stack spacing={1}>{scenes.map((scene) => <Button key={scene.id} variant={scene.id === selected.id ? "contained" : "text"}>{scene.purpose}</Button>)}</Stack></CardContent></Card>
+      <Card><CardContent><Stack spacing={1}>{scenes.map((scene) => <Button key={scene.id} variant={scene.id === selected.id ? "contained" : "text"} onClick={() => onSelect(scene.id)}>{scene.purpose}</Button>)}</Stack></CardContent></Card>
       <Card sx={{ flex: 1 }}><CardContent><Typography variant="h3">{String(selected.content.title ?? selected.purpose)}</Typography><Typography color="text.secondary">{selected.components?.[0]?.kind}</Typography></CardContent></Card>
       <Card><CardContent><Stack spacing={2}><Typography fontWeight={700}>Scene inspector</Typography><TextField label="Purpose" value={purpose} onChange={(event) => setPurpose(event.target.value)} /><TextField label="Trigger" value={selected.trigger.type} disabled /></Stack></CardContent></Card>
     </Stack>
@@ -42,8 +42,8 @@ function Editor({ scenes, selected }: { scenes: SceneSpec[]; selected: SceneSpec
 
 export function App() {
   const scenes = useMemo(() => getOrderedScenes(experience), []);
-  const [selectedId] = useState(scenes[0]?.id);
+  const [selectedId, setSelectedId] = useState(scenes[0]?.id);
   const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
   if (!selected) return null;
-  return <ThemeProvider theme={inviteTheme}><CssBaseline /><Editor scenes={scenes} selected={selected} /></ThemeProvider>;
+  return <ThemeProvider theme={inviteTheme}><CssBaseline /><Editor scenes={scenes} selected={selected} onSelect={setSelectedId} /></ThemeProvider>;
 }
