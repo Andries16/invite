@@ -1,0 +1,1 @@
+The public runtime renders a validated ExperienceSpec. It contains no creator application state or platform secrets.
