@@ -267,7 +267,11 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
-  packages/ai: {}
+  packages/ai:
+    dependencies:
+      '@invite/invitation-schema':
+        specifier: workspace:^
+        version: link:../invitation-schema
 
   packages/campaign-schema:
     devDependencies:
