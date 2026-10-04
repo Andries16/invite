@@ -1,0 +1,22 @@
+name: Media Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "packages/media/**"
+      - "packages/invitation-runtime/**"
+      - "packages/invitation-components/**"
+
+permissions:
+  contents: read
+
+jobs:
+  media:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Media contract
+        run: |
+          echo "Validate image/video metadata, limits, variants and posters here."
+          echo "Enable fixture processing when the media pipeline is implemented."
