@@ -5,6 +5,7 @@ Create an ADR for decisions that are expensive to reverse.
 Statuses: Proposed, Accepted, Superseded, Rejected.
 
 Existing decisions:
+
 - ADR-001 static generation
 - ADR-002 InvitationSpec
 - ADR-003 asynchronous generation

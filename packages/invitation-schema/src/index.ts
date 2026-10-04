@@ -15,6 +15,27 @@ export type ExperienceInteraction =
   | { type: "rsvp"; id: string }
   | { type: "guestbook"; id: string };
 
-export interface ExperienceSpec { schemaVersion: string; id: ExperienceId; invitationId: string; visualLanguage: string; scenes: SceneSpec[]; interactions: ExperienceInteraction[]; variables: VariableDefinition[]; }
-export interface SceneSpec { id: SceneId; order: number; purpose: string; trigger: SceneTrigger; content: Record<string, unknown>; mediaIds: string[]; interactionIds: string[]; durationMs?: number; }
-export interface VariableDefinition { key: string; type: "string" | "number" | "boolean" | "url"; required?: boolean; }
+export interface ExperienceSpec {
+  schemaVersion: string;
+  id: ExperienceId;
+  invitationId: string;
+  visualLanguage: string;
+  scenes: SceneSpec[];
+  interactions: ExperienceInteraction[];
+  variables: VariableDefinition[];
+}
+export interface SceneSpec {
+  id: SceneId;
+  order: number;
+  purpose: string;
+  trigger: SceneTrigger;
+  content: Record<string, unknown>;
+  mediaIds: string[];
+  interactionIds: string[];
+  durationMs?: number;
+}
+export interface VariableDefinition {
+  key: string;
+  type: "string" | "number" | "boolean" | "url";
+  required?: boolean;
+}

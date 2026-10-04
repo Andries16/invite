@@ -16,7 +16,7 @@
     "@invite/storage": "workspace:*"
   },
   "devDependencies": {
-    "tsx": "^4.19.2",
-    "typescript": "^5.9.2"
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }

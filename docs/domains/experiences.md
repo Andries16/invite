@@ -8,9 +8,9 @@ It covers recipes, visual language, scenes, triggers, interactions, media placem
 
 ## Lifecycle
 
-~~~text
+```text
 Draft -> Storyboard -> Composed -> Validated -> Generated -> Published -> Archived
-~~~
+```
 
 A published version is immutable. Editing creates a new draft and version.
 
@@ -25,6 +25,7 @@ The scene editor supports add, reorder, duplicate, remove and AI remix.
 Recipes describe reusable experience mechanics rather than fixed pages.
 
 Initial recipes:
+
 - Cinematic intro
 - Typewriter story
 - GIF memory beats

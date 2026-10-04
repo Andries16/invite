@@ -6,10 +6,12 @@ Invite.md has two design layers:
 2. Invitation design — generated public experiences.
 
 Read:
+
 - ../DESIGN.md
 - ../DESIGN_AI.md
 
 Future detailed design documents can be added for:
+
 - creator UI
 - design tokens
 - invitation components

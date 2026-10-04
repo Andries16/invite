@@ -4,10 +4,10 @@ Assets are user-provided or system-generated media.
 
 Lifecycle:
 
-~~~text
+```text
 uploaded -> validated -> processed -> available
                               -> rejected
-~~~
+```
 
 Metadata belongs in the database; binary data belongs in object storage.
 

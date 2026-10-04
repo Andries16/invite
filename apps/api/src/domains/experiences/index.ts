@@ -1,1 +1,4 @@
-export interface ExperienceService { getExperience(id: string): Promise<unknown>; publishExperience(id: string): Promise<void>; }
+export interface ExperienceService {
+  getExperience(id: string): Promise<unknown>;
+  publishExperience(id: string): Promise<void>;
+}

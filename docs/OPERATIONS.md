@@ -77,30 +77,35 @@ Do not make liveness depend on a slow external provider.
 Monitor:
 
 ### API
+
 - latency
 - error rate
 - throughput
 - authentication failures
 
 ### AI
+
 - latency
 - failure rate
 - token/cost usage
 - rate limits
 
 ### Generation
+
 - queue depth
 - build duration
 - failure rate
 - artifact size
 
 ### Public
+
 - request rate
 - cache hit ratio
 - error rate
 - origin load
 
 ### Storage
+
 - capacity
 - request errors
 - orphan growth

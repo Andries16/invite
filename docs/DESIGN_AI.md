@@ -7,6 +7,7 @@ Define how AI makes design decisions without bypassing the design system.
 ## Inputs
 
 AI receives:
+
 - occasion
 - relationship
 - recipient
@@ -42,6 +43,7 @@ AI receives:
 ## Emotional intent
 
 Examples:
+
 - intimate
 - celebratory
 - humorous
@@ -59,14 +61,14 @@ Do not infer sensitive personal attributes from user data.
 Use an intermediate structure:
 
 type DesignBrief = {
-  emotionalIntent: string[];
-  visualKeywords: string[];
-  avoid: string[];
-  typographyDirection: string;
-  colorDirection: string;
-  imageryDirection: string;
-  motionLevel: MotionLevel;
-  interactionLevel: InteractionLevel;
+emotionalIntent: string[];
+visualKeywords: string[];
+avoid: string[];
+typographyDirection: string;
+colorDirection: string;
+imageryDirection: string;
+motionLevel: MotionLevel;
+interactionLevel: InteractionLevel;
 };
 
 This is not production code.
@@ -103,9 +105,9 @@ Design changes should be structured patches.
 Example conceptual operation:
 
 {
-  "op": "set",
-  "path": "/design/motion/level",
-  "value": "subtle"
+"op": "set",
+"path": "/design/motion/level",
+"value": "subtle"
 }
 
 Do not regenerate unrelated sections.
@@ -113,6 +115,7 @@ Do not regenerate unrelated sections.
 ## Quality gate
 
 Before presenting a design as ready:
+
 - no missing required content
 - no inaccessible interactions
 - no invalid assets

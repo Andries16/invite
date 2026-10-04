@@ -3,17 +3,21 @@
 Read this file before changing the repository.
 
 ## Source of truth
+
 Read README.md, docs/PRODUCT.md, docs/ARCHITECTURE.md, docs/AI.md, relevant domain docs and relevant ADRs.
 
 If code and documentation conflict on a core invariant, resolve the conflict explicitly; do not invent a third behavior.
 
 ## Core invariant
+
 The user describes an invitation conversationally. AI converts that intent into a validated, versioned ExperienceSpec. Trusted application code renders the same experience model in creator preview, guest playback and the published experience.
 
 Do not make unrestricted LLM-generated production code the normal path.
 
 ## Coding rules
+
 Follow docs/CONVENTIONS.md. Mandatory:
+
 - React components are `const` arrow functions only.
 - Atomic files, maximum 500 lines each.
 - File and folder names are kebab-case.
@@ -21,6 +25,7 @@ Follow docs/CONVENTIONS.md. Mandatory:
 - Never use `any` or `as any`; use strong, strict TypeScript typing.
 
 ## Rules
+
 - TypeScript-first and strict typing.
 - Keep AI orchestration separate from deterministic rendering.
 - Keep public invitation serving separate from the control plane.

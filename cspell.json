@@ -1,0 +1,13 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [],
+  "dictionaries": ["invite"],
+  "dictionaryDefinitions": [
+    {
+      "name": "invite",
+      "path": "./.cspell/invite.txt"
+    }
+  ],
+  "ignorePaths": ["node_modules", "dist", "build", "pnpm-lock.yaml", ".git"]
+}

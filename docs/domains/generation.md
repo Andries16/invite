@@ -2,10 +2,10 @@
 
 Generation converts a specific InvitationVersion into an immutable artifact.
 
-~~~text
+```text
 queued -> running -> succeeded
                  -> failed
-~~~
+```
 
 Retries must not publish partial output.
 

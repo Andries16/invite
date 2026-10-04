@@ -5,6 +5,7 @@ Status: Proposed baseline.
 This document defines the visual and interaction design of both the Invite.md creator platform and the generated invitation websites.
 
 There are two separate surfaces:
+
 1. Creator Platform — the application used to create invitations.
 2. Generated Invitation — the public experience received by guests.
 
@@ -15,6 +16,7 @@ They share principles, tokens and accessibility standards, but the public invita
 Invite.md should feel creative without requiring the user to understand design or development.
 
 Core qualities:
+
 - simple
 - creative
 - personal
@@ -34,12 +36,13 @@ The primary creator experience is a studio composed of Conversation + Live Previ
 Desktop:
 
 Creator header
-  |
+|
 Conversation panel | Live invitation preview
-  |
-Composer          | Preview/device controls
+|
+Composer | Preview/device controls
 
 Suggested desktop dimensions:
+
 - header: 56–64px
 - conversation: 360–460px
 - preview: remaining viewport
@@ -54,6 +57,7 @@ The creator should not resemble an enterprise administration dashboard.
 ## 3. Creator navigation
 
 Primary areas:
+
 - Create
 - Invitations
 - Campaigns
@@ -73,6 +77,7 @@ Prefer:
 "What kind of feeling should this invitation have?"
 
 Then offer visual choices:
+
 - Romantic
 - Elegant
 - Playful
@@ -87,6 +92,7 @@ Use progressive disclosure. Ask for advanced information only when it becomes re
 ## 5. Interaction blocks
 
 The conversation renderer should support typed interaction blocks:
+
 - message
 - single choice
 - multiple choice
@@ -102,6 +108,7 @@ The conversation renderer should support typed interaction blocks:
 Creative decisions should generally use cards rather than dropdowns.
 
 Cards can contain:
+
 - image
 - title
 - short description
@@ -113,21 +120,27 @@ Cards can contain:
 The AI should naturally discover:
 
 ### Occasion
+
 Invitation type, people, event, date and location.
 
 ### Story
+
 Memories, relationship context, inside jokes and desired message.
 
 ### Visual direction
+
 Mood, palette, typography, imagery and animation intensity.
 
 ### Experience
+
 Sections, gallery, timeline, quiz, RSVP, music and interactive elements.
 
 ### Refinement
+
 Focused changes after the user sees a preview.
 
 ### Publication
+
 Final preview, public URL, QR and sharing controls.
 
 These phases are an internal creation model. They do not need to appear as a wizard.
@@ -141,6 +154,7 @@ It is not a screenshot.
 The preview and production renderer must use the same component system.
 
 Preview modes:
+
 - desktop
 - tablet
 - mobile
@@ -152,6 +166,7 @@ Editor chrome must never appear in the published invitation.
 The creator UI must be tokenized.
 
 Token groups:
+
 - color
 - typography
 - spacing
@@ -170,6 +185,7 @@ Feature code should not scatter arbitrary visual values.
 Creator typography prioritizes readability.
 
 Hierarchy:
+
 - display
 - heading
 - subheading
@@ -187,6 +203,7 @@ Generated invitations can use expressive typefaces.
 Generated sites are compositions of trusted primitives.
 
 Initial primitives:
+
 - Hero
 - Text
 - Image
@@ -232,6 +249,7 @@ The AI selects structure from the user's content and intent.
 ## 12. Hero
 
 Hero variants:
+
 - full-screen image
 - cinematic video
 - typography-only
@@ -247,6 +265,7 @@ A hero should establish emotional identity immediately and remain usable on mobi
 ## 13. Sections
 
 Every section has:
+
 - semantic purpose
 - layout
 - content
@@ -257,12 +276,12 @@ Every section has:
 Conceptual shape:
 
 type Section = {
-  id: string;
-  type: SectionType;
-  layout: LayoutSpec;
-  content: ContentSpec;
-  style?: StyleSpec;
-  motion?: MotionSpec;
+id: string;
+type: SectionType;
+layout: LayoutSpec;
+content: ContentSpec;
+style?: StyleSpec;
+motion?: MotionSpec;
 };
 
 The actual schema belongs in the invitation-schema package.
@@ -270,6 +289,7 @@ The actual schema belongs in the invitation-schema package.
 ## 14. Layout system
 
 Use controlled layout primitives:
+
 - container
 - stack
 - row
@@ -307,6 +327,7 @@ AI should select semantic roles rather than writing raw CSS colors throughout a 
 ## 16. Theme families
 
 Initial theme families:
+
 - Romantic
 - Elegant
 - Minimal
@@ -325,6 +346,7 @@ A theme is a token set plus component defaults. It is not a fixed page template.
 ## 17. Typography themes
 
 Supported directions:
+
 - modern sans + serif
 - editorial serif + sans
 - handwritten accent + sans
@@ -339,6 +361,7 @@ Normally use no more than two primary font families plus an optional decorative 
 Image treatment is part of art direction.
 
 Supported treatments:
+
 - natural
 - rounded
 - circular
@@ -356,6 +379,7 @@ Never destructively modify the user's original asset.
 ## 19. Motion system
 
 Motion levels:
+
 - none
 - subtle
 - moderate
@@ -363,6 +387,7 @@ Motion levels:
 - cinematic
 
 Motion primitives:
+
 - fade
 - reveal
 - slide
@@ -384,6 +409,7 @@ Respect prefers-reduced-motion and remove or substantially reduce non-essential 
 Interactions need a purpose.
 
 Examples:
+
 - reveal a message
 - answer a quiz
 - choose an option
@@ -398,6 +424,7 @@ Do not add interaction merely because it is technically possible.
 ## 21. Emotional interactions
 
 Supported patterns can include:
+
 - envelope opening
 - letter reveal
 - playful button behavior
@@ -414,12 +441,14 @@ These must remain accessible and must never trap the recipient.
 Generated invitations are mobile-first.
 
 Semantic breakpoints:
+
 - mobile
 - tablet
 - desktop
 - wide
 
 Every component defines:
+
 - layout behavior
 - typography behavior
 - spacing behavior
@@ -435,6 +464,7 @@ Interactive touch targets should generally be at least 44x44 CSS pixels.
 Generated invitations target WCAG 2.2 AA where applicable.
 
 Requirements:
+
 - semantic HTML
 - keyboard navigation
 - visible focus
@@ -461,6 +491,7 @@ Provide an explicit control and never make audio necessary for basic navigation.
 Video must be optimized for mobile.
 
 Support:
+
 - poster
 - lazy loading
 - muted autoplay where appropriate
@@ -474,6 +505,7 @@ Do not require a large video download for initial usability.
 The invitation should become useful quickly.
 
 Use:
+
 - critical content first
 - image placeholders
 - progressive media loading
@@ -483,6 +515,7 @@ Use:
 ## 27. Design quality checks
 
 Evaluate every generated invitation for:
+
 1. visual hierarchy
 2. content hierarchy
 3. contrast
@@ -524,6 +557,7 @@ Do not jump directly from user text to arbitrary CSS.
 Different invitations should not all look like the same template.
 
 Variation comes from:
+
 - component composition
 - section ordering
 - typography pairing
@@ -540,6 +574,7 @@ The design system provides constraints, not one visual output.
 ## 30. Hard design constraints
 
 Prevent:
+
 - unreadable text
 - low contrast
 - excessive animation
@@ -556,6 +591,7 @@ Prevent:
 ## 31. Pre-publish review
 
 Show:
+
 - full preview
 - mobile preview
 - desktop preview
@@ -582,6 +618,7 @@ Do not expose React, CSS, breakpoints, bundles, build hashes or object storage c
 Recommended:
 
 packages/design-system/
+
 - tokens/
 - creator-components/
 - invitation-primitives/
@@ -598,13 +635,13 @@ Design must be serializable and versioned.
 Conceptual model:
 
 type DesignSpec = {
-  theme: ThemeSpec;
-  typography: TypographySpec;
-  palette: PaletteSpec;
-  spacing: SpacingSpec;
-  layout: LayoutSpec;
-  motion: MotionSpec;
-  imagery: ImagerySpec;
+theme: ThemeSpec;
+typography: TypographySpec;
+palette: PaletteSpec;
+spacing: SpacingSpec;
+layout: LayoutSpec;
+motion: MotionSpec;
+imagery: ImagerySpec;
 };
 
 InvitationSpec references design concepts, not raw implementation details.
@@ -632,19 +669,18 @@ Underneath, the system should be strict, componentized, validated and determinis
 
 The experience should feel unrestricted on top while remaining controlled underneath.
 
-
 ## 37. Experience design system
 
 Invite.md treats an experience as a sequence of intentional moments rather than a collection of landing-page sections.
 
-~~~text
+```text
 01 Opening
 02 Memory
 03 Interaction
 04 Reveal
 05 Event details
 06 Final action
-~~~
+```
 
 Each scene exposes trigger, media, motion, interaction and timing. The scene editor should make these concepts understandable without exposing implementation details.
 
@@ -665,6 +701,7 @@ Creator preview provides Play as guest. Playback hides creator controls and runs
 ## 41. Scene editor
 
 The editor consists of:
+
 - scene timeline
 - live stage
 - scene inspector
@@ -689,7 +726,6 @@ Guest variables are visible as safe tokens in the creator UI. A creator should u
 ## 44. Interaction feedback
 
 Every interactive element needs clear idle, focused, active, completed and unavailable states where applicable. Motion should reinforce state changes rather than decorate every interaction.
-
 
 ## Experience design
 

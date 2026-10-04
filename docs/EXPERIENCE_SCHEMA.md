@@ -4,7 +4,7 @@ Status: Proposed baseline.
 
 ## ExperienceSpec
 
-~~~text
+```text
 ExperienceSpec
   schemaVersion
   invitationId
@@ -16,11 +16,11 @@ ExperienceSpec
   audio
   variables[]
   analytics
-~~~
+```
 
 ## SceneSpec
 
-~~~text
+```text
 SceneSpec
   id
   order
@@ -31,7 +31,7 @@ SceneSpec
   motion
   interactionIds
   duration
-~~~
+```
 
 ## Trigger types
 

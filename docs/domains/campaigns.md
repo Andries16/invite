@@ -2,14 +2,14 @@
 
 A Campaign is one invitation design reused for many recipients.
 
-~~~text
+```text
 Campaign
   |
   +-- template InvitationSpec
   +-- recipient A
   +-- recipient B
   +-- recipient C
-~~~
+```
 
 Prefer one shared artifact plus safe recipient variables. Build separately only when recipient-specific assets or layout genuinely change the artifact.
 
