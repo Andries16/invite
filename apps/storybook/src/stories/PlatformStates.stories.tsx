@@ -1,8 +1,8 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Alert, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Divider, Drawer, IconButton, Paper, Skeleton, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Avatar, Box, Button, Card, CardContent, Chip, Divider, Drawer, IconButton, Paper, Skeleton, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import { EmptyState, LoadingState, PermissionGate } from "@invite/design-system";
-import { Add, AutoAwesome, CheckCircle, Close, ErrorOutline, HelpOutline, InfoOutlined, Lock, WarningAmber } from "@mui/icons-material";
+import { Add, AutoAwesome, CheckCircle, Close, ErrorOutline, HelpOutline, InfoOutlined, WarningAmber } from "@mui/icons-material";
 
 const meta = { title: "Platform/States & Responsive", parameters: { layout: "centered" } } satisfies Meta;
 export default meta;
