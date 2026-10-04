@@ -43,3 +43,16 @@ Preferred flow:
 Conversation -> structured answers -> InvitationSpec -> validation -> renderer -> build -> artifact validation -> publish.
 
 Important business invariants must exist in code and schemas, not only prompts.
+
+
+## Platform expansion
+
+The complete capability roadmap lives in docs/ROADMAP.md and docs/PLATFORM_CAPABILITIES.md. Feature inventory is in docs/FEATURES.md. Implementation work is organized under tasks/.
+
+When adding a capability, first place it in the correct task group and bounded domain. Extend the schema before adding UI-only behavior when the capability affects guest playback or generation. Keep public interactions, analytics, publication, campaigns, story intelligence, distribution, collaboration and marketplace concerns isolated behind explicit boundaries.
+
+The intended long-term model is:
+
+Creator -> Conversation -> DesignBrief -> ExperienceSpec -> Validation -> Runtime -> Artifact -> Publication
+
+AI proposes structured data and patches. Trusted runtime code executes validated data. Generated artifacts never receive platform secrets. Public delivery remains independent from the control plane.
