@@ -2,6 +2,7 @@ import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   AnalyticsPage,
+  DashboardPage,
   BillingPage,
   CampaignsPage,
   CreatePage,
@@ -91,8 +92,27 @@ const extraPages: Record<Exclude<AppPage, PlatformPage>, React.ReactNode> = {
 function FullPlatform() {
   const [page, setPage] = React.useState<AppPage>("dashboard");
 
+  const pageTitles: Record<AppPage, string> = {
+    dashboard: "Overview",
+    experiences: "Experiences",
+    invitations: "Invitations",
+    create: "Create",
+    templates: "Templates",
+    campaigns: "Campaigns",
+    media: "Media",
+    analytics: "Analytics",
+    settings: "Settings",
+    billing: "Billing",
+    marketplace: "Marketplace",
+    story: "Story & AI",
+    interactions: "Interactions",
+    distribution: "Distribution",
+    team: "Team & Collaboration",
+    exports: "Export & Delivery",
+  };
+
   const content = {
-    dashboard: <DashboardFallback />,
+    dashboard: <DashboardPage />,
     experiences: <ExperiencesPage />,
     invitations: <InvitationsPage />,
     create: <CreatePage />,
@@ -113,7 +133,8 @@ function FullPlatform() {
   return (
     <Box sx={{ minHeight: "100vh", "& .MuiPaper-root": { transition: "box-shadow .18s ease" } }}>
       <PlatformShell
-        page={page === "story" || page === "interactions" || page === "distribution" || page === "team" || page === "exports" ? "dashboard" : page}
+        page={page}
+        title={pageTitles[page]}
         onNavigate={(next) => setPage(next)}
       >
         {content}
