@@ -1,6 +1,7 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Alert, Avatar, Box, Button, Card, CardContent, Chip, CircularProgress, Divider, Drawer, IconButton, Paper, Skeleton, Snackbar, Stack, TextField, Typography } from "@mui/material";
+import { EmptyState, LoadingState, PermissionGate } from "@invite/design-system";
 import { Add, AutoAwesome, CheckCircle, Close, ErrorOutline, HelpOutline, InfoOutlined, Lock, WarningAmber } from "@mui/icons-material";
 
 const meta = { title: "Platform/States & Responsive", parameters: { layout: "centered" } } satisfies Meta;
@@ -9,15 +10,15 @@ type Story = StoryObj<typeof meta>;
 
 const Stage=({children}:{children:React.ReactNode})=><Box minWidth={340} maxWidth={1100} p={4} bgcolor="background.default">{children}</Box>;
 
-export const EmptyExperiences: Story={render:()=> <Stage><Card><CardContent sx={{py:7,textAlign:"center"}}><Avatar sx={{mx:"auto",mb:2,width:52,height:52,bgcolor:"primary.light",color:"primary.dark"}}><AutoAwesome/></Avatar><Typography variant="h2">No experiences yet</Typography><Typography color="text.secondary" maxWidth={460} mx="auto" mt={1}>Start with an idea, a template, or a blank canvas. Your first experience can be ready in minutes.</Typography><Stack direction="row" justifyContent="center" spacing={1} mt={3}><Button variant="accent" startIcon={<Add/>}>Create with AI</Button><Button variant="outlined">Browse templates</Button></Stack></CardContent></Card></Stage>};
+export const EmptyExperiences: Story={render:()=> <Stage><EmptyState title="No experiences yet" icon={<Avatar sx={{mx:"auto",width:52,height:52,bgcolor:"primary.light",color:"primary.dark"}}><AutoAwesome/></Avatar>} body="Start with an idea, a template, or a blank canvas. Your first experience can be ready in minutes." actions={<><Button variant="accent" startIcon={<Add/>}>Create with AI</Button><Button variant="outlined">Browse templates</Button></>}/></Stage>};
 
-export const EmptyMedia: Story={render:()=> <Stage><Card><CardContent sx={{py:6,textAlign:"center"}}><Typography variant="h3">Your media library is empty</Typography><Typography color="text.secondary">Upload photos, videos, GIFs, audio and stickers to start composing scenes.</Typography><Button variant="accent" sx={{mt:2}} startIcon={<Add/>}>Upload media</Button></CardContent></Card></Stage>};
+export const EmptyMedia: Story={render:()=> <Stage><EmptyState title="Your media library is empty" body="Upload photos, videos, GIFs, audio and stickers to start composing scenes." actions={<Button variant="accent" startIcon={<Add/>}>Upload media</Button>}/></Stage>};
 
 export const Errors: Story={render:()=> <Stage><Stack spacing={1.5}><Alert severity="error" icon={<ErrorOutline/>}>The generation failed. Your draft is safe. Retry without losing changes.</Alert><Alert severity="warning" icon={<WarningAmber/>}>3 media files are above the recommended delivery size.</Alert><Alert severity="info" icon={<InfoOutlined/>}>This campaign uses guest variables. Preview a recipient before publishing.</Alert><Alert severity="success" icon={<CheckCircle/>}>Version 7 is production-ready.</Alert></Stack></Stage>};
 
-export const LoadingStates: Story={render:()=> <Stage><Stack spacing={2}><Card><CardContent><Stack direction="row" spacing={2} alignItems="center"><CircularProgress size={28}/><Box><Typography fontWeight={800}>Generating scenes…</Typography><Typography variant="body2" color="text.secondary">This can take a few seconds.</Typography></Box></Stack></CardContent></Card><Card><CardContent><Skeleton variant="text" width="40%" height={30}/><Skeleton variant="rounded" height={120}/><Skeleton variant="text" width="75%"/><Skeleton variant="text" width="55%"/></CardContent></Card></Stack></Stage>};
+export const LoadingStates: Story={render:()=> <Stage><Stack spacing={2}><LoadingState title="Generating scenes…" body="This can take a few seconds."/><Card><CardContent><Skeleton variant="text" width="40%" height={30}/><Skeleton variant="rounded" height={120}/><Skeleton variant="text" width="75%"/><Skeleton variant="text" width="55%"/></CardContent></Card></Stack></Stage>};
 
-export const PermissionLocked: Story={render:()=> <Stage><Card><CardContent sx={{py:5,textAlign:"center"}}><Lock sx={{fontSize:42}}/><Typography variant="h2" mt={1}>Pro feature</Typography><Typography color="text.secondary" maxWidth={480} mx="auto">Custom domains and advanced analytics are available on the Pro plan.</Typography><Button variant="accent" sx={{mt:2}}>Upgrade workspace</Button></CardContent></Card></Stage>};
+export const PermissionLocked: Story={render:()=> <Stage><PermissionGate title="Pro feature" body="Custom domains and advanced analytics are available on the Pro plan." action="Upgrade workspace"/></Stage>};
 
 export const ConfirmationSnackbar: Story={render:()=> <Stage><Snackbar open message="Invitation published successfully" action={<IconButton size="small"><Close/></IconButton>}/></Stage>};
 
