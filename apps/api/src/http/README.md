@@ -1,0 +1,1 @@
+HTTP transport and request validation. Transport code delegates to domain/application services.
