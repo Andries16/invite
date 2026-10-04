@@ -98,6 +98,12 @@ export const sampleExperience: ExperienceSpec = {
   ],
 };
 
+export const getSceneTitle = (scene: ExperienceSpec["scenes"][number]): string =>
+  String(scene.content.title ?? scene.purpose);
+
+export const getSceneDescription = (scene: ExperienceSpec["scenes"][number]): string =>
+  String(scene.content.description ?? scene.content.text ?? scene.purpose);
+
 export const getSceneDisplayType = (scene: ExperienceSpec["scenes"][number]): string => {
   const kind = scene.components?.[0]?.kind;
   return kind ? kind.charAt(0).toUpperCase() + kind.slice(1) : "Scene";
