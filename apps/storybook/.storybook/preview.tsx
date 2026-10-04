@@ -1,12 +1,11 @@
 import type { Preview } from "@storybook/react";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-
-const theme = createTheme();
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { inviteTheme } from "@invite/design-system";
 
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={inviteTheme}>
         <CssBaseline />
         <Story />
       </ThemeProvider>
@@ -14,9 +13,7 @@ const preview: Preview = {
   ],
   parameters: {
     layout: "centered",
-    a11y: {
-      test: "todo",
-    },
+    a11y: { test: "todo" },
   },
   tags: ["autodocs"],
 };
