@@ -1,28 +1,34 @@
-# Phase 13: Quality & Security
+# Phase 13: Quality, Security, Performance & Analytics
 
 ## Prototype Mapping
-Maps to prototype capability: **Analytics**
+Maps to prototype capability: **Analytics**, plus cross-cutting quality requirements for every prototype capability.
 
-## Architectural Boundaries
+### Schema
+- Analytics event contracts and funnel definitions.
+- Security/audit event contracts where required.
+- Performance and publication validation results.
 
-### 1. Schema (`packages/*`)
-- N/A
+### API Domain
+- `analytics`: privacy-aware event ingestion and aggregation.
+- Security controls: authorization, rate limiting, abuse prevention, input validation and auditability.
+- Analytics must not become a dependency for ordinary public page delivery.
 
-### 2. API Domain (`apps/api/src/domains/*`)
-- `analytics`
+### Creator UI
+- Funnel and experience-performance views.
+- Pre-publish accessibility/performance/security warnings.
+- Storybook-backed component states.
 
-### 3. Creator UI (`apps/creator` & `packages/design-system`)
-- Funnel charts, interaction performance
+### Worker & Runtime
+- Event pipeline and aggregation.
+- Performance budgets for generated experiences.
+- Sanitization and media validation.
+- Graceful degradation when analytics or interaction APIs are unavailable.
 
-### 4. Worker & Runtime (`apps/worker` & `apps/public`)
-- Event pipeline, analytics aggregation
+## Mandatory quality gates
 
-
-## Cross-cutting quality requirements
-
-- Storybook must build in CI.
-- Every reusable creator component must have at least one Storybook story.
-- Accessibility checks must be enabled for creator stories.
-- Visual states must be reviewable in isolation before integration.
-- Storybook stories must not require the API, database, queue, AI provider or production storage.
-- Public invitation components must remain independent of the creator design system and MUI.
+- Storybook build passes in CI.
+- Reusable creator components have stories covering meaningful states.
+- Accessibility checks are enabled for creator stories.
+- Public components are tested independently of MUI.
+- Generated experiences are checked for contrast, keyboard access, reduced motion, responsive overflow, media loading and unsafe external content.
+- Public delivery remains available when non-essential control-plane services degrade.
