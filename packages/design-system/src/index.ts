@@ -11,5 +11,12 @@ export {
   RecipeCard,
   PreviewFrame,
   MetricGrid,
+  CreatorShell,
+  EditorShell,
+  GuestFrame,
+  PrototypeTable,
+  SceneRail,
+  FlowStatus,
+  PrototypeSection,
 } from "./components";
 export type { InviteStatus } from "./components";
