@@ -1,0 +1,23 @@
+name: AI Experience Evaluation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "packages/ai/**"
+      - "packages/invitation-schema/**"
+      - "packages/interaction-schema/**"
+      - "packages/story/**"
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate AI evaluation contract
+        run: |
+          echo "AI evaluation suite is scaffolded."
+          echo "Add fixture-based ExperienceSpec evaluations before enabling model calls in CI."
