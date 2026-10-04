@@ -159,14 +159,13 @@ invite/
 │   ├── worker/         # asynchronous AI/media/generation jobs
 │   └── public/         # public experience runtime
 ├── packages/
-│   ├── contracts/      # API and ExperienceSpec contracts
-│   ├── domain/         # domain entities and invariants
-│   ├── experience-runtime/ # deterministic scene/runtime primitives
-│   ├── ai/             # AI orchestration contracts and adapters
-│   ├── database/       # persistence boundary
-│   ├── storage/        # object-storage boundary
-│   ├── ui/             # shared creator UI primitives
-│   └── config/         # shared typed configuration
+│   ├── invitation-schema/     # versioned ExperienceSpec and public contracts
+│   ├── invitation-runtime/   # deterministic scene runtime
+│   ├── invitation-components/ # trusted experience components
+│   ├── invitation-generator/  # static artifact generation
+│   ├── ai/                    # AI orchestration boundary
+│   ├── storage/               # object-storage boundary
+│   └── shared/                # small cross-cutting primitives
 ├── docs/
 │   ├── domains/        # bounded-context documentation
 │   └── adr/            # architectural decisions
@@ -176,11 +175,11 @@ invite/
 ### Dependency direction
 
 ```text
-creator -> contracts/domain/runtime/ui
-api     -> contracts/domain/database/storage
-worker  -> contracts/domain/ai/database/storage
-public  -> contracts/runtime
-runtime -> contracts
+creator -> invitation-schema/runtime/components/shared
+api     -> invitation-schema/generator/storage/shared
+worker  -> invitation-schema/generator/ai/storage/shared
+public  -> invitation-schema/runtime/components
+runtime -> invitation-schema
 ```
 
 The public runtime must not depend on the creator, API application or database implementation. The API must not become the rendering layer. AI packages produce structured proposals; deterministic runtime packages execute validated specifications.
