@@ -163,7 +163,7 @@ function DashboardFallback() {
 }
 
 const meta = {
-  title: "Platform/Full Platform",
+  title: "Platform/00 Full Platform",
   parameters: { layout: "fullscreen" },
   tags: ["autodocs"],
 } satisfies Meta;
