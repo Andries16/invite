@@ -62,7 +62,7 @@ export function PlatformShell({
   const parent = React.useContext(PlatformContext);
   const navigate = onNavigate ?? parent.onNavigate;
 
-  if (embedded && parent.onNavigate) {
+  if (parent.onNavigate) {
     return (
       <PlatformContext.Provider value={{ onNavigate: navigate }}>
         <Box component="section">
