@@ -1,9 +1,1 @@
-{
-  "name": "@invite/creator",
-  "version": "0.0.0",
-  "private": true,
-  "main": "src/index.ts",
-  "scripts": {
-    "build": "tsc"
-  }
-}
+{"name":"@invite/creator","version":"0.0.0","private":true,"type":"module","scripts":{"dev":"vite","build":"tsc -b && vite build","lint":"tsc --noEmit"},"dependencies":{"@invite/contracts":"workspace:*","@invite/domain":"workspace:*","@invite/experience-runtime":"workspace:*","@invite/ui":"workspace:*","react":"^19.1.1","react-dom":"^19.1.1"},"devDependencies":{"@vitejs/plugin-react":"^5.0.4","vite":"^7.1.7","typescript":"^5.9.2"}}
