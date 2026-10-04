@@ -1,1 +1,22 @@
-{"name":"@invite/worker","version":"0.0.0","private":true,"type":"module","scripts":{"dev":"tsx src/index.ts","build":"tsc","lint":"tsc --noEmit"},"dependencies":{"@invite/ai":"workspace:*","@invite/contracts":"workspace:*","@invite/database":"workspace:*","@invite/domain":"workspace:*","@invite/storage":"workspace:*"},"devDependencies":{"tsx":"^4.19.2","typescript":"^5.9.2"}}
+{
+  "name": "@invite/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@invite/ai": "workspace:*",
+    "@invite/invitation-generator": "workspace:*",
+    "@invite/invitation-schema": "workspace:*",
+    "@invite/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.9.2"
+  }
+}
