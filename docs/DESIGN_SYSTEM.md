@@ -251,7 +251,6 @@ motion:
 
 AI cannot request capabilities outside the manifest.
 
-
 ## 36. Storybook contract
 
 The creator design system is developed and reviewed in `apps/storybook`.

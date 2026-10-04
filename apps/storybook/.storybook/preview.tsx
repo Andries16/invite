@@ -1,6 +1,6 @@
-import type { Preview } from "@storybook/react";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 import { inviteTheme } from "@invite/design-system";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import type { Preview } from "@storybook/react";
 
 const preview: Preview = {
   decorators: [

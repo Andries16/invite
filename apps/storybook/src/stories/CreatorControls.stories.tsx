@@ -1,5 +1,9 @@
+import Autocomplete from "@mui/material/Autocomplete";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Autocomplete, Button, Chip, Stack, TextField, Typography } from "@mui/material";
 
 const meta = {
   title: "Creator/Controls",
@@ -34,14 +38,8 @@ export const ChoiceInput: Story = {
         multiple
         options={["Romantic", "Elegant", "Playful", "Cinematic", "Minimal"]}
         defaultValue={["Romantic"]}
-        renderTags={(value, getTagProps) =>
-          value.map((option, index) => (
-            <Chip label={option} {...getTagProps({ index })} key={option} />
-          ))
-        }
-        renderInput={(params) => (
-          <TextField {...params} label="Visual direction" />
-        )}
+
+        renderInput={(params) => <TextField {...params} label="Visual direction" />}
       />
       <TextField
         label="Describe the feeling"

@@ -1,5 +1,3 @@
-export async function runExperienceGenerationJob(
-  input: unknown,
-): Promise<void> {
+export async function runExperienceGenerationJob(input: unknown): Promise<void> {
   void input;
 }

@@ -37,9 +37,7 @@ type InvitationTitleProps = {
   title: string;
 };
 
-export const InvitationTitle = ({ title }: InvitationTitleProps) => (
-  <h1>{title}</h1>
-);
+export const InvitationTitle = ({ title }: InvitationTitleProps) => <h1>{title}</h1>;
 ```
 
 - Never use `function` declarations or class components.
