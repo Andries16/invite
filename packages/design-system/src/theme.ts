@@ -1,3 +1,12 @@
+import type {} from "@mui/material/Button";
+
+declare module "@mui/material/Button" {
+  interface ButtonPropsVariantOverrides {
+    soft: true;
+    accent: true;
+  }
+}
+
 import { alpha, createTheme } from "@mui/material/styles";
 
 const ink = "#171614";
@@ -51,7 +60,7 @@ export const inviteTheme = createTheme({
     "0 14px 45px rgba(31,27,22,0.07)",
     "0 25px 65px rgba(31,27,22,0.10)",
     "0 25px 80px rgba(31,27,22,0.14)",
-    ...Array(19).fill("0 25px 80px rgba(31,27,22,0.14)"),
+    ...Array(18).fill("0 25px 80px rgba(31,27,22,0.14)"),
   ],
   components: {
     MuiCssBaseline: {
@@ -100,10 +109,10 @@ export const inviteTheme = createTheme({
         input: { padding: "9px 11px" },
       },
     },
-    MuiInputLabel: { styleOverrides: { root: { color: muted, fontSize: "0.8125rem", "&.Mui-focused": { color: "#604cccf" } } } },
+    MuiInputLabel: { styleOverrides: { root: { color: muted, fontSize: "0.8125rem", "&.Mui-focused": { color: "#604ccf" } } } },
     MuiSelect: { defaultProps: { variant: "outlined", size: "small" } },
     MuiAutocomplete: { defaultProps: { size: "small" }, styleOverrides: { root: { "& .MuiOutlinedInput-root": { borderRadius: 9, backgroundColor: panel } }, tag: { borderRadius: 999 } } },
-    MuiChip: { styleOverrides: { root: { borderRadius: 999, fontWeight: 650, backgroundColor: "#f0eee8" }, colorPrimary: { backgroundColor: soft, color: "#604cccf" }, sizeSmall: { height: 24, fontSize: "0.6875rem" } } },
+    MuiChip: { styleOverrides: { root: { borderRadius: 999, fontWeight: 650, backgroundColor: "#f0eee8" }, colorPrimary: { backgroundColor: soft, color: "#604ccf" }, sizeSmall: { height: 24, fontSize: "0.6875rem" } } },
     MuiToggleButtonGroup: { styleOverrides: { root: { backgroundColor: "#efede7", borderRadius: 9, padding: 3, gap: 2 } } },
     MuiToggleButton: { styleOverrides: { root: { border: 0, borderRadius: 7, padding: "6px 8px", color: muted, fontSize: "0.6875rem", textTransform: "none", "&.Mui-selected": { backgroundColor: panel, color: ink, fontWeight: 750, boxShadow: "0 2px 6px rgba(0,0,0,0.06)", "&:hover": { backgroundColor: panel } } } } },
     MuiTabs: { styleOverrides: { root: { minHeight: 40 }, indicator: { height: 2, borderRadius: 2, backgroundColor: accent } } },
