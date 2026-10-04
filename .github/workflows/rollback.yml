@@ -1,0 +1,22 @@
+name: Production Rollback
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Rollback contract
+        run: |
+          echo "Rollback is intentionally manual."
+          echo "Connect this job to the production deployment provider and select the previous immutable release."
