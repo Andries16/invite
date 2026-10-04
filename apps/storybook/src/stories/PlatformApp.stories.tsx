@@ -1,138 +1,140 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
-  AnalyticsPage,
-  DashboardPage,
-  BillingPage,
-  CampaignsPage,
-  CreatePage,
-  ExperiencesPage,
-  InvitationsPage,
-  MarketplacePage,
-  MediaPage,
-  SettingsPage,
+  AnalyticsPage, BillingPage, CampaignsPage, CreatePage, DashboardPage,
+  ExperiencesPage, InvitationsPage, MarketplacePage, MediaPage, SettingsPage,
   TemplatesPage,
 } from "../platform/PlatformPages";
-import { PlatformShell, type PlatformPage } from "../platform/PlatformShell";\nimport { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
-import { Box, Card, CardContent, Chip, Grid, Stack, Typography } from "@mui/material";
+import { PlatformShell, type PlatformPage } from "../platform/PlatformShell";
+import { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
+import {
+  Box, Button, Card, CardContent, Chip, Grid, IconButton, Stack, TextField, Typography,
+} from "@mui/material";
+import { ArrowBack, DesktopWindows, PhoneIphone, Preview, Publish } from "@mui/icons-material";
 
-type AppPage = PlatformPage | "story" | "interactions" | "distribution" | "team" | "exports";
+type AppPage = PlatformPage;
+type Scene = {
+  id: string;
+  title: string;
+  type: string;
+  duration: string;
+  description: string;
+};
 
-const extraPages: Record<Exclude<AppPage, PlatformPage>, React.ReactNode> = {
-  story: (
-    <PlatformShell page="dashboard" title="Story & AI" subtitle="Give AI the story behind the invitation.">
-      <Grid container spacing={1.75}>
-        {[
-          ["12 facts", "People & relationships"],
-          ["7 moments", "Memory timeline"],
-          ["94%", "Creative direction confidence"],
-        ].map(([value, label]) => (
-          <Grid key={label} size={{ xs: 12, md: 4 }}>
-            <Card><CardContent><Chip label={value} color="primary" /><Typography variant="h3" mt={1}>{label}</Typography><Typography color="text.secondary">Nostalgic, intimate, cinematic, understated.</Typography></CardContent></Card>
-          </Grid>
-        ))}
-      </Grid>
-    </PlatformShell>
-  ),
-  interactions: (
-    <PlatformShell page="dashboard" title="Interactions" subtitle="Design what guests can do.">
-      <Grid container spacing={1.75}>
-        {["RSVP", "Quiz", "Branching", "Guestbook", "Voting", "Photo upload", "Hidden reveal", "Countdown"].map((name, i) => (
-          <Grid key={name} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <Card><CardContent><Chip size="small" label={i < 4 ? "Live" : "Beta"} /><Typography variant="h3" mt={1}>{name}</Typography><Typography color="text.secondary">Typed, validated guest interaction.</Typography></CardContent></Card>
-          </Grid>
-        ))}
-      </Grid>
-    </PlatformShell>
-  ),
-  distribution: (
-    <PlatformShell page="dashboard" title="Distribution" subtitle="Take the experience everywhere.">
-      <Grid container spacing={1.75}>
-        {[
-          ["Stable URL", "invite.md/i/a-little-surprise"],
-          ["QR sharing", "Print or scan the experience"],
-          ["Custom domain", "elena-andrei.md"],
-          ["Physical outputs", "Cards, posters, menus and stickers"],
-        ].map(([title, body]) => (
-          <Grid key={title} size={{ xs: 12, sm: 6, md: 3 }}>
-            <Card><CardContent><Chip label={title} color="primary" /><Typography variant="h3" mt={1}>{body}</Typography></CardContent></Card>
-          </Grid>
-        ))}
-      </Grid>
-    </PlatformShell>
-  ),
-  team: (
-    <PlatformShell page="dashboard" title="Team & Collaboration" subtitle="Roles, review, comments and approval.">
-      <Grid container spacing={1.75}>
-        {[
-          ["Andrei S.", "Owner", "Everything"],
-          ["Maria P.", "Designer", "Experiences + media"],
-          ["Elena R.", "Reviewer", "Review only"],
-        ].map(([name, role, access]) => (
-          <Grid key={name} size={{ xs: 12, md: 4 }}>
-            <Card><CardContent><Typography variant="h3">{name}</Typography><Chip label={role} sx={{ mt: 1 }} /><Typography color="text.secondary" mt={1}>{access}</Typography></CardContent></Card>
-          </Grid>
-        ))}
-      </Grid>
-    </PlatformShell>
-  ),
-  editor: (
-    <PlatformShell page="editor" title="Experience Editor" subtitle="Compose scenes, interactions and the guest experience.">
+const scenes: Scene[] = [
+  { id: "opening", title: "Opening", type: "Hero", duration: "8.2s", description: "A cinematic introduction that establishes the mood." },
+  { id: "memory", title: "Memory beat", type: "Story", duration: "12.0s", description: "One personal memory with photo, caption and ambient motion." },
+  { id: "question", title: "The question", type: "Interaction", duration: "15.0s", description: "A playful question that invites the guest to participate." },
+  { id: "reveal", title: "The reveal", type: "Reveal", duration: "7.4s", description: "The central surprise with a deliberate visual pause." },
+  { id: "location", title: "Location", type: "Details", duration: "10.0s", description: "Date, place and practical information." },
+  { id: "rsvp", title: "RSVP", type: "RSVP", duration: "18.0s", description: "Collect attendance and optional guest information." },
+  { id: "finale", title: "Finale", type: "Closing", duration: "6.0s", description: "A warm closing moment with sharing and replay." },
+];
+
+function EditorPage({ onBack }: { onBack: () => void }) {
+  const [selectedId, setSelectedId] = React.useState("opening");
+  const [device, setDevice] = React.useState<"desktop" | "phone">("desktop");
+  const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
+  const [description, setDescription] = React.useState(selected.description);
+
+  React.useEffect(() => {
+    setDescription(selected.description);
+  }, [selectedId, selected.description]);
+
+  return (
+    <PlatformShell
+      page="editor"
+      title="Experience Editor"
+      subtitle="Compose scenes, interactions and the guest experience."
+      actions={
+        <Stack direction="row" spacing={0.75}>
+          <Button size="small" startIcon={<Preview />}>Preview</Button>
+          <Button size="small" variant="contained" startIcon={<Publish />}>Publish</Button>
+        </Stack>
+      }
+    >
       <EditorShell>
-        <Stack spacing={2} sx={{ maxWidth: 760, mx: "auto" }}>
-          <Box>
-            <Chip label="Opening · Scene 01" color="primary" />
-            <Typography variant="h2" sx={{ color: "#fff", mt: 1 }}>A little surprise</Typography>
-            <Typography sx={{ color: "#bdb7ae" }}>Cinematic opening scene · 8.2s</Typography>
-          </Box>
-          <GuestFrame>
-            <Stack alignItems="center" justifyContent="center" minHeight={520} textAlign="center" spacing={1.5}>
-              <Typography variant="overline" color="primary">SEPTEMBER 28</Typography>
-              <Typography variant="h2" fontFamily="Georgia, serif">Elena & Victor</Typography>
-              <Typography color="text.secondary">A little surprise is waiting for you.</Typography>
+        <Stack spacing={2} sx={{ maxWidth: 820, mx: "auto" }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Button size="small" startIcon={<ArrowBack />} onClick={onBack}>Back to experiences</Button>
+            <Stack direction="row" spacing={0.5}>
+              <IconButton size="small" onClick={() => setDevice("desktop")} color={device === "desktop" ? "primary" : "default"}><DesktopWindows /></IconButton>
+              <IconButton size="small" onClick={() => setDevice("phone")} color={device === "phone" ? "primary" : "default"}><PhoneIphone /></IconButton>
             </Stack>
-          </GuestFrame>
-          <SceneRail scenes={["Opening", "Memory beat", "The question", "The reveal", "Location", "RSVP", "Finale"]} />
+          </Stack>
+
+          <Box>
+            <Chip label={`${selected.type} · Scene ${String(scenes.indexOf(selected) + 1).padStart(2, "0")}`} color="primary" />
+            <Typography variant="h2" sx={{ color: "#fff", mt: 1 }}>{selected.title}</Typography>
+            <Typography sx={{ color: "#bdb7ae" }}>{selected.duration} · Autosaved just now</Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <GuestFrame>
+              <Stack
+                alignItems="center"
+                justifyContent="center"
+                minHeight={device === "phone" ? 560 : 520}
+                width={device === "phone" ? 320 : "100%"}
+                textAlign="center"
+                spacing={1.5}
+                sx={{ px: 3, transition: "width .2s ease" }}
+              >
+                <Typography variant="overline" color="primary">SEPTEMBER 28</Typography>
+                <Typography variant="h2" fontFamily="Georgia, serif">Elena & Victor</Typography>
+                <Typography color="text.secondary">{description}</Typography>
+                <Chip label={selected.type === "Interaction" ? "Guest interaction" : "Animated scene"} size="small" />
+              </Stack>
+            </GuestFrame>
+          </Box>
+
+          <SceneRail scenes={scenes.map((scene) => scene.title)} />
+          <Stack direction="row" spacing={1} flexWrap="wrap">
+            {scenes.map((scene) => (
+              <Button key={scene.id} size="small" variant={scene.id === selectedId ? "contained" : "outlined"} onClick={() => setSelectedId(scene.id)}>
+                {scene.title}
+              </Button>
+            ))}
+          </Stack>
+        </Stack>
+
+        <Stack spacing={2} sx={{ display: { xs: "none", lg: "block" } }}>
+          <Typography fontWeight={800}>Scene inspector</Typography>
+          <TextField label="Scene title" value={selected.title} fullWidth size="small" disabled />
+          <TextField
+            label="Description"
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+            multiline
+            minRows={4}
+            fullWidth
+            size="small"
+          />
+          <Stack spacing={1}>
+            <Typography variant="caption" color="text.secondary">SCENE SETTINGS</Typography>
+            <Card variant="outlined"><CardContent><Typography fontWeight={700}>{selected.type}</Typography><Typography variant="body2" color="text.secondary">{selected.duration} duration</Typography></CardContent></Card>
+            <Button variant="outlined">Edit media</Button>
+            <Button variant="outlined">Configure interaction</Button>
+          </Stack>
         </Stack>
       </EditorShell>
     </PlatformShell>
-  ),
-  exports: (
-    <PlatformShell page="dashboard" title="Export & Delivery" subtitle="Generate every output from the same validated ExperienceSpec.">
-      <Grid container spacing={1.75}>
-        {["Interactive website", "ZIP", "PDF / print", "Social card", "Short video", "MP4 guest version"].map((name, i) => (
-          <Grid key={name} size={{ xs: 12, sm: 6, lg: 4 }}>
-            <Card><CardContent><Chip label={i < 3 ? "Ready" : "Beta"} /><Typography variant="h3" mt={1}>{name}</Typography><Typography color="text.secondary">Same source experience, different delivery channel.</Typography></CardContent></Card>
-          </Grid>
-        ))}
-      </Grid>
-    </PlatformShell>
-  ),
-};
+  );
+}
 
 function FullPlatform() {
   const [page, setPage] = React.useState<AppPage>("dashboard");
 
   const pageTitles: Record<AppPage, string> = {
-    dashboard: "Overview",
-    experiences: "Experiences",
-    invitations: "Invitations",
-    create: "Create",
-    templates: "Templates",
-    campaigns: "Campaigns",
-    media: "Media",
-    analytics: "Analytics",
-    settings: "Settings",
-    billing: "Billing",
-    marketplace: "Marketplace",
-    story: "Story & AI",
-    interactions: "Interactions",
-    distribution: "Distribution",
-    team: "Team & Collaboration",
-    exports: "Export & Delivery",\n    editor: "Experience Editor",
+    dashboard: "Overview", experiences: "Experiences", invitations: "Invitations",
+    create: "Create", templates: "Templates", campaigns: "Campaigns", media: "Media",
+    analytics: "Analytics", settings: "Settings", billing: "Billing",
+    marketplace: "Marketplace", story: "Story & AI", interactions: "Interactions",
+    distribution: "Distribution", team: "Team & Collaboration", exports: "Export & Delivery",
+    editor: "Experience Editor",
   };
 
-  const content = {
+  const content: Record<AppPage, React.ReactNode> = {
     dashboard: <DashboardPage />,
     experiences: <ExperiencesPage />,
     invitations: <InvitationsPage />,
@@ -144,42 +146,20 @@ function FullPlatform() {
     settings: <SettingsPage />,
     billing: <BillingPage />,
     marketplace: <MarketplacePage />,
-    story: extraPages.story,
-    interactions: extraPages.interactions,
-    distribution: extraPages.distribution,
-    team: extraPages.team,
-    exports: extraPages.exports,\n    editor: extraPages.editor,
-  }[page];
+    story: <PlatformShell page="dashboard" title="Story & AI"><Grid container spacing={1.75}>{["12 facts", "7 moments", "94% creative confidence"].map((x) => <Grid key={x} size={{ xs: 12, md: 4 }}><Card><CardContent><Typography variant="h3">{x}</Typography><Typography color="text.secondary">Story intelligence and creative direction.</Typography></CardContent></Card></Grid>)}</Grid></PlatformShell>,
+    interactions: <PlatformShell page="dashboard" title="Interactions"><Grid container spacing={1.75}>{["RSVP", "Quiz", "Branching", "Guestbook", "Voting", "Photo upload"].map((x) => <Grid key={x} size={{ xs: 12, sm: 6, lg: 4 }}><Card><CardContent><Chip label="Typed interaction" /><Typography variant="h3" mt={1}>{x}</Typography></CardContent></Card></Grid>)}</Grid></PlatformShell>,
+    distribution: <PlatformShell page="dashboard" title="Distribution"><Card><CardContent><Typography variant="h3">invite.md/i/a-little-surprise</Typography><Typography color="text.secondary">Stable public URL · QR · custom domain · physical outputs.</Typography></CardContent></Card></PlatformShell>,
+    team: <PlatformShell page="dashboard" title="Team & Collaboration"><Card><CardContent><Typography variant="h3">Review workflow</Typography><Typography color="text.secondary">Owner → designer → reviewer → approved.</Typography></CardContent></Card></PlatformShell>,
+    exports: <PlatformShell page="dashboard" title="Export & Delivery"><Grid container spacing={1.75}>{["Interactive website", "ZIP", "PDF / print", "Social card", "Short video", "MP4"].map((x) => <Grid key={x} size={{ xs: 12, sm: 6, lg: 4 }}><Card><CardContent><Chip label="Ready" /><Typography variant="h3" mt={1}>{x}</Typography></CardContent></Card></Grid>)}</Grid></PlatformShell>,
+    editor: <EditorPage onBack={() => setPage("experiences")} />,
+  };
 
   return (
-    <Box sx={{ minHeight: "100vh", "& .MuiPaper-root": { transition: "box-shadow .18s ease" } }}>
-      <PlatformShell
-        page={page}
-        title={pageTitles[page]}
-        onNavigate={(next) => setPage(next)}
-      >
-        {content}
+    <Box sx={{ minHeight: "100vh" }}>
+      <PlatformShell page={page} title={pageTitles[page]} onNavigate={setPage}>
+        {content[page]}
       </PlatformShell>
     </Box>
-  );
-}
-
-function DashboardFallback() {
-  return (
-    <PlatformShell page="dashboard" title="Good morning, Andrei" subtitle="Create memorable digital experiences from one calm workspace.">
-      <Card sx={{ border: 0, color: "#fff", background: "linear-gradient(120deg,#201e1a,#2b2723 65%,#342c44)" }}>
-        <CardContent sx={{ p: { xs: 3, md: 5 } }}>
-          <Typography variant="overline" sx={{ color: "#b4a6ff" }}>AI EXPERIENCE STUDIO</Typography>
-          <Typography variant="h2" sx={{ color: "#fff", mt: 1 }}>Turn a story into an experience.</Typography>
-          <Typography color="#c4c0b9" maxWidth={700} mt={1}>Describe the moment, let AI shape the storyboard, then refine every scene before publishing.</Typography>
-          <Stack direction="row" spacing={1} mt={3}>
-            <Chip label="AI creative director" />
-            <Chip label="Interactive scenes" />
-            <Chip label="Campaigns" />
-          </Stack>
-        </CardContent>
-      </Card>
-    </PlatformShell>
   );
 }
 
