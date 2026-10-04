@@ -8,12 +8,12 @@ import {
 import { PlatformShell, type PlatformPage } from "../platform/PlatformShell";
 import { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
 import {
-  Box, Button, Card, CardContent, Chip, Grid, IconButton, Stack, TextField, Typography,
+  Box, Button, Card, CardContent, Chip, Grid, IconButton, Paper, Stack, TextField, Typography,
 } from "@mui/material";
-import { ArrowBack, DesktopWindows, PhoneIphone, Preview, Publish } from "@mui/icons-material";
+import { ArrowBack, CheckCircle, DesktopWindows, PhoneIphone, Preview, Publish } from "@mui/icons-material";
 
 type AppPage = PlatformPage;
-type FlowStep = "create" | "interview" | "storyboard";
+type FlowStep = "interview" | "recipe" | "storyboard";
 const interviewMessages = [
   { role: "assistant" as const, text: "What are you creating, and what should the guest feel when they open it?" },
   { role: "user" as const, text: "A romantic date invitation. I want it to feel cinematic, playful and personal." },
@@ -47,7 +47,7 @@ function CreationFlow({ onComplete }: { onComplete: () => void }) {
             {step === "interview" ? <Stack spacing={1.5}>
               {messages.map((message, i) => <Paper key={i} variant="outlined" sx={{ p: 1.5, alignSelf: message.role === "user" ? "flex-end" : "stretch", maxWidth: "88%", bgcolor: message.role === "user" ? "secondary.main" : "background.paper", color: message.role === "user" ? "#fff" : "text.primary" }}>{message.text}</Paper>)}
               <TextField fullWidth multiline minRows={2} value={input} onChange={(e) => setInput(e.target.value)} placeholder="Tell the creative director more..." />
-              <Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">{messages.length} messages · AI keeps the structured story separate from generated code.</Typography><Button variant="accent" onClick={() => { if (input.trim()) { setMessages([...messages, { role: "user", text: input.trim() }]); setInput(""); } else setStep("storyboard"); }}>Continue</Button></Stack>
+              <Stack direction="row" justifyContent="space-between"><Typography variant="caption" color="text.secondary">{messages.length} messages · AI keeps the structured story separate from generated code.</Typography><Button variant="accent" onClick={() => { if (input.trim()) { setMessages([...messages, { role: "user", text: input.trim() }]); setInput(""); } else setStep("recipe"); }}>Continue</Button></Stack>
             </Stack> : <Stack spacing={2}>
               <Typography variant="h3">Choose the visual recipe</Typography>
               <Grid container spacing={1}>{["Cinematic", "Warm minimal", "Editorial", "Playful"].map((recipe) => <Grid key={recipe} size={{ xs: 6 }}><Button fullWidth variant={selectedRecipe === recipe ? "contained" : "outlined"} onClick={() => setSelectedRecipe(recipe)}>{recipe}</Button></Grid>)}</Grid>
