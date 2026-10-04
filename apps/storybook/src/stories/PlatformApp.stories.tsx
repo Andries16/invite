@@ -53,7 +53,34 @@ function EditorPage({ onBack }: { onBack: () => void }) {
         </Stack>
       }
     >
-      <EditorShell>
+      <EditorShell
+        left={
+          <Stack spacing={1}>
+            <Typography variant="overline" color="primary.light">Experience editor</Typography>
+            <Typography variant="h3" color="#fff">A little surprise</Typography>
+            <Typography variant="caption" color="#9f9991">7 scenes · 3 interactions</Typography>
+            <Stack spacing={0.5} mt={1}>
+              {scenes.map((scene, index) => (
+                <Button key={scene.id} size="small" onClick={() => setSelectedId(scene.id)}
+                  variant={scene.id === selectedId ? "contained" : "text"}
+                  sx={{ justifyContent: "flex-start", textTransform: "none", color: scene.id === selectedId ? undefined : "#c7c1b8" }}>
+                  {String(index + 1).padStart(2, "0")}&nbsp; {scene.title}
+                </Button>
+              ))}
+            </Stack>
+          </Stack>
+        }
+        right={
+          <Stack spacing={1.5}>
+            <Typography fontWeight={800}>Scene inspector</Typography>
+            <Chip size="small" label={selected.type} sx={{ alignSelf: "flex-start" }} />
+            <TextField label="Scene title" value={selected.title} fullWidth size="small" disabled />
+            <TextField label="Description" value={description} onChange={(event) => setDescription(event.target.value)} multiline minRows={5} fullWidth size="small" />
+            <Button variant="outlined">Edit media</Button>
+            <Button variant="outlined">Configure interaction</Button>
+          </Stack>
+        }
+      >
         <Stack spacing={2} sx={{ maxWidth: 820, mx: "auto" }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Button size="small" startIcon={<ArrowBack />} onClick={onBack}>Back to experiences</Button>
@@ -95,26 +122,6 @@ function EditorPage({ onBack }: { onBack: () => void }) {
                 {scene.title}
               </Button>
             ))}
-          </Stack>
-        </Stack>
-
-        <Stack spacing={2} sx={{ display: { xs: "none", lg: "block" } }}>
-          <Typography fontWeight={800}>Scene inspector</Typography>
-          <TextField label="Scene title" value={selected.title} fullWidth size="small" disabled />
-          <TextField
-            label="Description"
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            multiline
-            minRows={4}
-            fullWidth
-            size="small"
-          />
-          <Stack spacing={1}>
-            <Typography variant="caption" color="text.secondary">SCENE SETTINGS</Typography>
-            <Card variant="outlined"><CardContent><Typography fontWeight={700}>{selected.type}</Typography><Typography variant="body2" color="text.secondary">{selected.duration} duration</Typography></CardContent></Card>
-            <Button variant="outlined">Edit media</Button>
-            <Button variant="outlined">Configure interaction</Button>
           </Stack>
         </Stack>
       </EditorShell>
