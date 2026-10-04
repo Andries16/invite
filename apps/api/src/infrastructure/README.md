@@ -1,0 +1,1 @@
+API adapters for persistence, queues, AI providers, object storage and external services.
