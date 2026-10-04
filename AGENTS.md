@@ -8,7 +8,7 @@ Read README.md, docs/PRODUCT.md, docs/ARCHITECTURE.md, docs/AI.md, relevant doma
 If code and documentation conflict on a core invariant, resolve the conflict explicitly; do not invent a third behavior.
 
 ## Core invariant
-The user describes an invitation conversationally. AI converts that intent into a validated, versioned InvitationSpec. Trusted application code renders it into a static public site.
+The user describes an invitation conversationally. AI converts that intent into a validated, versioned ExperienceSpec. Trusted application code renders the same experience model in creator preview, guest playback and the published experience.
 
 Do not make unrestricted LLM-generated production code the normal path.
 
