@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { ArrowBack, CheckCircle, DesktopWindows, PhoneIphone, Preview, Publish } from "@mui/icons-material";
 
-type AppPage = PlatformPage;
+type AppPage = PlatformPage;\n\ntype ExperienceSpec = {\n  title: string;\n  guestNames: string;\n  date: string;\n  recipe: string;\n  scenes: Scene[];\n};
 type FlowStep = "interview" | "recipe" | "storyboard";
 const interviewMessages = [
   { role: "assistant" as const, text: "What are you creating, and what should the guest feel when they open it?" },
@@ -81,7 +81,7 @@ const scenes: Scene[] = [
   { id: "finale", title: "Finale", type: "Closing", duration: "6.0s", description: "A warm closing moment with sharing and replay." },
 ];
 
-function EditorPage({ onBack }: { onBack: () => void }) {
+function PublicPreview({ onBack, onPublish }: { onBack: () => void; onPublish: () => void }) {\n  return (\n    <PlatformShell page="preview" title="Guest Preview" subtitle="This is the public experience your guests will see." actions={<Button variant="contained" startIcon={<Publish />} onClick={onPublish}>Publish</Button>}>\n      <Stack alignItems="center" spacing={2}>\n        <GuestFrame>\n          <Stack spacing={5} sx={{ minHeight: 720, p: { xs: 3, md: 7 }, textAlign: "center", background: "linear-gradient(160deg,#fffaf3,#f0e9ef)" }}>\n            {scenes.map((scene, index) => (\n              <Box key={scene.id} sx={{ py: 5, minHeight: 260, display: "grid", placeItems: "center" }}>\n                <Stack spacing={1.5} alignItems="center">\n                  <Typography variant="overline" color="primary">{String(index + 1).padStart(2, "0")} · {scene.type}</Typography>\n                  <Typography variant="h2" fontFamily="Georgia, serif">{scene.title}</Typography>\n                  <Typography color="text.secondary" maxWidth={500}>{scene.description}</Typography>\n                  {scene.type === "Interaction" && <Button variant="contained">Continue</Button>}\n                  {scene.type === "RSVP" && <Button variant="outlined">RSVP</Button>}\n                </Stack>\n              </Box>\n            ))}\n          </Stack>\n        </GuestFrame>\n        <Button startIcon={<ArrowBack />} onClick={onBack}>Back to editor</Button>\n      </Stack>\n    </PlatformShell>\n  );\n}\n\nfunction PublishPage({ onBack }: { onBack: () => void }) {\n  return (\n    <PlatformShell page="distribution" title="Publish & Distribution" subtitle="Your experience is ready to become a stable public artifact.">\n      <Stack spacing={2}>\n        <Card><CardContent><Stack direction="row" spacing={1.5} alignItems="center"><CheckCircle color="success" /><Box><Typography fontWeight={800}>Production build validated</Typography><Typography variant="body2" color="text.secondary">Accessibility, responsive layout, interactions and media checks passed.</Typography></Box></Stack></CardContent></Card>\n        <Grid container spacing={1.5}>\n          {[["Stable URL","invite.md/i/a-little-surprise"],["QR code","Ready to generate"],["Custom domain","Not configured"],["Social preview","Ready"]].map(([label,value]) => <Grid key={label} size={{xs:12,sm:6}}><Card><CardContent><Typography variant="caption" color="text.secondary">{label}</Typography><Typography variant="h3" mt={.5}>{value}</Typography></CardContent></Card></Grid>)}\n        </Grid>\n        <Stack direction="row" justifyContent="flex-end"><Button variant="outlined" onClick={onBack}>Back to preview</Button><Button variant="contained" sx={{ml:1}}>Publish experience</Button></Stack>\n      </Stack>\n    </PlatformShell>\n  );\n}\n\nfunction EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () => void }) {
   const [selectedId, setSelectedId] = React.useState("opening");
   const [device, setDevice] = React.useState<"desktop" | "phone">("desktop");
   const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
@@ -98,7 +98,7 @@ function EditorPage({ onBack }: { onBack: () => void }) {
       subtitle="Compose scenes, interactions and the guest experience."
       actions={
         <Stack direction="row" spacing={0.75}>
-          <Button size="small" startIcon={<Preview />}>Preview</Button>
+          <Button size="small" startIcon={<Preview />} onClick={onPreview}>Preview</Button>
           <Button size="small" variant="contained" startIcon={<Publish />}>Publish</Button>
         </Stack>
       }
@@ -189,7 +189,7 @@ function FullPlatform() {
     analytics: "Analytics", settings: "Settings", billing: "Billing",
     marketplace: "Marketplace", story: "Story & AI", interactions: "Interactions",
     distribution: "Distribution", team: "Team & Collaboration", exports: "Export & Delivery",
-    editor: "Experience Editor",
+    editor: "Experience Editor",\n    preview: "Guest Preview",
   };
 
   const content: Record<AppPage, React.ReactNode> = {
@@ -206,10 +206,10 @@ function FullPlatform() {
     marketplace: <MarketplacePage />,
     story: <PlatformShell page="dashboard" title="Story & AI"><Grid container spacing={1.75}>{["12 facts", "7 moments", "94% creative confidence"].map((x) => <Grid key={x} size={{ xs: 12, md: 4 }}><Card><CardContent><Typography variant="h3">{x}</Typography><Typography color="text.secondary">Story intelligence and creative direction.</Typography></CardContent></Card></Grid>)}</Grid></PlatformShell>,
     interactions: <PlatformShell page="dashboard" title="Interactions"><Grid container spacing={1.75}>{["RSVP", "Quiz", "Branching", "Guestbook", "Voting", "Photo upload"].map((x) => <Grid key={x} size={{ xs: 12, sm: 6, lg: 4 }}><Card><CardContent><Chip label="Typed interaction" /><Typography variant="h3" mt={1}>{x}</Typography></CardContent></Card></Grid>)}</Grid></PlatformShell>,
-    distribution: <PlatformShell page="dashboard" title="Distribution"><Card><CardContent><Typography variant="h3">invite.md/i/a-little-surprise</Typography><Typography color="text.secondary">Stable public URL · QR · custom domain · physical outputs.</Typography></CardContent></Card></PlatformShell>,
+    distribution: <PublishPage onBack={() => setPage("preview")} />,<Card><CardContent><Typography variant="h3">invite.md/i/a-little-surprise</Typography><Typography color="text.secondary">Stable public URL · QR · custom domain · physical outputs.</Typography></CardContent></Card></PlatformShell>,
     team: <PlatformShell page="dashboard" title="Team & Collaboration"><Card><CardContent><Typography variant="h3">Review workflow</Typography><Typography color="text.secondary">Owner → designer → reviewer → approved.</Typography></CardContent></Card></PlatformShell>,
     exports: <PlatformShell page="dashboard" title="Export & Delivery"><Grid container spacing={1.75}>{["Interactive website", "ZIP", "PDF / print", "Social card", "Short video", "MP4"].map((x) => <Grid key={x} size={{ xs: 12, sm: 6, lg: 4 }}><Card><CardContent><Chip label="Ready" /><Typography variant="h3" mt={1}>{x}</Typography></CardContent></Card></Grid>)}</Grid></PlatformShell>,
-    editor: <EditorPage onBack={() => setPage("experiences")} />,
+    editor: <EditorPage onBack={() => setPage("experiences")} onPreview={() => setPage("preview")} />,\n    preview: <PublicPreview onBack={() => setPage("editor")} onPublish={() => setPage("distribution")} />,
   };
 
   return (
