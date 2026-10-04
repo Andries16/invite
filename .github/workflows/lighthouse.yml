@@ -1,0 +1,21 @@
+name: Lighthouse
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "apps/public/**"
+      - "packages/invitation-runtime/**"
+      - "packages/invitation-components/**"
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Lighthouse scaffold
+        run: |
+          echo "Lighthouse will run against the public invitation URL when preview deployment is available."
