@@ -2,96 +2,45 @@
 
 ## Role
 
-AI interprets intent and proposes structured changes. It is not the source of truth for authorization, safety, schema validity or publication.
+AI is a creative director and structured planning system, not the production runtime.
 
-AI handles conversational discovery, clarification questions, copy, creative direction, theme/layout recommendations, component selection, interaction planning and InvitationSpec patches.
+AI may understand intent, ask questions, extract stories, recommend visual language, choose recipes, generate copy, propose scenes/interactions, suggest media placement, produce structured patches, localize content and explain recommendations.
 
-Code handles authentication, authorization, validation, persistence, assets, jobs, builds, artifact validation and publication.
+AI must not normally emit unrestricted production JavaScript, receive platform secrets, directly publish, bypass schema validation, mutate persistent state without an application command, or introduce arbitrary executable variables.
 
-## Conversation model
+## Pipeline
 
-Keep conversation history separate from invitation state.
+User -> Conversation -> Structured Answers -> DesignBrief -> Creative Direction -> Experience Proposal -> Schema Validation -> Repair/Clarification -> Versioned ExperienceSpec -> Deterministic Runtime
 
-Conceptual entities:
+## Preference precedence
 
-- Conversation
-- Message
-- InteractionRequest
-- InteractionResponse
-- InvitationDraft
+1. explicit current request
+2. explicit previous decision
+3. invitation requirements
+4. selected recipe/theme
+5. AI recommendation
+6. platform default
 
-Do not reconstruct the entire invitation by replaying the transcript on every request.
+## Structured patching
 
-## Structured interaction protocol
+Prefer operations such as replace copy, reorder scene, change theme token, change motion preset, add media reference, change interaction, change typography and alter responsive rule. A patch must validate before persistence.
 
-AI responses may contain typed blocks:
+## Story ingestion
 
-- message
-- single choice
-- multi choice
-- text
-- number
-- date/time
-- color
-- media upload request
-- preview
-- confirmation
-- invitation patch
+Long-form text, uploaded documents and media may be transformed into a structured memory/story model. Extracted facts should retain provenance and confidence where practical.
 
-The creator renders these blocks. The model does not directly manipulate browser APIs.
+## AI media intelligence
 
-## Tools
-
-Expose narrow tools such as:
-
-- get invitation draft
-- update invitation draft
-- list assets
-- request upload
-- validate spec
-- preview
-- start generation
-- get generation status
-
-Do not expose arbitrary database queries, shell commands or privileged filesystem access.
-
-## Spec editing
-
-Prefer structured operations over full-document regeneration.
-
-Examples:
-
-```text
-set theme.palette.primary
-insert section after hero
-replace component content
-remove interaction
-set event.startAt
-add media asset
-```
-
-Every operation is validated against the current schema.
-
-## Provider abstraction
-
-Keep the application independent from one model vendor.
-
-```ts
-interface AiProvider {
-  generate(input: AiRequest): Promise<AiResponse>;
-}
-```
-
-## Prompt rules
-
-Prompts describe product purpose, current spec, available components, interaction protocol, design constraints and output contract.
-
-Critical business rules must also exist in code and schemas.
-
-## AI safety
-
-Model output is untrusted. Never execute arbitrary model-generated server code, trust model-generated authorization decisions, or allow generated invitations to access platform secrets.
+AI can suggest strongest photos, chronological ordering, captions, focal points, video moments, scene placement and visual continuity. Suggestions remain proposals until accepted or explicitly applied.
 
 ## Evaluation
 
-Maintain fixture conversations for simple invitations, weddings, declarations, interactive dates, campaigns, multilingual cases and malicious output. Assert structured correctness and invariant preservation rather than exact prose.
+Evaluate AI outputs for schema validity, narrative coherence, design-system compliance, accessibility, unsafe content, unsupported capabilities, performance risk and factual preservation.
+
+## Provider boundary
+
+The AI package exposes provider-neutral operations. Provider-specific SDKs, prompts, retries, token accounting and safety settings stay behind the AI infrastructure boundary.
+
+## Human control
+
+AI should propose high-impact changes and make low-risk changes only when explicitly authorized by the current creator workflow. Every applied AI mutation produces a versioned change record.
