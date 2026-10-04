@@ -1,10 +1,15 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import * as React from "react";
 
 export const PrototypeSection = ({
-  title: _title,
-  children: _children,
+  title,
+  children,
   ...props
 }: { title?: string; children?: React.ReactNode } & React.ComponentProps<typeof Box>) => {
-  return <Box {...props} />;
+  return (
+    <Box {...props}>
+      {title && <Typography>{title}</Typography>}
+      {children}
+    </Box>
+  );
 };

@@ -22,8 +22,8 @@ type Story = StoryObj<typeof meta>;
 export const CreatorNavigation: Story = {
   play: async ({ canvasElement }: { canvasElement: HTMLElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Experiences")).toBeInTheDocument();
-    await expect(canvas.getByText("invite.md")).toBeInTheDocument();
+    await expect(canvas.getAllByText("Experiences").length).toBeGreaterThan(0);
+    await expect(canvas.getByText(/invite\.md/i)).toBeInTheDocument();
   },
   render: () => (
     <CreatorShell title="Experiences">
