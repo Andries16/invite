@@ -13,7 +13,7 @@ import {
   SettingsPage,
   TemplatesPage,
 } from "../platform/PlatformPages";
-import { PlatformShell, type PlatformPage } from "../platform/PlatformShell";
+import { PlatformShell, type PlatformPage } from "../platform/PlatformShell";\nimport { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
 import { Box, Card, CardContent, Chip, Grid, Stack, Typography } from "@mui/material";
 
 type AppPage = PlatformPage | "story" | "interactions" | "distribution" | "team" | "exports";
@@ -76,6 +76,27 @@ const extraPages: Record<Exclude<AppPage, PlatformPage>, React.ReactNode> = {
       </Grid>
     </PlatformShell>
   ),
+  editor: (
+    <PlatformShell page="editor" title="Experience Editor" subtitle="Compose scenes, interactions and the guest experience.">
+      <EditorShell>
+        <Stack spacing={2} sx={{ maxWidth: 760, mx: "auto" }}>
+          <Box>
+            <Chip label="Opening · Scene 01" color="primary" />
+            <Typography variant="h2" sx={{ color: "#fff", mt: 1 }}>A little surprise</Typography>
+            <Typography sx={{ color: "#bdb7ae" }}>Cinematic opening scene · 8.2s</Typography>
+          </Box>
+          <GuestFrame>
+            <Stack alignItems="center" justifyContent="center" minHeight={520} textAlign="center" spacing={1.5}>
+              <Typography variant="overline" color="primary">SEPTEMBER 28</Typography>
+              <Typography variant="h2" fontFamily="Georgia, serif">Elena & Victor</Typography>
+              <Typography color="text.secondary">A little surprise is waiting for you.</Typography>
+            </Stack>
+          </GuestFrame>
+          <SceneRail scenes={["Opening", "Memory beat", "The question", "The reveal", "Location", "RSVP", "Finale"]} />
+        </Stack>
+      </EditorShell>
+    </PlatformShell>
+  ),
   exports: (
     <PlatformShell page="dashboard" title="Export & Delivery" subtitle="Generate every output from the same validated ExperienceSpec.">
       <Grid container spacing={1.75}>
@@ -108,7 +129,7 @@ function FullPlatform() {
     interactions: "Interactions",
     distribution: "Distribution",
     team: "Team & Collaboration",
-    exports: "Export & Delivery",
+    exports: "Export & Delivery",\n    editor: "Experience Editor",
   };
 
   const content = {
@@ -127,7 +148,7 @@ function FullPlatform() {
     interactions: extraPages.interactions,
     distribution: extraPages.distribution,
     team: extraPages.team,
-    exports: extraPages.exports,
+    exports: extraPages.exports,\n    editor: extraPages.editor,
   }[page];
 
   return (
