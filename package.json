@@ -1,10 +1,12 @@
 {
   "name": "invite",
   "private": true,
+  "packageManager": "pnpm@9.15.9",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "typecheck": "turbo run lint"
   },
   "devDependencies": {
     "turbo": "^2.11.7"
