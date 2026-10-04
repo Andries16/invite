@@ -6,13 +6,20 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,html,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json,html,css}\"",
     "spellcheck": "cspell \"**/*.{ts,tsx,md,mdx,json,html,css}\""
   },
   "devDependencies": {
+    "@types/node": "^26.6.4",
     "cspell": "^10.3.6",
     "prettier": "^3.9.9",
-    "turbo": "^2.11.7"
+    "turbo": "^2.11.7",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=9.0.0"
   }
 }

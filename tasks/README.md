@@ -3,6 +3,7 @@
 Tasks are grouped by product capability and architectural boundary.
 
 Rules:
+
 - Name the domain/package affected.
 - Identify schema/API/runtime implications.
 - Include acceptance criteria.

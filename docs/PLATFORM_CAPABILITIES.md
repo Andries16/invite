@@ -6,22 +6,22 @@ Invite.md is an AI Experience Studio. Invitations are the first major use case, 
 
 ## Capability map
 
-| Area | Foundation | Expansion |
-|---|---|---|
-| AI creation | conversational intake, structured answers | story ingestion, creative director, iterative patches |
-| Experiences | scenes, triggers, interactions | branching, games, secret/time unlocks |
-| Design | visual languages, design tokens | reusable themes, creator marketplace |
-| Media | upload + processing boundary | AI editing, smart crops, video clips, generated assets |
-| Personalization | typed variables | campaigns, dynamic guest content |
-| Public interaction | isolated interaction API | RSVP, quizzes, guestbook, voting, photo uploads |
-| Publication | stable URL + immutable artifact | custom domains, edge routing |
-| QR | stable logical destination | QR campaigns, physical print workflows |
-| Analytics | privacy-aware event model | funnels, campaign analytics |
-| Localization | schema-ready content | multilingual AI adaptation |
-| Export | static artifact | PDF, ZIP, video/social exports |
-| Collaboration | project boundary | teams, comments, roles |
-| Commerce | billing boundary | plans, credits, marketplace |
-| Ecosystem | recipes | public/private experience marketplace |
+| Area               | Foundation                                | Expansion                                              |
+| ------------------ | ----------------------------------------- | ------------------------------------------------------ |
+| AI creation        | conversational intake, structured answers | story ingestion, creative director, iterative patches  |
+| Experiences        | scenes, triggers, interactions            | branching, games, secret/time unlocks                  |
+| Design             | visual languages, design tokens           | reusable themes, creator marketplace                   |
+| Media              | upload + processing boundary              | AI editing, smart crops, video clips, generated assets |
+| Personalization    | typed variables                           | campaigns, dynamic guest content                       |
+| Public interaction | isolated interaction API                  | RSVP, quizzes, guestbook, voting, photo uploads        |
+| Publication        | stable URL + immutable artifact           | custom domains, edge routing                           |
+| QR                 | stable logical destination                | QR campaigns, physical print workflows                 |
+| Analytics          | privacy-aware event model                 | funnels, campaign analytics                            |
+| Localization       | schema-ready content                      | multilingual AI adaptation                             |
+| Export             | static artifact                           | PDF, ZIP, video/social exports                         |
+| Collaboration      | project boundary                          | teams, comments, roles                                 |
+| Commerce           | billing boundary                          | plans, credits, marketplace                            |
+| Ecosystem          | recipes                                   | public/private experience marketplace                  |
 
 ## Product pillars
 

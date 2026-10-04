@@ -1,6 +1,7 @@
 # Invite.md Feature Inventory
 
 ## Creation
+
 - invitation/event type
 - conversational onboarding
 - typed AI questions
@@ -18,6 +19,7 @@
 - accessibility preferences
 
 ## Experience mechanics
+
 - cinematic intro
 - typewriter
 - terminal/code
@@ -42,6 +44,7 @@
 - audio/voice
 
 ## Visual languages
+
 - film trailer
 - terminal/code
 - VHS
@@ -54,6 +57,7 @@
 - dark cinematic
 
 ## Media
+
 - image
 - GIF
 - video
@@ -67,6 +71,7 @@
 - focal points/crops
 
 ## Personalization
+
 - guest name
 - guest photo
 - guest message
@@ -77,6 +82,7 @@
 - campaign-specific media
 
 ## Public interaction
+
 - RSVP
 - plus-one
 - dietary requirements
@@ -87,6 +93,7 @@
 - reactions
 
 ## Distribution
+
 - stable invitation URL
 - campaign URLs
 - QR
@@ -99,6 +106,7 @@
 - video export
 
 ## Operations
+
 - version history
 - drafts
 - publish/unpublish
@@ -114,6 +122,7 @@
 - collaboration
 
 ## Ecosystem
+
 - recipes
 - themes
 - marketplace

@@ -44,7 +44,6 @@ Conversation -> structured answers -> InvitationSpec -> validation -> renderer -
 
 Important business invariants must exist in code and schemas, not only prompts.
 
-
 ## Platform expansion
 
 The complete capability roadmap lives in docs/ROADMAP.md and docs/PLATFORM_CAPABILITIES.md. Feature inventory is in docs/FEATURES.md. Implementation work is organized under tasks/.
