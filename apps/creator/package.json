@@ -1,1 +1,26 @@
-{"name":"@invite/creator","version":"0.0.0","private":true,"type":"module","scripts":{"dev":"vite","build":"tsc -b && vite build","lint":"tsc --noEmit"},"dependencies":{"@invite/contracts":"workspace:*","@invite/domain":"workspace:*","@invite/experience-runtime":"workspace:*","@invite/ui":"workspace:*","react":"^19.1.1","react-dom":"^19.1.1"},"devDependencies":{"@vitejs/plugin-react":"^5.0.4","vite":"^7.1.7","typescript":"^5.9.2"}}
+{
+  "name": "@invite/creator",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@invite/invitation-components": "workspace:*",
+    "@invite/invitation-runtime": "workspace:*",
+    "@invite/invitation-schema": "workspace:*",
+    "@invite/shared": "workspace:*",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.7"
+  }
+}
