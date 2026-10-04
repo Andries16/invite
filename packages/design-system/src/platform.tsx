@@ -42,3 +42,27 @@ export function FlowStatus({ label, status }: { label: string; status: "live"|"d
 export function PrototypeSection({ title, children }: { title: string; children: React.ReactNode }) {
   return <Box mt={4}><SectionHeader title={title}/>{children}</Box>;
 }
+
+export function EmptyState({ title, body, icon, actions }: { title: React.ReactNode; body?: React.ReactNode; icon?: React.ReactNode; actions?: React.ReactNode }) {
+  return <Card><CardContent sx={{ py: 7, textAlign: "center" }}>{icon && <Box mb={2}>{icon}</Box>}<Typography variant="h2">{title}</Typography>{body && <Typography color="text.secondary" maxWidth={520} mx="auto" mt={1}>{body}</Typography>}{actions && <Stack direction="row" justifyContent="center" spacing={1} mt={3} flexWrap="wrap">{actions}</Stack>}</CardContent></Card>;
+}
+
+export function LoadingState({ title = "Loading…", body, progress }: { title?: React.ReactNode; body?: React.ReactNode; progress?: number }) {
+  return <Card><CardContent><Stack spacing={1.5}><Typography fontWeight={800}>{title}</Typography>{body && <Typography variant="body2" color="text.secondary">{body}</Typography>}{progress !== undefined ? <LinearProgress value={progress} variant="determinate"/> : <LinearProgress/>}</Stack></CardContent></Card>;
+}
+
+export function PermissionGate({ title = "Pro feature", body, action = "Upgrade workspace" }: { title?: React.ReactNode; body?: React.ReactNode; action?: React.ReactNode }) {
+  return <Card><CardContent sx={{ py: 5, textAlign: "center" }}><Typography variant="h2">{title}</Typography>{body && <Typography color="text.secondary" maxWidth={480} mx="auto" mt={1}>{body}</Typography>}<Button variant="contained" sx={{ mt: 2 }}>{action}</Button></CardContent></Card>;
+}
+
+export function PublishStepper({ steps, activeStep, status }: { steps: string[]; activeStep: number; status?: React.ReactNode }) {
+  return <Stack spacing={2}>{<Stack direction={{ xs: "column", sm: "row" }} spacing={1}>{steps.map((step, i) => <Paper key={step} variant="outlined" sx={{ p: 1.2, flex: 1, borderColor: i === activeStep ? "primary.main" : "divider" }}><Typography variant="caption">0{i + 1}</Typography><Typography fontWeight={800}>{step}</Typography></Paper>)}</Stack>}{status}</Stack>;
+}
+
+export function MediaTileGrid({ count = 8, label = "memory" }: { count?: number; label?: string }) {
+  return <Box display="grid" gridTemplateColumns="repeat(auto-fill,minmax(160px,1fr))" gap={1.5}>{Array.from({ length: count }, (_, i) => <Card key={i}><MediaPreview title={`${label}-${i + 1}`} height={120}/><CardContent sx={{ p: 1.4 }}><Typography fontWeight={700} fontSize={12}>{label}-{i + 1}.jpg</Typography><Typography variant="caption" color="text.secondary">Optimized media</Typography></CardContent></Card>)}</Box>;
+}
+
+export function ConversationPanel({ messages }: { messages: Array<{ role: "assistant" | "user"; text: React.ReactNode }> }) {
+  return <Stack spacing={1.5}>{messages.map((message, i) => <Paper key={i} variant={message.role === "user" ? "elevation" : "outlined"} sx={{ p: 1.5, bgcolor: message.role === "user" ? "secondary.main" : "background.paper", color: message.role === "user" ? "#fff" : "text.primary", alignSelf: message.role === "user" ? "flex-end" : "stretch", maxWidth: "88%" }}>{message.text}</Paper>)}</Stack>;
+}
