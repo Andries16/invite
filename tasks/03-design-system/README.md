@@ -19,3 +19,14 @@ Maps to prototype capability: **Visual Languages, Recipes, Typography, and Motio
 
 ### 4. Worker & Runtime
 - **Strict Requirement**: The public guest app must NOT inherit MUI. It uses raw vanilla/tailwind or custom lightweight CSS tailored strictly to the `DesignSpec`.
+
+
+## Storybook contract
+
+Storybook is part of the design-system implementation, not a separate product surface.
+
+- Create and maintain stories for every reusable creator component before it is considered complete.
+- Cover the required creator controls from `docs/DESIGN_SYSTEM.md`: Button, IconButton, Input, Textarea, Select, Autocomplete, ChoiceCard, Chip, Dialog, Drawer, Tabs, Progress, Toast, EmptyState, ErrorState, MediaPicker, PreviewFrame, VersionList and PublishControl.
+- Stories must cover default, interactive, disabled/error/empty states where applicable, keyboard/focus behavior and responsive states.
+- Use Storybook as the visual contract for MUI 9.4.x creator components.
+- Do not import creator MUI components into the public invitation runtime.
