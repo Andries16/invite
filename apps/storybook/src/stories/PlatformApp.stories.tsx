@@ -1,4 +1,7 @@
 import { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
+import { getOrderedScenes } from "@invite/invitation-runtime";
+import { getSceneDisplayType, getSceneDurationLabel, sampleExperience } from "@invite/story";
+import type { ExperienceSpec } from "@invite/invitation-schema";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DesktopWindowsIcon from "@mui/icons-material/DesktopWindows";
@@ -35,13 +38,8 @@ import { PlatformShell, type PlatformPage } from "../platform/PlatformShell";
 
 type AppPage = PlatformPage;
 
-export type ExperienceSpec = {
-  title: string;
-  guestNames: string;
-  date: string;
-  recipe: string;
-  scenes: Scene[];
-};
+export type { ExperienceSpec } from "@invite/invitation-schema";
+
 type FlowStep = "interview" | "recipe" | "storyboard";
 const interviewMessages = [
   {
@@ -88,14 +86,14 @@ export function CreationFlow({ onComplete }: { onComplete: () => void }) {
             </CardContent>
           </Card>
           <Grid container spacing={1.5}>
-            {scenes.map((scene, i) => (
+            {getOrderedScenes(sampleExperience).map((scene, i) => (
               <Grid key={scene.id} size={{ xs: 12, sm: 6, lg: 4 }}>
                 <Card>
                   <CardContent>
                     <Typography variant="caption">0{i + 1}</Typography>
                     <Typography sx={{ fontWeight: 800 }}>{scene.title}</Typography>
                     <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                      {scene.type} · {scene.duration}
+                      {getSceneDisplayType(scene)} · {getSceneDurationLabel(scene)}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -219,66 +217,6 @@ export function CreationFlow({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-type Scene = {
-  id: string;
-  title: string;
-  type: string;
-  duration: string;
-  description: string;
-};
-
-const scenes: Scene[] = [
-  {
-    id: "opening",
-    title: "Opening",
-    type: "Hero",
-    duration: "8.2s",
-    description: "A cinematic introduction that establishes the mood.",
-  },
-  {
-    id: "memory",
-    title: "Memory beat",
-    type: "Story",
-    duration: "12.0s",
-    description: "One personal memory with photo, caption and ambient motion.",
-  },
-  {
-    id: "question",
-    title: "The question",
-    type: "Interaction",
-    duration: "15.0s",
-    description: "A playful question that invites the guest to participate.",
-  },
-  {
-    id: "reveal",
-    title: "The reveal",
-    type: "Reveal",
-    duration: "7.4s",
-    description: "The central surprise with a deliberate visual pause.",
-  },
-  {
-    id: "location",
-    title: "Location",
-    type: "Details",
-    duration: "10.0s",
-    description: "Date, place and practical information.",
-  },
-  {
-    id: "rsvp",
-    title: "RSVP",
-    type: "RSVP",
-    duration: "18.0s",
-    description: "Collect attendance and optional guest information.",
-  },
-  {
-    id: "finale",
-    title: "Finale",
-    type: "Closing",
-    duration: "6.0s",
-    description: "A warm closing moment with sharing and replay.",
-  },
-];
-
 function PublicPreview({ onBack, onPublish }: { onBack: () => void; onPublish: () => void }) {
   return (
     <PlatformShell
@@ -302,23 +240,23 @@ function PublicPreview({ onBack, onPublish }: { onBack: () => void; onPublish: (
               background: "linear-gradient(160deg,#fffaf3,#f0e9ef)",
             }}
           >
-            {scenes.map((scene, index) => (
+            {getOrderedScenes(sampleExperience).map((scene, index) => (
               <Box
                 key={scene.id}
                 sx={{ py: 5, minHeight: 260, display: "grid", placeItems: "center" }}
               >
                 <Stack spacing={1.5} sx={{ alignItems: "center" }}>
                   <Typography variant="overline" sx={{ color: "primary" }}>
-                    {String(index + 1).padStart(2, "0")} · {scene.type}
+                    {String(index + 1).padStart(2, "0")} · {getSceneDisplayType(scene)}
                   </Typography>
                   <Typography variant="h2" sx={{ fontFamily: "Georgia, serif" }}>
                     {scene.title}
                   </Typography>
                   <Typography sx={{ color: "text.secondary", maxWidth: 500 }}>
-                    {scene.description}
+                    {scene.purpose}
                   </Typography>
-                  {scene.type === "Interaction" && <Button variant="contained">Continue</Button>}
-                  {scene.type === "RSVP" && <Button variant="outlined">RSVP</Button>}
+                  {getSceneDisplayType(scene) === "Quiz" && <Button variant="contained">Continue</Button>}
+                  {getSceneDisplayType(scene) === "Rsvp" && <Button variant="outlined">RSVP</Button>}
                 </Stack>
               </Box>
             ))}
@@ -388,9 +326,9 @@ function PublishPage({ onBack }: { onBack: () => void }) {
 }
 
 function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () => void }) {
-  const [selectedId, setSelectedId] = React.useState("opening");
+  const [selectedId, setSelectedId] = React.useState<string>(String(getOrderedScenes(sampleExperience)[0]?.id));
   const [device, setDevice] = React.useState<"desktop" | "phone">("desktop");
-  const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
+  const selected = getOrderedScenes(sampleExperience).find((scene) => scene.id === selectedId) ?? getOrderedScenes(sampleExperience)[0];
   const [description, setDescription] = React.useState(selected.description);
 
   const [prevId, setPrevId] = React.useState(selectedId);
@@ -428,7 +366,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
               7 scenes · 3 interactions
             </Typography>
             <Stack spacing={0.5} sx={{ mt: 1 }}>
-              {scenes.map((scene, index) => (
+              {getOrderedScenes(sampleExperience).map((scene, index) => (
                 <Button
                   key={scene.id}
                   size="small"
@@ -449,7 +387,7 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
         right={
           <Stack spacing={1.5}>
             <Typography sx={{ fontWeight: 800 }}>Scene inspector</Typography>
-            <Chip size="small" label={selected.type} sx={{ alignSelf: "flex-start" }} />
+            <Chip size="small" label={getSceneDisplayType(selected)} sx={{ alignSelf: "flex-start" }} />
             <TextField label="Scene title" value={selected.title} fullWidth size="small" disabled />
             <TextField
               label="Description"
@@ -490,14 +428,14 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
 
           <Box>
             <Chip
-              label={`${selected.type} · Scene ${String(scenes.indexOf(selected) + 1).padStart(2, "0")}`}
+              label={`${getSceneDisplayType(selected)} · Scene ${String(getOrderedScenes(sampleExperience).indexOf(selected) + 1).padStart(2, "0")}`}
               sx={{ color: "primary" }}
             />
             <Typography variant="h2" sx={{ color: "#fff", mt: 1 }}>
               {selected.title}
             </Typography>
             <Typography sx={{ color: "#bdb7ae" }}>
-              {selected.duration} · Autosaved just now
+              {getSceneDurationLabel(selected)} · Autosaved just now
             </Typography>
           </Box>
 
@@ -522,16 +460,16 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
                 </Typography>
                 <Typography sx={{ color: "text.secondary" }}>{description}</Typography>
                 <Chip
-                  label={selected.type === "Interaction" ? "Guest interaction" : "Animated scene"}
+                  label={getSceneDisplayType(selected) === "Interaction" ? "Guest interaction" : "Animated scene"}
                   size="small"
                 />
               </Stack>
             </GuestFrame>
           </Box>
 
-          <SceneRail scenes={scenes.map((scene) => scene.title)} />
+          <SceneRail scenes={getOrderedScenes(sampleExperience).map((scene) => scene.title)} />
           <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-            {scenes.map((scene) => (
+            {getOrderedScenes(sampleExperience).map((scene) => (
               <Button
                 key={scene.id}
                 size="small"
