@@ -9,7 +9,9 @@
     "typecheck": "turbo run typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,html,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,html,css}\"",
-    "spellcheck": "cspell \"**/*.{ts,tsx,md,mdx,json,html,css}\""
+    "spellcheck": "cspell \"**/*.{ts,tsx,md,mdx,json,html,css}\"",
+    "storybook": "turbo run dev --filter=@invite/storybook",
+    "storybook:build": "turbo run build --filter=@invite/storybook"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
