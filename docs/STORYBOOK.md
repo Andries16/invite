@@ -1,37 +1,55 @@
-# Invite.md Storybook Contract
+# Storybook as the Invite.md visual contract
 
-## Purpose
+The HTML prototype is the product capability reference. The reusable composition primitives in `@invite/design-system` are the implementation layer used to reproduce that visual language consistently.
 
-apps/storybook is the visual integration environment for the creator platform. It is deliberately broader than a component gallery. The goal is to make the complete creator product inspectable before apps/creator is fully implemented.
+## Composition primitives
 
-## Catalog
+- `PageHeader` — eyebrow, title, description and contextual actions.
+- `SectionHeader` — section title, supporting copy and action.
+- `ResponsiveGrid` — responsive page/card layout.
+- `StatCard` / `MetricGrid` — dashboard and analytics metrics.
+- `StatusChip` — shared lifecycle/status vocabulary.
+- `MediaPreview` — reusable visual card/media header.
+- `ExperienceCard` — invitation/experience library card.
+- `RecipeCard` — experience/template recipe card.
+- `PreviewFrame` — shared guest-preview frame.
+- `inviteTheme` — visual tokens and MUI component defaults.
 
-Components, Pages, Overlays, Flows, Advanced builder surfaces, States & Responsive and Interaction tests.
+## Contract
 
-## Product lifecycle
+Prototype parity stories must consume these primitives for repeated creator patterns. Page-specific `sx` is allowed only for composition that is genuinely unique to the page or for prototype-specific art direction.
 
-Idea -> AI interview -> ExperienceSpec -> Storyboard -> Visual recipe -> Media -> Interactions -> Preview -> Review -> Publish -> Distribution -> Analytics.
+Do not duplicate navigation, page-header, metric-card, status-chip, experience-card, recipe-card, preview-frame, or responsive-grid implementations inside individual Storybook stories.
 
-Workspace capabilities include Campaigns, Collaboration, Billing, Marketplace, Security, Performance and Export.
+The public guest runtime remains separate from this creator design system. Creator MUI components must not be imported by the public runtime.
 
-## Story rules
+## Storybook structure
 
-A story is a contract, not a screenshot. Use real component composition and deterministic domain states. Keep business logic in packages and avoid turning Storybook into a second application.
+```
+Design System/
+  Platform Composition
 
-## Testing
+HTML Prototype/
+  Parity
+  Overlays & Playback
 
-Interaction stories use @storybook/test with accessible queries. Tests should verify behavior rather than implementation details.
+Platform/
+  Pages
+  Components
+  Overlays
+  Flows
+  States & Responsive
+```
 
-Recommended coverage includes primary actions, form submission, keyboard traversal, modal/drawer interaction, validation, publishing confirmation and campaign personalization preview.
+The `HTML Prototype/Parity` catalog is the closest visual implementation of the existing `html-prototype`. Changes to the prototype's repeated UI patterns should result in corresponding design-system changes and Storybook coverage.
 
-## Documentation requirements
+## Validation
 
-Each major product surface should document purpose, user entry point, primary actions, state model, accessibility expectations, responsive behavior and design-system dependencies.
+```bash
+pnpm install
+pnpm --filter @invite/storybook typecheck
+pnpm storybook
+pnpm storybook:build
+```
 
-## Prototype relationship
-
-html-prototype remains useful for visual comparison and product discovery. Storybook is the maintainable implementation-facing contract.
-
-## CI
-
-CI should run Storybook build, typecheck, lint and the interaction test suite against a built Storybook.
+When a reusable primitive changes, review its component stories first, then review the affected prototype-parity pages.
