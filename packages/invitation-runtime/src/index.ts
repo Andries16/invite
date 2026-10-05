@@ -45,6 +45,9 @@ const requiredThemeKeys: Array<keyof ExperienceTheme> = [
 
 const motionLevels = ["none", "subtle", "moderate", "expressive", "cinematic"] as const;
 
+const isMotionLevel = (value: unknown): value is ExperienceSpec["design"]["motion"] =>
+  isString(value) && motionLevels.some((level) => level === value);
+
 const isSceneTrigger = (value: unknown): value is SceneTrigger => {
   if (!isRecord(value) || !isString(value.type)) return false;
   if (value.type === "load") return true;
@@ -96,8 +99,7 @@ export const isExperienceSpec = (value: unknown): value is ExperienceSpec => {
   if (!isRecord(value)) return false;
   if (!isString(value.schemaVersion) || !isString(value.id) || !isString(value.invitationId)) return false;
   if (!isString(value.visualLanguage) || !isRecord(value.design)) return false;
-  if (!isRecord(value.design.theme) || !isString(value.design.motion)) return false;
-  if (!motionLevels.includes(value.design.motion as (typeof motionLevels)[number])) return false;
+  if (!isRecord(value.design.theme) || !isMotionLevel(value.design.motion)) return false;
   if (!requiredThemeKeys.every((key) => isString(value.design.theme[key]))) return false;
   if (value.design.theme.headingFont !== undefined && !isString(value.design.theme.headingFont)) return false;
   if (value.design.theme.bodyFont !== undefined && !isString(value.design.theme.bodyFont)) return false;
@@ -168,7 +170,7 @@ export const validateExperienceSpec = (spec: unknown): RuntimeValidationResult =
     issues.push({ path: "design", message: "Design is required." });
   } else {
     validateTheme(spec.design.theme, issues);
-    if (!isString(spec.design.motion) || !motionLevels.includes(spec.design.motion as (typeof motionLevels)[number])) {
+    if (!isMotionLevel(spec.design.motion)) {
       issues.push({ path: "design.motion", message: "Design motion must be a supported motion level." });
     }
   }
