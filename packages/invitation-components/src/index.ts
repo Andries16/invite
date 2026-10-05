@@ -26,5 +26,5 @@ export const isSupportedComponent = (kind: string): kind is ExperienceComponentK
     "celebration",
   ].includes(kind);
 
-export { ExperienceRenderer } from "./ExperienceRenderer";
-export type { ExperienceRendererProps } from "./ExperienceRenderer";
+export { ExperienceRenderer } from "./experience-renderer";
+export type { ExperienceRendererProps } from "./experience-renderer";
