@@ -26,7 +26,7 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
   useEffect(() => {
     if (!currentScene || !nextScene) return;
     if (currentScene.durationMs === undefined) return;
-    const timer = window.setTimeout(advance, currentScene.durationMs);
+    const timer = window.setTimeout(() => setCurrentSceneId(nextScene.id), currentScene.durationMs);
     return () => window.clearTimeout(timer);
   }, [currentScene, nextScene]);
 
@@ -36,7 +36,7 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
     const onScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       const progress = maxScroll <= 0 ? 1 : window.scrollY / maxScroll;
-      if (progress >= threshold) advance();
+      if (progress >= threshold) setCurrentSceneId(nextScene.id);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -47,7 +47,7 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
   const completedRequiredInteraction = nextScene?.trigger.type === "interaction-complete" && completedInteractions.has(nextScene.trigger.interactionId);
 
   useEffect(() => {
-    if (completedRequiredInteraction) advance();
+    if (completedRequiredInteraction && nextScene) setCurrentSceneId(nextScene.id);
   }, [completedRequiredInteraction, nextScene]);
 
   if (!validation.valid) return <main style={errorStyle}><h1>Experience unavailable</h1><p>This invitation has an invalid experience definition.</p><ul>{validation.issues.map((issue) => <li key={issue.path + issue.message}>{issue.path}: {issue.message}</li>)}</ul></main>;
