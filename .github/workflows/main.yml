@@ -29,11 +29,7 @@ jobs:
           node-version-file: ".nvmrc"
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Print Prettier output for runtime files
-        run: |
-          pnpm exec prettier --write apps/creator/src/app.tsx packages/invitation-components/src/audio-component.tsx packages/invitation-components/src/choice-component.tsx packages/invitation-components/src/countdown-component.tsx packages/invitation-components/src/experience-renderer.tsx packages/invitation-components/src/guestbook-component.tsx packages/invitation-components/src/renderer-styles.ts packages/invitation-components/src/reveal-component.tsx packages/invitation-components/src/scene-component-view.tsx packages/invitation-components/src/scene-view.tsx packages/invitation-components/src/timeline-component.tsx packages/invitation-runtime/src/index.ts
-          git diff -- apps/creator/src/app.tsx packages/invitation-components/src/audio-component.tsx packages/invitation-components/src/choice-component.tsx packages/invitation-components/src/countdown-component.tsx packages/invitation-components/src/experience-renderer.tsx packages/invitation-components/src/guestbook-component.tsx packages/invitation-components/src/renderer-styles.ts packages/invitation-components/src/reveal-component.tsx packages/invitation-components/src/scene-component-view.tsx packages/invitation-components/src/scene-view.tsx packages/invitation-components/src/timeline-component.tsx packages/invitation-runtime/src/index.ts
-          exit 1
+      - run: pnpm format:check
 
   spellcheck:
     name: Spellcheck
