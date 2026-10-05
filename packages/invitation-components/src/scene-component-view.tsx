@@ -1,4 +1,4 @@
-import type { ExperienceComponentKind, SceneComponent } from "@invite/invitation-schema";
+import type { SceneComponent } from "@invite/invitation-schema";
 import type { CSSProperties } from "react";
 import { AudioComponent } from "./audio-component";
 import { ChoiceComponent } from "./choice-component";
@@ -31,7 +31,7 @@ export const SceneComponentView = ({ component, reducedMotion, onInteractionComp
     case "map": return <section style={sectionStyle}><h2 style={headingStyle}>{title}</h2><p style={bodyStyle}>{getString(content.place, getString(content.address))}</p><p style={bodyStyle}>{[getString(content.date), getString(content.time)].filter(Boolean).join(" · ")}</p></section>;
     case "celebration": return <section style={{ ...sectionStyle, animation: reducedMotion ? undefined : "invite-fade-in 700ms ease" }}><h2 style={heroTitleStyle}>{title}</h2><p style={bodyStyle}>{getString(content.message, getString(content.text))}</p></section>;
     default: {
-      const exhaustive: never = component.kind as ExperienceComponentKind;
+      const exhaustive: never = component.kind;
       return <section style={sectionStyle}><h2 style={headingStyle}>{title}</h2><p style={bodyStyle}>Unsupported component: {exhaustive}</p></section>;
     }
   }
