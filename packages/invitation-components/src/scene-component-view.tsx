@@ -5,18 +5,16 @@ import { CountdownComponent } from "./countdown-component";
 import { GuestbookComponent } from "./guestbook-component";
 import {
   bodyStyle,
-  componentTitle,
   eyebrowStyle,
   galleryImageStyle,
   galleryStyle,
-  getString,
-  getStringList,
   headingStyle,
   heroTitleStyle,
   imageStyle,
   mediaStyle,
   sectionStyle,
 } from "./renderer-styles";
+import { componentTitle, getString, getStringList } from "./component-utils";
 import { RevealComponent } from "./reveal-component";
 import { TimelineComponent } from "./timeline-component";
 
