@@ -15,10 +15,7 @@ const matchesClickTrigger = (trigger: ExperienceSpec["scenes"][number]["trigger"
 export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
   const validation = useMemo(() => validateExperienceSpec(spec), [spec]);
   const validSpec = validation.valid && isExperienceSpec(spec) ? spec : undefined;
-  const scenes = useMemo(
-    () => (validSpec ? getOrderedScenes(validSpec) : []),
-    [validSpec],
-  );
+  const scenes = useMemo(() => (validSpec ? getOrderedScenes(validSpec) : []), [validSpec]);
   const [currentSceneId, setCurrentSceneId] = useState<ExperienceSpec["scenes"][number]["id"] | null>(
     scenes[0]?.id ?? null,
   );
@@ -39,7 +36,12 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
 
   useEffect(() => {
     if (!validSpec || !currentScene || !nextScene) return;
-    if (nextScene.trigger.type !== "after") return;
+    if (nextScene.trigger.type !== "load") return;
+    setCurrentSceneId(nextScene.id);
+  }, [currentScene, nextScene, validSpec]);
+
+  useEffect(() => {
+    if (!validSpec || !currentScene || !nextScene || nextScene.trigger.type !== "after") return;
     const timer = window.setTimeout(
       () => setCurrentSceneId(nextScene.id),
       Math.max(0, nextScene.trigger.seconds * 1000),
@@ -111,19 +113,22 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
           scene={currentScene}
           reducedMotion={reducedMotion}
           canContinue={canContinue}
-          onNext={() => setCurrentSceneId(nextScene?.id ?? currentScene.id)}
+          onNext={() => {
+            if (nextScene && matchesClickTrigger(nextScene.trigger)) {
+              setCurrentSceneId(nextScene.id);
+            }
+          }}
           onInteractionComplete={(interactionId) =>
             setCompletedInteractions((current) => new Set(current).add(interactionId))
           }
         />
-        <nav aria-label="Experience scenes" style={sceneNavigationStyle}>
+        <nav aria-label="Experience progress" style={sceneNavigationStyle}>
           {scenes.map((scene) => (
-            <button
+            <span
               key={scene.id}
-              type="button"
-              aria-label={"Go to scene " + (scene.order + 1)}
               aria-current={scene.id === currentScene.id ? "step" : undefined}
-              onClick={() => setCurrentSceneId(scene.id)}
+              aria-label={"Scene " + (scene.order + 1)}
+              role="img"
               style={{
                 ...sceneDotStyle,
                 background:
