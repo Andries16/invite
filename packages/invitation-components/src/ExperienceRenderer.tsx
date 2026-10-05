@@ -2,7 +2,7 @@ import type { ExperienceComponentKind, ExperienceSpec, SceneComponent, SceneSpec
 import { getNextScene, getOrderedScenes, validateExperienceSpec } from "@invite/invitation-runtime";
 import { useMemo, useState } from "react";
 
-interface ExperienceRendererProps {
+export interface ExperienceRendererProps {
   spec: ExperienceSpec;
 }
 
@@ -74,6 +74,14 @@ function SceneComponentView({ component, reducedMotion }: ComponentProps) {
       return <ChoiceComponent component={component} label="Choose an answer" />;
     case "rsvp":
       return <ChoiceComponent component={component} label="Let them know you are coming" />;
+    case "map":
+      return (
+        <section style={sectionStyle}>
+          <h2 style={headingStyle}>{title}</h2>
+          <p style={bodyStyle}>{getString(content.place, getString(content.address))}</p>
+          <p style={bodyStyle}>{[getString(content.date), getString(content.time)].filter(Boolean).join(" · ")}</p>
+        </section>
+      );
     case "celebration":
       return (
         <section style={{ ...sectionStyle, animation: reducedMotion ? undefined : "invite-fade-in 700ms ease" }}>
@@ -180,7 +188,7 @@ export function ExperienceRenderer({ spec }: ExperienceRendererProps) {
   const nextScene = getNextScene(spec, currentScene.id);
 
   return (
-    <main style={{ ...runtimeStyle, background: spec.design.theme.background, color: spec.design.theme.text, fontFamily: spec.design.theme.bodyFont ?? "system-ui, sans-serif" }}>
+    <main style={{ ...runtimeStyle, background: spec.design.theme.background, color: spec.design.theme.text, fontFamily: spec.design.theme.bodyFont ?? "system-ui, sans-serif", ["--invite-primary" as string]: spec.design.theme.primary }}>
       <style>{
         "@keyframes invite-fade-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }"
       }</style>
