@@ -1,5 +1,6 @@
 import { createExperienceSpecProposal, applyExperienceSpecPatch } from "@invite/ai";
 import { inviteTheme } from "@invite/design-system";
+import { ExperienceRenderer } from "@invite/invitation-components";
 import { getOrderedScenes } from "@invite/invitation-runtime";
 import { getSceneDescription, getSceneDisplayType, getSceneTitle, sampleExperience } from "@invite/story";
 import type { ExperienceSpec, SceneSpec } from "@invite/invitation-schema";
@@ -11,6 +12,7 @@ import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import TextField from "@mui/material/TextField";
+import Chip from "@mui/material/Chip";
 import { useMemo, useState } from "react";
 
 function Editor({ experience, selected, onSelect, onChange }: {
@@ -23,7 +25,7 @@ function Editor({ experience, selected, onSelect, onChange }: {
   return <Stack spacing={2} sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
     <Typography variant="overline" color="primary">Experience Editor</Typography>
     <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
-      <Typography variant="h2">{getSceneTitle(scenes[0])}</Typography>
+      <Typography variant="h2">{getSceneTitle(selected)}</Typography>
       <Chip label={`${scenes.length} scenes · ${experience.interactions.length} interactions`} />
     </Stack>
     <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
@@ -59,5 +61,6 @@ export function App() {
   return <ThemeProvider theme={inviteTheme}><CssBaseline /><Stack spacing={2} sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
     <Card><CardContent><Stack spacing={1.5}><Typography variant="h3">Creative director</Typography><TextField fullWidth label="Brief" value={brief} onChange={(event) => setBrief(event.target.value)} /><Button variant="contained" onClick={generateProposal}>Generate AI proposal</Button>{proposalState && <Typography color="success.main">{proposalState}</Typography>}</Stack></CardContent></Card>
     <Editor experience={experience} selected={selected} onSelect={setSelectedId} onChange={setExperience} />
+    <Card><CardContent><Stack spacing={1.5}><Typography variant="h4">Guest preview</Typography><Typography color="text.secondary">The creator preview uses the same canonical ExperienceSpec and renderer as the public runtime.</Typography><div style={{ border: "1px solid #ddd", borderRadius: 16, overflow: "hidden" }}><ExperienceRenderer spec={experience} /></div></Stack></CardContent></Card>
   </Stack></ThemeProvider>;
 }
