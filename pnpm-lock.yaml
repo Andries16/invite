@@ -146,6 +146,9 @@ importers:
 
   apps/public:
     dependencies:
+      '@invite/story':
+        specifier: workspace:*
+        version: link:../../packages/story
       '@invite/invitation-components':
         specifier: workspace:*
         version: link:../../packages/invitation-components
@@ -180,6 +183,9 @@ importers:
 
   apps/storybook:
     dependencies:
+      '@invite/invitation-components':
+        specifier: workspace:*
+        version: link:../../packages/invitation-components
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@18.3.31)(react@18.3.1)
@@ -324,6 +330,13 @@ importers:
       '@invite/invitation-schema':
         specifier: workspace:*
         version: link:../invitation-schema
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0
+        version: 18.3.31
 
   packages/invitation-generator:
     dependencies:
