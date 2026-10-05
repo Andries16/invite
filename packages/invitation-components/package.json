@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "@invite/invitation-schema": "workspace:*",
-    "react": "^19.3.0"
+    "react": "^18.0.0"
   },
   "devDependencies": {
-    "@types/react": "^19.2.0"
+    "@types/react": "^18.0.0"
   }
 }
