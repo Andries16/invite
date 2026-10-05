@@ -1,6 +1,6 @@
 import type { ExperienceComponentKind, ExperienceSpec, SceneComponent, SceneSpec } from "@invite/invitation-schema";
 import { getNextScene, getOrderedScenes, validateExperienceSpec } from "@invite/invitation-runtime";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 
 export interface ExperienceRendererProps {
@@ -75,6 +75,14 @@ function SceneComponentView({ component, reducedMotion }: ComponentProps) {
       return <ChoiceComponent component={component} label="Choose an answer" />;
     case "rsvp":
       return <ChoiceComponent component={component} label="Let them know you are coming" />;
+    case "timeline":
+      return <TimelineComponent component={component} />;
+    case "countdown":
+      return <CountdownComponent component={component} />;
+    case "audio":
+      return <AudioComponent component={component} />;
+    case "guestbook":
+      return <GuestbookComponent component={component} />;
     case "map":
       return (
         <section style={sectionStyle}>
@@ -98,6 +106,116 @@ function SceneComponentView({ component, reducedMotion }: ComponentProps) {
         </section>
       );
   }
+}
+
+function TimelineComponent({ component }: { component: SceneComponent }) {
+  const items = Array.isArray(component.content.items) ? component.content.items : [];
+
+  return (
+    <section style={sectionStyle}>
+      <h2 style={headingStyle}>{componentTitle(component)}</h2>
+      <ol style={timelineStyle}>
+        {items.map((item, index) => {
+          const value = item && typeof item === "object" ? item as Record<string, unknown> : {};
+          return (
+            <li key={String(value.id ?? index)} style={timelineItemStyle}>
+              <strong>{getString(value.title, `Moment ${index + 1}`)}</strong>
+              <span style={bodyStyle}>{getString(value.description, getString(value.text))}</span>
+              {getString(value.date) && <small>{getString(value.date)}</small>}
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
+function CountdownComponent({ component }: { component: SceneComponent }) {
+  const target = getString(component.content.target);
+  const [remaining, setRemaining] = useState(() => getCountdownParts(target));
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setRemaining(getCountdownParts(target)), 1000);
+    return () => window.clearInterval(timer);
+  }, [target]);
+
+  return (
+    <section style={sectionStyle} aria-live="polite">
+      <h2 style={headingStyle}>{componentTitle(component)}</h2>
+      <div style={countdownGridStyle}>
+        {Object.entries(remaining).map(([unit, value]) => (
+          <div key={unit} style={countdownItemStyle}>
+            <strong>{value}</strong>
+            <span>{unit}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AudioComponent({ component }: { component: SceneComponent }) {
+  const src = getString(component.content.src);
+  return (
+    <section style={sectionStyle}>
+      <h2 style={headingStyle}>{componentTitle(component)}</h2>
+      {src ? <audio controls preload="metadata" src={src} style={audioStyle} /> : <p style={bodyStyle}>Audio is not configured yet.</p>}
+      <p style={bodyStyle}>{getString(component.content.caption)}</p>
+    </section>
+  );
+}
+
+function GuestbookComponent({ component }: { component: SceneComponent }) {
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState<string[]>([]);
+  const prompt = getString(component.content.prompt, "Leave a message");
+
+  return (
+    <section style={sectionStyle}>
+      <h2 style={headingStyle}>{componentTitle(component)}</h2>
+      <label style={guestbookLabelStyle}>
+        <span>{prompt}</span>
+        <textarea
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          rows={4}
+          maxLength={500}
+          style={guestbookInputStyle}
+          placeholder="Write something memorable..."
+        />
+      </label>
+      <button
+        type="button"
+        style={primaryButtonStyle}
+        disabled={!message.trim()}
+        onClick={() => {
+          const next = message.trim();
+          if (!next) return;
+          setSubmitted((current) => [...current, next]);
+          setMessage("");
+        }}
+      >
+        Sign the guestbook
+      </button>
+      {submitted.length > 0 && (
+        <div style={guestbookEntriesStyle}>
+          {submitted.map((entry, index) => <p key={index} style={bodyStyle}>{entry}</p>)}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function getCountdownParts(target: string): Record<string, number> {
+  const targetTime = Date.parse(target);
+  const distance = Number.isNaN(targetTime) ? 0 : Math.max(0, targetTime - Date.now());
+  const totalSeconds = Math.floor(distance / 1000);
+  return {
+    days: Math.floor(totalSeconds / 86400),
+    hours: Math.floor((totalSeconds % 86400) / 3600),
+    minutes: Math.floor((totalSeconds % 3600) / 60),
+    seconds: totalSeconds % 60,
+  };
 }
 
 function RevealComponent({ component }: { component: SceneComponent }) {
@@ -245,4 +363,12 @@ const selectedButtonStyle = { ...secondaryButtonStyle, background: "currentColor
 const choiceGridStyle = { display: "flex", flexWrap: "wrap" as const, gap: 10 };
 const sceneNavigationStyle = { display: "flex", justifyContent: "center", gap: 8, padding: "8px 0 24px" };
 const sceneDotStyle = { width: 8, height: 8, border: 0, borderRadius: "50%", padding: 0, cursor: "pointer" };
+const timelineStyle = { display: "grid", gap: 16, margin: 0, paddingLeft: 24 };
+const timelineItemStyle = { display: "grid", gap: 4, padding: "16px 0", borderBottom: "1px solid currentColor" };
+const countdownGridStyle = { display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 10 };
+const countdownItemStyle = { display: "grid", gap: 4, textAlign: "center" as const, padding: 16, border: "1px solid currentColor", borderRadius: 16 };
+const audioStyle = { width: "100%", maxWidth: 560 };
+const guestbookLabelStyle = { display: "grid", gap: 8 };
+const guestbookInputStyle = { width: "100%", resize: "vertical" as const, border: "1px solid currentColor", borderRadius: 12, padding: 12, background: "transparent", color: "inherit" };
+const guestbookEntriesStyle = { display: "grid", gap: 8 };
 const errorStyle = { minHeight: "100vh", padding: 32, display: "grid", placeContent: "center", gap: 12 };
