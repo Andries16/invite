@@ -28,6 +28,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @invite/storybook exec playwright install --with-deps chromium
       - run: pnpm --filter @invite/storybook typecheck
       - run: pnpm --filter @invite/storybook test:ci
       - run: pnpm --filter @invite/storybook build
