@@ -42,15 +42,13 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
     currentScene && validSpec ? getNextScene(validSpec, currentScene.id) : undefined;
 
   useEffect(() => {
-    if (scenes.length > 0 && !scenes.some((scene) => scene.id === currentSceneId)) {
-      setCurrentSceneId(scenes[0].id);
+    if (!validSpec || !currentScene || !nextScene || nextScene.trigger.type !== "load") {
+      return;
     }
-  }, [scenes, currentSceneId]);
 
-  useEffect(() => {
-    if (!validSpec || !currentScene || !nextScene) return;
-    if (nextScene.trigger.type !== "load") return;
-    setCurrentSceneId(nextScene.id);
+    const timer = window.setTimeout(() => setCurrentSceneId(nextScene.id), 0);
+
+    return () => window.clearTimeout(timer);
   }, [currentScene, nextScene, validSpec]);
 
   useEffect(() => {
@@ -92,9 +90,13 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
     completedInteractions.has(nextScene.trigger.interactionId);
 
   useEffect(() => {
-    if (completedRequiredInteraction && nextScene) {
-      setCurrentSceneId(nextScene.id);
+    if (!completedRequiredInteraction || !nextScene) {
+      return;
     }
+
+    const timer = window.setTimeout(() => setCurrentSceneId(nextScene.id), 0);
+
+    return () => window.clearTimeout(timer);
   }, [completedRequiredInteraction, nextScene]);
 
   const canContinue = Boolean(nextScene && matchesClickTrigger(nextScene.trigger));
