@@ -1,5 +1,7 @@
+import { createExperienceSpecProposal, applyExperienceSpecPatch } from "@invite/ai";
 import { inviteTheme } from "@invite/design-system";
 import { getOrderedScenes } from "@invite/invitation-runtime";
+import { getSceneDescription, getSceneDisplayType, getSceneTitle, sampleExperience } from "@invite/story";
 import type { ExperienceSpec, SceneSpec } from "@invite/invitation-schema";
 import CssBaseline from "@mui/material/CssBaseline";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
@@ -11,39 +13,51 @@ import CardContent from "@mui/material/CardContent";
 import TextField from "@mui/material/TextField";
 import { useMemo, useState } from "react";
 
-const experience: ExperienceSpec = {
-  schemaVersion: "1.0",
-  id: "date-surprise" as ExperienceSpec["id"],
-  invitationId: "invitation-demo",
-  visualLanguage: "cinematic",
-  design: { theme: { background: "#fffaf3", surface: "#fff", text: "#241f1b", mutedText: "#756c64", primary: "#6f4b63", secondary: "#a97891", accent: "#d7a85b", border: "#ded5cd" }, motion: "moderate" },
-  scenes: [
-    { id: "opening" as ExperienceSpec["scenes"][number]["id"], order: 0, purpose: "Opening", trigger: { type: "load" }, content: { title: "A little surprise" }, components: [{ kind: "hero", content: { title: "A little surprise" } }], mediaIds: [], interactionIds: [] },
-    { id: "story" as ExperienceSpec["scenes"][number]["id"], order: 1, purpose: "Story", trigger: { type: "after", seconds: 8 }, content: { title: "One more memory" }, components: [{ kind: "text", content: { title: "One more memory" } }], mediaIds: [], interactionIds: [] },
-    { id: "question" as ExperienceSpec["scenes"][number]["id"], order: 2, purpose: "Interaction", trigger: { type: "load" }, content: { title: "The question" }, components: [{ kind: "quiz", content: { question: "Where should the evening begin?", choices: ["At sunset", "After dark"] } }], mediaIds: [], interactionIds: ["mood-quiz"] },
-    { id: "reveal" as ExperienceSpec["scenes"][number]["id"], order: 3, purpose: "Reveal", trigger: { type: "interaction-complete", interactionId: "mood-quiz" }, content: { title: "The reveal" }, components: [{ kind: "reveal", content: { title: "Valea Morilor" } }], mediaIds: [], interactionIds: [] },
-  ],
-  interactions: [{ type: "quiz", id: "mood-quiz", choices: ["At sunset", "After dark"] }],
-  variables: [],
-};
-
-function Editor({ scenes, selected, onSelect }: { scenes: SceneSpec[]; selected: SceneSpec; onSelect: (id: SceneSpec["id"]) => void }) {
-  const [purpose, setPurpose] = useState(selected.purpose);
+function Editor({ experience, selected, onSelect, onChange }: {
+  experience: ExperienceSpec;
+  selected: SceneSpec;
+  onSelect: (id: SceneSpec["id"]) => void;
+  onChange: (next: ExperienceSpec) => void;
+}) {
+  const scenes = getOrderedScenes(experience);
   return <Stack spacing={2} sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
     <Typography variant="overline" color="primary">Experience Editor</Typography>
-    <Typography variant="h2">A little surprise</Typography>
+    <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+      <Typography variant="h2">{getSceneTitle(scenes[0])}</Typography>
+      <Chip label={`${scenes.length} scenes · ${experience.interactions.length} interactions`} />
+    </Stack>
     <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-      <Card><CardContent><Stack spacing={1}>{scenes.map((scene) => <Button key={scene.id} variant={scene.id === selected.id ? "contained" : "text"} onClick={() => onSelect(scene.id)}>{scene.purpose}</Button>)}</Stack></CardContent></Card>
-      <Card sx={{ flex: 1 }}><CardContent><Typography variant="h3">{String(selected.content.title ?? selected.purpose)}</Typography><Typography color="text.secondary">{selected.components?.[0]?.kind}</Typography></CardContent></Card>
-      <Card><CardContent><Stack spacing={2}><Typography fontWeight={700}>Scene inspector</Typography><TextField label="Purpose" value={purpose} onChange={(event) => setPurpose(event.target.value)} /><TextField label="Trigger" value={selected.trigger.type} disabled /></Stack></CardContent></Card>
+      <Card><CardContent><Stack spacing={1}>{scenes.map((scene) => <Button key={scene.id} variant={scene.id === selected.id ? "contained" : "text"} onClick={() => onSelect(scene.id)}>{getSceneTitle(scene)}</Button>)}</Stack></CardContent></Card>
+      <Card sx={{ flex: 1 }}><CardContent><Typography variant="h3">{getSceneTitle(selected)}</Typography><Typography color="text.secondary">{getSceneDisplayType(selected)}</Typography><Typography sx={{ mt: 2 }} color="text.secondary">{getSceneDescription(selected)}</Typography></CardContent></Card>
+      <Card><CardContent><Stack spacing={2}><Typography fontWeight={700}>Scene inspector</Typography><TextField label="Purpose" value={selected.purpose} onChange={(event) => onChange({ ...experience, scenes: experience.scenes.map((scene) => scene.id === selected.id ? { ...scene, purpose: event.target.value } : scene) })} /><TextField label="Trigger" value={selected.trigger.type} disabled /></Stack></CardContent></Card>
     </Stack>
   </Stack>;
 }
 
 export function App() {
-  const scenes = useMemo(() => getOrderedScenes(experience), []);
+  const [experience, setExperience] = useState<ExperienceSpec>(sampleExperience);
+  const scenes = useMemo(() => getOrderedScenes(experience), [experience]);
   const [selectedId, setSelectedId] = useState(scenes[0]?.id);
   const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
+  const [brief, setBrief] = useState("Make this a cinematic date invitation for September 28 at sunset.");
+  const [proposalState, setProposalState] = useState("");
+
   if (!selected) return null;
-  return <ThemeProvider theme={inviteTheme}><CssBaseline /><Editor scenes={scenes} selected={selected} onSelect={setSelectedId} /></ThemeProvider>;
+
+  const generateProposal = () => {
+    const proposal = createExperienceSpecProposal({
+      invitationType: "date",
+      goal: brief,
+      tone: ["cinematic", "playful", "personal"],
+      date: "September 28",
+      location: "Valea Morilor",
+    }, experience);
+    setExperience(applyExperienceSpecPatch(experience, proposal.proposal));
+    setProposalState(`AI proposal applied · ${Math.round(proposal.confidence * 100)}% confidence · review recommended`);
+  };
+
+  return <ThemeProvider theme={inviteTheme}><CssBaseline /><Stack spacing={2} sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
+    <Card><CardContent><Stack spacing={1.5}><Typography variant="h3">Creative director</Typography><TextField fullWidth label="Brief" value={brief} onChange={(event) => setBrief(event.target.value)} /><Button variant="contained" onClick={generateProposal}>Generate AI proposal</Button>{proposalState && <Typography color="success.main">{proposalState}</Typography>}</Stack></CardContent></Card>
+    <Editor experience={experience} selected={selected} onSelect={setSelectedId} onChange={setExperience} />
+  </Stack></ThemeProvider>;
 }
