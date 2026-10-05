@@ -15,8 +15,13 @@
     "@invite/invitation-runtime": "workspace:*",
     "@invite/invitation-schema": "workspace:*",
     "@invite/shared": "workspace:*",
+    "@invite/story": "workspace:*",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "@mui/material": "^9.4.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@invite/ai": "workspace:^"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

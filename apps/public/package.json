@@ -14,7 +14,8 @@
     "@invite/invitation-runtime": "workspace:*",
     "@invite/invitation-schema": "workspace:*",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "@invite/story": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

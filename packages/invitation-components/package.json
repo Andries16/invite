@@ -11,6 +11,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@invite/invitation-schema": "workspace:*"
+    "@invite/invitation-schema": "workspace:*",
+    "@invite/invitation-runtime": "workspace:*",
+    "react": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0"
   }
 }

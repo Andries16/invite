@@ -97,6 +97,15 @@ importers:
 
   apps/creator:
     dependencies:
+      '@emotion/react':
+        specifier: ^11.14.0
+        version: 11.14.0(@types/react@18.3.31)(react@18.3.1)
+      '@emotion/styled':
+        specifier: ^11.14.0
+        version: 11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
+      '@invite/ai':
+        specifier: workspace:^
+        version: link:../../packages/ai
       '@invite/design-system':
         specifier: workspace:^
         version: link:../../packages/design-system
@@ -112,6 +121,12 @@ importers:
       '@invite/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@invite/story':
+        specifier: workspace:*
+        version: link:../../packages/story
+      '@mui/material':
+        specifier: ^9.4.0
+        version: 9.4.0(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -146,6 +161,9 @@ importers:
       '@invite/invitation-schema':
         specifier: workspace:*
         version: link:../../packages/invitation-schema
+      '@invite/story':
+        specifier: workspace:*
+        version: link:../../packages/story
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -180,6 +198,18 @@ importers:
       '@invite/design-system':
         specifier: workspace:^
         version: link:../../packages/design-system
+      '@invite/invitation-components':
+        specifier: workspace:*
+        version: link:../../packages/invitation-components
+      '@invite/invitation-runtime':
+        specifier: workspace:*
+        version: link:../../packages/invitation-runtime
+      '@invite/invitation-schema':
+        specifier: workspace:*
+        version: link:../../packages/invitation-schema
+      '@invite/story':
+        specifier: workspace:^
+        version: link:../../packages/story
       '@mui/icons-material':
         specifier: ^9.4.0
         version: 9.4.0(@mui/material@9.4.0(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react@18.3.1))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.31)(react@18.3.1)
@@ -261,7 +291,11 @@ importers:
         specifier: ^7.0.2
         version: 7.0.2
 
-  packages/ai: {}
+  packages/ai:
+    dependencies:
+      '@invite/invitation-schema':
+        specifier: workspace:^
+        version: link:../invitation-schema
 
   packages/campaign-schema:
     devDependencies:
@@ -308,9 +342,19 @@ importers:
 
   packages/invitation-components:
     dependencies:
+      '@invite/invitation-runtime':
+        specifier: workspace:*
+        version: link:../invitation-runtime
       '@invite/invitation-schema':
         specifier: workspace:*
         version: link:../invitation-schema
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^18.0.0
+        version: 18.3.31
 
   packages/invitation-generator:
     dependencies:
@@ -337,6 +381,10 @@ importers:
   packages/storage: {}
 
   packages/story:
+    dependencies:
+      '@invite/invitation-schema':
+        specifier: workspace:^
+        version: link:../invitation-schema
     devDependencies:
       typescript:
         specifier: ^5.0.0
