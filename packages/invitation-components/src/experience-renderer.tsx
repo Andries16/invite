@@ -31,6 +31,15 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
   }, [currentScene, nextScene]);
 
   useEffect(() => {
+    if (!nextScene || nextScene.trigger.type !== "after") return;
+    const timer = window.setTimeout(
+      () => setCurrentSceneId(nextScene.id),
+      Math.max(0, nextScene.trigger.seconds * 1000),
+    );
+    return () => window.clearTimeout(timer);
+  }, [nextScene]);
+
+  useEffect(() => {
     if (!currentScene || !nextScene || nextScene.trigger.type !== "scroll") return;
     const threshold = Math.min(1, Math.max(0, nextScene.trigger.threshold ?? 0.5));
     const onScroll = () => {
