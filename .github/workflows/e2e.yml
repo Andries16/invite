@@ -26,11 +26,11 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @invite/storybook exec playwright install --with-deps chromium
       - name: Run E2E when a browser project exists
         run: |
           if find apps -name 'playwright.config.*' -o -name '*e2e*.test.ts' | grep -q .; then
-            pnpm exec playwright test
+            pnpm --filter @invite/storybook exec playwright test
           else
             echo "No Playwright application suite yet; workflow is scaffolded."
           fi

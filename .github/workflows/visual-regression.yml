@@ -26,11 +26,11 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm --filter @invite/storybook exec playwright install --with-deps chromium
       - name: Check for visual test configuration
         run: |
           if find . -name 'playwright.config.*' | grep -q .; then
-            pnpm exec playwright test --grep @visual
+            pnpm --filter @invite/storybook exec playwright test --grep @visual
           else
             echo "No visual regression suite yet; workflow is scaffolded."
           fi
