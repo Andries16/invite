@@ -1,8 +1,4 @@
-import type {
-  ExperienceId,
-  ExperienceSpec,
-  SceneId,
-} from "@invite/invitation-schema";
+import type { ExperienceId, ExperienceSpec, SceneId } from "@invite/invitation-schema";
 
 const experienceId = "exp-a-little-surprise" as ExperienceId;
 const invitationId = "inv-a-little-surprise";
@@ -18,7 +14,8 @@ const scene = (
   id: id as SceneId,
   order,
   purpose,
-  trigger: order === 0 ? ({ type: "load" } as const) : ({ type: "scroll", threshold: 0.5 } as const),
+  trigger:
+    order === 0 ? ({ type: "load" } as const) : ({ type: "scroll", threshold: 0.5 } as const),
   content,
   components: [{ kind: componentKind, content }],
   mediaIds: [],
@@ -59,15 +56,29 @@ export const sampleExperience: ExperienceSpec = {
       eyebrow: "SEPTEMBER 28",
       description: "A little surprise is waiting for you.",
     }),
-    scene("memory", 1, "One personal memory with photo, caption and ambient motion.", 12000, "text", {
-      title: "Memory beat",
-      text: "One of our favorite moments, kept here for you.",
-    }),
-    scene("question", 2, "A playful question that invites the guest to participate.", 15000, "quiz", {
-      title: "The question",
-      question: "Ready for one little clue?",
-      choices: ["Absolutely", "Give me a hint"],
-    }),
+    scene(
+      "memory",
+      1,
+      "One personal memory with photo, caption and ambient motion.",
+      12000,
+      "text",
+      {
+        title: "Memory beat",
+        text: "One of our favorite moments, kept here for you.",
+      },
+    ),
+    scene(
+      "question",
+      2,
+      "A playful question that invites the guest to participate.",
+      15000,
+      "quiz",
+      {
+        title: "The question",
+        question: "Ready for one little clue?",
+        choices: ["Absolutely", "Give me a hint"],
+      },
+    ),
     scene("reveal", 3, "The central surprise with a deliberate visual pause.", 7400, "reveal", {
       title: "The reveal",
       text: "The exact location unlocks now.",

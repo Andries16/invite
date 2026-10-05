@@ -1,11 +1,6 @@
 import type { ExperienceSpec } from "@invite/invitation-schema";
 
-export type AiJobType =
-  | "interview"
-  | "storyboard"
-  | "experience-compose"
-  | "copy"
-  | "refine";
+export type AiJobType = "interview" | "storyboard" | "experience-compose" | "copy" | "refine";
 
 export interface AiJob {
   id: string;
@@ -98,19 +93,28 @@ export const applyExperienceSpecPatch = (
     if (operation.op === "set") {
       if (operation.path === "/visualLanguage") return { ...next, visualLanguage: operation.value };
       if (operation.path === "/design/motion") {
-        return { ...next, design: { ...next.design, motion: operation.value as ExperienceSpec["design"]["motion"] } };
+        return {
+          ...next,
+          design: { ...next.design, motion: operation.value as ExperienceSpec["design"]["motion"] },
+        };
       }
-      const themePath = operation.path.slice("/design/theme/".length) as keyof ExperienceSpec["design"]["theme"];
-      return { ...next, design: { ...next.design, theme: { ...next.design.theme, [themePath]: operation.value } } };
+      const themePath = operation.path.slice(
+        "/design/theme/".length,
+      ) as keyof ExperienceSpec["design"]["theme"];
+      return {
+        ...next,
+        design: { ...next.design, theme: { ...next.design.theme, [themePath]: operation.value } },
+      };
     }
 
     const sceneIndex = next.scenes.findIndex((scene) => scene.id === operation.sceneId);
     if (sceneIndex < 0) throw new Error(`Unknown scene id: ${String(operation.sceneId)}`);
     const scenes = [...next.scenes];
     const scene = scenes[sceneIndex];
-    scenes[sceneIndex] = operation.op === "set-scene-purpose"
-      ? { ...scene, purpose: operation.value }
-      : { ...scene, content: operation.value };
+    scenes[sceneIndex] =
+      operation.op === "set-scene-purpose"
+        ? { ...scene, purpose: operation.value }
+        : { ...scene, content: operation.value };
     return { ...next, scenes };
   }, base);
 };
@@ -140,9 +144,7 @@ export const createExperienceSpecProposal = (
   }
 
   if (brief.date || brief.location) {
-    const locationScene = base.scenes.find((scene) =>
-      scene.content.title === "Location",
-    );
+    const locationScene = base.scenes.find((scene) => scene.content.title === "Location");
 
     if (locationScene) {
       operations.push({

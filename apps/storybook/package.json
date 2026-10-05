@@ -21,7 +21,9 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "@invite/story": "workspace:^",
-    "@invite/invitation-components": "workspace:*"
+    "@invite/invitation-components": "workspace:*",
+    "@invite/invitation-runtime": "workspace:*",
+    "@invite/invitation-schema": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^8.6.15",

@@ -7,9 +7,7 @@ export interface ComponentRenderContext {
   variables: Record<string, string | number | boolean>;
 }
 
-export const isSupportedComponent = (
-  kind: string,
-): kind is ExperienceComponentKind =>
+export const isSupportedComponent = (kind: string): kind is ExperienceComponentKind =>
   [
     "hero",
     "text",

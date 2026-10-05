@@ -15,6 +15,7 @@
     "@invite/invitation-runtime": "workspace:*",
     "@invite/invitation-schema": "workspace:*",
     "@invite/shared": "workspace:*",
+    "@invite/story": "workspace:*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "@mui/material": "^9.4.0",

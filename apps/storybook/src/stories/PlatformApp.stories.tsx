@@ -1,7 +1,13 @@
 import { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
 import { ExperienceRenderer } from "@invite/invitation-components";
 import { getOrderedScenes } from "@invite/invitation-runtime";
-import { getSceneDescription, getSceneDisplayType, getSceneDurationLabel, getSceneTitle, sampleExperience } from "@invite/story";
+import {
+  getSceneDescription,
+  getSceneDisplayType,
+  getSceneDurationLabel,
+  getSceneTitle,
+  sampleExperience,
+} from "@invite/story";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DesktopWindowsIcon from "@mui/icons-material/DesktopWindows";
@@ -303,14 +309,17 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
   const [selectedId, setSelectedId] = React.useState<string>(String(orderedScenes[0]?.id));
   const [device, setDevice] = React.useState<"desktop" | "phone">("desktop");
   const selected = orderedScenes.find((scene) => scene.id === selectedId) ?? orderedScenes[0];
-  if (!selected) return null;
-  const [description, setDescription] = React.useState(getSceneDescription(selected));
+  const [description, setDescription] = React.useState(
+    selected ? getSceneDescription(selected) : "",
+  );
 
   const [prevId, setPrevId] = React.useState(selectedId);
   if (selectedId !== prevId) {
     setPrevId(selectedId);
-    setDescription(getSceneDescription(selected));
+    setDescription(selected ? getSceneDescription(selected) : "");
   }
+
+  if (!selected) return null;
 
   return (
     <PlatformShell
@@ -362,8 +371,18 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
         right={
           <Stack spacing={1.5}>
             <Typography sx={{ fontWeight: 800 }}>Scene inspector</Typography>
-            <Chip size="small" label={getSceneDisplayType(selected)} sx={{ alignSelf: "flex-start" }} />
-            <TextField label="Scene title" value={getSceneTitle(selected)} fullWidth size="small" disabled />
+            <Chip
+              size="small"
+              label={getSceneDisplayType(selected)}
+              sx={{ alignSelf: "flex-start" }}
+            />
+            <TextField
+              label="Scene title"
+              value={getSceneTitle(selected)}
+              fullWidth
+              size="small"
+              disabled
+            />
             <TextField
               label="Description"
               value={description}
@@ -435,14 +454,20 @@ function EditorPage({ onBack, onPreview }: { onBack: () => void; onPreview: () =
                 </Typography>
                 <Typography sx={{ color: "text.secondary" }}>{description}</Typography>
                 <Chip
-                  label={["Quiz", "Rsvp"].includes(getSceneDisplayType(selected)) ? "Guest interaction" : "Animated scene"}
+                  label={
+                    ["Quiz", "Rsvp"].includes(getSceneDisplayType(selected))
+                      ? "Guest interaction"
+                      : "Animated scene"
+                  }
                   size="small"
                 />
               </Stack>
             </GuestFrame>
           </Box>
 
-          <SceneRail scenes={getOrderedScenes(sampleExperience).map((scene) => getSceneTitle(scene))} />
+          <SceneRail
+            scenes={getOrderedScenes(sampleExperience).map((scene) => getSceneTitle(scene))}
+          />
           <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
             {orderedScenes.map((scene) => (
               <Button

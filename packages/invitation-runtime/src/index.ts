@@ -1,8 +1,4 @@
-import type {
-  ExperienceSpec,
-  SceneSpec,
-  SceneTrigger,
-} from "@invite/invitation-schema";
+import type { ExperienceSpec, SceneSpec, SceneTrigger } from "@invite/invitation-schema";
 
 export type RuntimeMode = "preview" | "guest" | "production";
 export type SceneStatus = "idle" | "active" | "completed";
@@ -52,9 +48,7 @@ export const getNextScene = (
 export const isAutomaticTrigger = (trigger: SceneTrigger): boolean =>
   trigger.type === "load" || trigger.type === "after";
 
-export const validateExperienceSpec = (
-  spec: ExperienceSpec,
-): RuntimeValidationResult => {
+export const validateExperienceSpec = (spec: ExperienceSpec): RuntimeValidationResult => {
   const issues: RuntimeValidationIssue[] = [];
   const sceneIds = new Set<string>();
 
@@ -83,7 +77,10 @@ export const validateExperienceSpec = (
     sceneIds.add(scene.id);
 
     if (scene.order < 0 || !Number.isInteger(scene.order)) {
-      issues.push({ path: `${path}.order`, message: "Scene order must be a non-negative integer." });
+      issues.push({
+        path: `${path}.order`,
+        message: "Scene order must be a non-negative integer.",
+      });
     }
 
     if (scene.durationMs !== undefined && scene.durationMs < 0) {
@@ -91,9 +88,7 @@ export const validateExperienceSpec = (
     }
   });
 
-  const interactionIds = new Set(
-    spec.interactions.map((interaction) => interaction.id),
-  );
+  const interactionIds = new Set(spec.interactions.map((interaction) => interaction.id));
 
   spec.scenes.forEach((scene, index) => {
     scene.interactionIds.forEach((interactionId) => {
