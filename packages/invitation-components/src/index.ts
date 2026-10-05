@@ -27,3 +27,6 @@ export const isSupportedComponent = (
     "audio",
     "celebration",
   ].includes(kind);
+
+export { ExperienceRenderer } from "./ExperienceRenderer";
+export type { ExperienceRendererProps } from "./ExperienceRenderer";
