@@ -8,10 +8,11 @@ import { TimelineComponent } from "./timeline-component";
 import {
   bodyStyle,
   componentTitle,
-  getString,
-  getStringList,
+  eyebrowStyle,
   galleryImageStyle,
   galleryStyle,
+  getString,
+  getStringList,
   headingStyle,
   heroTitleStyle,
   imageStyle,
@@ -37,9 +38,7 @@ export const SceneComponentView = ({
     case "hero":
       return (
         <section style={sectionStyle}>
-          <p style={getString(content.eyebrow) ? eyebrowStyle : hiddenEyebrowStyle}>
-            {getString(content.eyebrow)}
-          </p>
+          <p style={eyebrowStyle}>{getString(content.eyebrow)}</p>
           <h1 style={heroTitleStyle}>{title}</h1>
           <p style={bodyStyle}>{getString(content.description)}</p>
         </section>
@@ -89,12 +88,7 @@ export const SceneComponentView = ({
         </section>
       );
     case "reveal":
-      return (
-        <RevealComponent
-          component={component}
-          onComplete={onInteractionComplete}
-        />
-      );
+      return <RevealComponent component={component} onComplete={onInteractionComplete} />;
     case "quiz":
       return (
         <ChoiceComponent
@@ -151,17 +145,4 @@ export const SceneComponentView = ({
       );
     }
   }
-};
-
-const eyebrowStyle = {
-  margin: 0,
-  fontSize: 12,
-  letterSpacing: "0.12em",
-  textTransform: "uppercase" as const,
-  opacity: 0.7,
-};
-
-const hiddenEyebrowStyle = {
-  ...eyebrowStyle,
-  visibility: "hidden" as const,
 };
