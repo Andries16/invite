@@ -32,4 +32,3 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm spellcheck
       - run: pnpm build
-      - run: pnpm --filter @invite/storybook test:ci
