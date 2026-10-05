@@ -1,6 +1,7 @@
 import type { SceneComponent } from "@invite/invitation-schema";
 import { AudioComponent } from "./audio-component";
 import { ChoiceComponent } from "./choice-component";
+import { componentTitle, getString, getStringList } from "./component-utils";
 import { CountdownComponent } from "./countdown-component";
 import { GuestbookComponent } from "./guestbook-component";
 import {
@@ -14,7 +15,6 @@ import {
   mediaStyle,
   sectionStyle,
 } from "./renderer-styles";
-import { componentTitle, getString, getStringList } from "./component-utils";
 import { RevealComponent } from "./reveal-component";
 import { TimelineComponent } from "./timeline-component";
 
