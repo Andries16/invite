@@ -20,18 +20,16 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useMemo, useState } from "react";
 
-const Editor = ({
-  experience,
-  selected,
-  onSelect,
-  onChange,
-}: {
+interface EditorProps {
   experience: ExperienceSpec;
   selected: SceneSpec;
   onSelect: (id: SceneSpec["id"]) => void;
   onChange: (next: ExperienceSpec) => void;
-}) {
+}
+
+const Editor = ({ experience, selected, onSelect, onChange }: EditorProps) => {
   const scenes = getOrderedScenes(experience);
+
   return (
     <Stack spacing={2} sx={{ maxWidth: 1100, mx: "auto", p: 4 }}>
       <Typography variant="overline" color="primary">
@@ -96,9 +94,7 @@ export const App = () => {
   const scenes = useMemo(() => getOrderedScenes(experience), [experience]);
   const [selectedId, setSelectedId] = useState(scenes[0]?.id);
   const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
-  const [brief, setBrief] = useState(
-    "Make this a cinematic date invitation for September 28 at sunset.",
-  );
+  const [brief, setBrief] = useState("Make this a cinematic date invitation for September 28 at sunset.");
   const [proposalState, setProposalState] = useState("");
 
   if (!selected) return null;
