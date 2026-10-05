@@ -10,9 +10,7 @@ import {
 
 const getCountdownParts = (target: string): Record<string, number> => {
   const targetTime = Date.parse(target);
-  const distance = Number.isNaN(targetTime)
-    ? 0
-    : Math.max(0, targetTime - Date.now());
+  const distance = Number.isNaN(targetTime) ? 0 : Math.max(0, targetTime - Date.now());
   const totalSeconds = Math.floor(distance / 1000);
 
   return {
@@ -32,10 +30,7 @@ export const CountdownComponent = ({ component }: CountdownComponentProps) => {
   const [remaining, setRemaining] = useState(() => getCountdownParts(target));
 
   useEffect(() => {
-    const timer = window.setInterval(
-      () => setRemaining(getCountdownParts(target)),
-      1000,
-    );
+    const timer = window.setInterval(() => setRemaining(getCountdownParts(target)), 1000);
 
     return () => window.clearInterval(timer);
   }, [target]);

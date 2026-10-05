@@ -3,8 +3,6 @@ import { AudioComponent } from "./audio-component";
 import { ChoiceComponent } from "./choice-component";
 import { CountdownComponent } from "./countdown-component";
 import { GuestbookComponent } from "./guestbook-component";
-import { RevealComponent } from "./reveal-component";
-import { TimelineComponent } from "./timeline-component";
 import {
   bodyStyle,
   componentTitle,
@@ -19,6 +17,8 @@ import {
   mediaStyle,
   sectionStyle,
 } from "./renderer-styles";
+import { RevealComponent } from "./reveal-component";
+import { TimelineComponent } from "./timeline-component";
 
 export interface SceneComponentViewProps {
   component: SceneComponent;

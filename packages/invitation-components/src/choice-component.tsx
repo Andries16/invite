@@ -16,11 +16,7 @@ export interface ChoiceComponentProps {
   onComplete?: () => void;
 }
 
-export const ChoiceComponent = ({
-  component,
-  label,
-  onComplete,
-}: ChoiceComponentProps) => {
+export const ChoiceComponent = ({ component, label, onComplete }: ChoiceComponentProps) => {
   const [selected, setSelected] = useState<string | null>(null);
   const configuredChoices = getStringList(component.content.choices);
   const choices =

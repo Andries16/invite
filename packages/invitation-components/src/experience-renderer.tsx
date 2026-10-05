@@ -7,7 +7,6 @@ import {
 import type { ExperienceSpec } from "@invite/invitation-schema";
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
-import { SceneView } from "./scene-view";
 import {
   errorStyle,
   experienceStyle,
@@ -16,28 +15,23 @@ import {
   sceneNavigationStyle,
   topBarStyle,
 } from "./renderer-styles";
+import { SceneView } from "./scene-view";
 
 export interface ExperienceRendererProps {
   spec: unknown;
 }
 
-const matchesClickTrigger = (
-  trigger: ExperienceSpec["scenes"][number]["trigger"],
-): boolean => trigger.type === "click" && (trigger.target === "continue" || trigger.target === "next");
+const matchesClickTrigger = (trigger: ExperienceSpec["scenes"][number]["trigger"]): boolean =>
+  trigger.type === "click" && (trigger.target === "continue" || trigger.target === "next");
 
 export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
   const validation = useMemo(() => validateExperienceSpec(spec), [spec]);
   const validSpec = validation.valid && isExperienceSpec(spec) ? spec : undefined;
-  const scenes = useMemo(
-    () => (validSpec ? getOrderedScenes(validSpec) : []),
-    [validSpec],
-  );
+  const scenes = useMemo(() => (validSpec ? getOrderedScenes(validSpec) : []), [validSpec]);
   const [currentSceneId, setCurrentSceneId] = useState<
     ExperienceSpec["scenes"][number]["id"] | null
   >(scenes[0]?.id ?? null);
-  const [completedInteractions, setCompletedInteractions] = useState<Set<string>>(
-    () => new Set(),
-  );
+  const [completedInteractions, setCompletedInteractions] = useState<Set<string>>(() => new Set());
   const [reducedMotion] = useState(
     () =>
       typeof window !== "undefined" &&
@@ -136,7 +130,9 @@ export const ExperienceRenderer = ({ spec }: ExperienceRendererProps) => {
   return (
     <main style={rootStyle}>
       <style>
-        {"@keyframes invite-fade-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }"}
+        {
+          "@keyframes invite-fade-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }"
+        }
       </style>
       <div style={experienceStyle}>
         <header style={topBarStyle}>

@@ -27,12 +27,7 @@ interface EditorProps {
   onChange: (next: ExperienceSpec) => void;
 }
 
-const Editor = ({
-  experience,
-  selected,
-  onSelect,
-  onChange,
-}: EditorProps) => {
+const Editor = ({ experience, selected, onSelect, onChange }: EditorProps) => {
   const scenes = getOrderedScenes(experience);
 
   return (
@@ -40,18 +35,10 @@ const Editor = ({
       <Typography variant="overline" color="primary">
         Experience Editor
       </Typography>
-      <Stack
-        direction="row"
-        sx={{ justifyContent: "space-between", alignItems: "center" }}
-      >
+      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
         <Typography variant="h2">{getSceneTitle(selected)}</Typography>
         <Chip
-          label={
-            scenes.length +
-            " scenes · " +
-            experience.interactions.length +
-            " interactions"
-          }
+          label={scenes.length + " scenes · " + experience.interactions.length + " interactions"}
         />
       </Stack>
       <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
@@ -73,9 +60,7 @@ const Editor = ({
         <Card sx={{ flex: 1 }}>
           <CardContent>
             <Typography variant="h3">{getSceneTitle(selected)}</Typography>
-            <Typography color="text.secondary">
-              {getSceneDisplayType(selected)}
-            </Typography>
+            <Typography color="text.secondary">{getSceneDisplayType(selected)}</Typography>
             <Typography sx={{ mt: 2 }} color="text.secondary">
               {getSceneDescription(selected)}
             </Typography>
@@ -84,9 +69,7 @@ const Editor = ({
         <Card>
           <CardContent>
             <Stack spacing={2}>
-              <Typography sx={{ fontWeight: 700 }}>
-                Scene inspector
-              </Typography>
+              <Typography sx={{ fontWeight: 700 }}>Scene inspector</Typography>
               <TextField
                 label="Purpose"
                 value={selected.purpose}
@@ -94,18 +77,12 @@ const Editor = ({
                   onChange({
                     ...experience,
                     scenes: experience.scenes.map((scene) =>
-                      scene.id === selected.id
-                        ? { ...scene, purpose: event.target.value }
-                        : scene,
+                      scene.id === selected.id ? { ...scene, purpose: event.target.value } : scene,
                     ),
                   })
                 }
               />
-              <TextField
-                label="Trigger"
-                value={selected.trigger.type}
-                disabled
-              />
+              <TextField label="Trigger" value={selected.trigger.type} disabled />
             </Stack>
           </CardContent>
         </Card>
@@ -115,12 +92,10 @@ const Editor = ({
 };
 
 export const App = () => {
-  const [experience, setExperience] =
-    useState<ExperienceSpec>(sampleExperience);
+  const [experience, setExperience] = useState<ExperienceSpec>(sampleExperience);
   const scenes = useMemo(() => getOrderedScenes(experience), [experience]);
   const [selectedId, setSelectedId] = useState(scenes[0]?.id);
-  const selected =
-    scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
+  const selected = scenes.find((scene) => scene.id === selectedId) ?? scenes[0];
   const [brief, setBrief] = useState(
     "Make this a cinematic date invitation for September 28 at sunset.",
   );
@@ -165,11 +140,7 @@ export const App = () => {
               <Button variant="contained" onClick={generateProposal}>
                 Generate AI proposal
               </Button>
-              {proposalState && (
-                <Typography color="success.main">
-                  {proposalState}
-                </Typography>
-              )}
+              {proposalState && <Typography color="success.main">{proposalState}</Typography>}
             </Stack>
           </CardContent>
         </Card>
@@ -184,8 +155,8 @@ export const App = () => {
             <Stack spacing={1.5}>
               <Typography variant="h4">Guest preview</Typography>
               <Typography color="text.secondary">
-                The creator preview uses the same canonical ExperienceSpec and
-                renderer as the public runtime.
+                The creator preview uses the same canonical ExperienceSpec and renderer as the
+                public runtime.
               </Typography>
               <div
                 style={{

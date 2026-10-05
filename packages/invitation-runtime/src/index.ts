@@ -43,17 +43,9 @@ const requiredThemeKeys: Array<keyof ExperienceTheme> = [
   "border",
 ];
 
-const motionLevels = [
-  "none",
-  "subtle",
-  "moderate",
-  "expressive",
-  "cinematic",
-] as const;
+const motionLevels = ["none", "subtle", "moderate", "expressive", "cinematic"] as const;
 
-const isMotionLevel = (
-  value: unknown,
-): value is ExperienceSpec["design"]["motion"] =>
+const isMotionLevel = (value: unknown): value is ExperienceSpec["design"]["motion"] =>
   isString(value) && motionLevels.some((level) => level === value);
 
 const isSceneTrigger = (value: unknown): value is SceneTrigger => {
@@ -113,11 +105,7 @@ const isVariableDefinition = (value: unknown): value is VariableDefinition =>
 
 export const isExperienceSpec = (value: unknown): value is ExperienceSpec => {
   if (!isRecord(value)) return false;
-  if (
-    !isString(value.schemaVersion) ||
-    !isString(value.id) ||
-    !isString(value.invitationId)
-  ) {
+  if (!isString(value.schemaVersion) || !isString(value.id) || !isString(value.invitationId)) {
     return false;
   }
   if (!isString(value.visualLanguage) || !isRecord(value.design)) return false;
@@ -125,36 +113,21 @@ export const isExperienceSpec = (value: unknown): value is ExperienceSpec => {
   const design = value.design;
   if (!isRecord(design.theme) || !isMotionLevel(design.motion)) return false;
   if (!requiredThemeKeys.every((key) => isString(design.theme[key]))) return false;
-  if (
-    design.theme.headingFont !== undefined &&
-    !isString(design.theme.headingFont)
-  ) {
+  if (design.theme.headingFont !== undefined && !isString(design.theme.headingFont)) {
     return false;
   }
-  if (
-    design.theme.bodyFont !== undefined &&
-    !isString(design.theme.bodyFont)
-  ) {
+  if (design.theme.bodyFont !== undefined && !isString(design.theme.bodyFont)) {
     return false;
   }
   if (!Array.isArray(value.scenes) || !value.scenes.every(isScene)) return false;
-  if (
-    !Array.isArray(value.interactions) ||
-    !value.interactions.every(isInteraction)
-  ) {
+  if (!Array.isArray(value.interactions) || !value.interactions.every(isInteraction)) {
     return false;
   }
 
-  return (
-    Array.isArray(value.variables) &&
-    value.variables.every(isVariableDefinition)
-  );
+  return Array.isArray(value.variables) && value.variables.every(isVariableDefinition);
 };
 
-const validateTheme = (
-  theme: unknown,
-  issues: RuntimeValidationIssue[],
-): void => {
+const validateTheme = (theme: unknown, issues: RuntimeValidationIssue[]): void => {
   if (!isRecord(theme)) {
     issues.push({
       path: "design.theme",
@@ -182,9 +155,7 @@ const validateTheme = (
   });
 };
 
-export const createInitialRuntimeState = (
-  mode: RuntimeMode,
-): RuntimeState => ({
+export const createInitialRuntimeState = (mode: RuntimeMode): RuntimeState => ({
   mode,
   currentSceneId: null,
   sceneStatus: "idle",
@@ -198,9 +169,8 @@ export const getSceneById = (
   sceneId: SceneSpec["id"],
 ): SceneSpec | undefined => spec.scenes.find((scene) => scene.id === sceneId);
 
-export const getInitialScene = (
-  spec: ExperienceSpec,
-): SceneSpec | undefined => getOrderedScenes(spec)[0];
+export const getInitialScene = (spec: ExperienceSpec): SceneSpec | undefined =>
+  getOrderedScenes(spec)[0];
 
 export const getNextScene = (
   spec: ExperienceSpec,
@@ -214,9 +184,7 @@ export const getNextScene = (
 export const isAutomaticTrigger = (trigger: SceneTrigger): boolean =>
   trigger.type === "load" || trigger.type === "after";
 
-export const validateExperienceSpec = (
-  spec: unknown,
-): RuntimeValidationResult => {
+export const validateExperienceSpec = (spec: unknown): RuntimeValidationResult => {
   const issues: RuntimeValidationIssue[] = [];
 
   if (!isRecord(spec)) {
@@ -306,10 +274,7 @@ export const validateExperienceSpec = (
         sceneIds.add(scene.id);
       }
 
-      if (
-        scene.components === undefined &&
-        Object.keys(scene.content).length === 0
-      ) {
+      if (scene.components === undefined && Object.keys(scene.content).length === 0) {
         issues.push({
           path: path + ".content",
           message: "Scene content cannot be empty when components are omitted.",
@@ -318,25 +283,17 @@ export const validateExperienceSpec = (
     });
   }
 
-  if (
-    !Array.isArray(spec.interactions) ||
-    !spec.interactions.every(isInteraction)
-  ) {
+  if (!Array.isArray(spec.interactions) || !spec.interactions.every(isInteraction)) {
     issues.push({
       path: "interactions",
-      message:
-        "Interactions must be an array of valid interaction definitions.",
+      message: "Interactions must be an array of valid interaction definitions.",
     });
   }
 
-  if (
-    !Array.isArray(spec.variables) ||
-    !spec.variables.every(isVariableDefinition)
-  ) {
+  if (!Array.isArray(spec.variables) || !spec.variables.every(isVariableDefinition)) {
     issues.push({
       path: "variables",
-      message:
-        "Variables must be an array of valid variable definitions.",
+      message: "Variables must be an array of valid variable definitions.",
     });
   }
 

@@ -14,10 +14,7 @@ export interface RevealComponentProps {
   onComplete?: () => void;
 }
 
-export const RevealComponent = ({
-  component,
-  onComplete,
-}: RevealComponentProps) => {
+export const RevealComponent = ({ component, onComplete }: RevealComponentProps) => {
   const [revealed, setRevealed] = useState(false);
   const content = component.content;
 
@@ -38,9 +35,7 @@ export const RevealComponent = ({
         <>
           <p style={eyebrowStyle}>The reveal</p>
           <h2 style={heroTitleStyle}>{getString(content.title, "Surprise")}</h2>
-          <p style={bodyStyle}>
-            {getString(content.message, getString(content.text))}
-          </p>
+          <p style={bodyStyle}>{getString(content.message, getString(content.text))}</p>
         </>
       )}
     </section>

@@ -1,6 +1,6 @@
 import type { SceneSpec } from "@invite/invitation-schema";
+import { sceneHeaderStyle, sceneStyle, secondaryButtonStyle } from "./renderer-styles";
 import { SceneComponentView } from "./scene-component-view";
-import { secondaryButtonStyle, sceneHeaderStyle, sceneStyle } from "./renderer-styles";
 
 export interface SceneViewProps {
   scene: SceneSpec;
@@ -17,9 +17,7 @@ export const SceneView = ({
   onNext,
   onInteractionComplete,
 }: SceneViewProps) => {
-  const components = scene.components ?? [
-    { kind: "text" as const, content: scene.content },
-  ];
+  const components = scene.components ?? [{ kind: "text" as const, content: scene.content }];
   const interactionIds = scene.interactionIds;
 
   return (
@@ -38,9 +36,7 @@ export const SceneView = ({
           key={component.kind + "-" + index}
           component={component}
           reducedMotion={reducedMotion}
-          onInteractionComplete={() =>
-            interactionIds.forEach(onInteractionComplete)
-          }
+          onInteractionComplete={() => interactionIds.forEach(onInteractionComplete)}
         />
       ))}
       {canContinue && (
