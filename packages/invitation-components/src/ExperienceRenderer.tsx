@@ -1,6 +1,7 @@
 import type { ExperienceComponentKind, ExperienceSpec, SceneComponent, SceneSpec } from "@invite/invitation-schema";
 import { getNextScene, getOrderedScenes, validateExperienceSpec } from "@invite/invitation-runtime";
 import { useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 
 export interface ExperienceRendererProps {
   spec: ExperienceSpec;
@@ -122,7 +123,11 @@ function RevealComponent({ component }: { component: SceneComponent }) {
 
 function ChoiceComponent({ component, label }: { component: SceneComponent; label: string }) {
   const [selected, setSelected] = useState<string | null>(null);
-  const choices = getStringList(component.content.choices);
+  const choices = getStringList(component.content.choices).length > 0
+    ? getStringList(component.content.choices)
+    : component.kind === "rsvp"
+      ? ["Yes, I’ll be there", "I can’t make it"]
+      : [];
 
   return (
     <section style={sectionStyle}>
@@ -188,7 +193,7 @@ export function ExperienceRenderer({ spec }: ExperienceRendererProps) {
   const nextScene = getNextScene(spec, currentScene.id);
 
   return (
-    <main style={{ ...runtimeStyle, background: spec.design.theme.background, color: spec.design.theme.text, fontFamily: spec.design.theme.bodyFont ?? "system-ui, sans-serif", ["--invite-primary" as string]: spec.design.theme.primary }}>
+    <main style={{ ...runtimeStyle, background: spec.design.theme.background, color: spec.design.theme.text, fontFamily: spec.design.theme.bodyFont ?? "system-ui, sans-serif", "--invite-primary": spec.design.theme.primary } as CSSProperties}>
       <style>{
         "@keyframes invite-fade-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }"
       }</style>
@@ -234,7 +239,7 @@ const mediaStyle = { margin: 0, display: "grid", gap: 8 };
 const imageStyle = { width: "100%", maxHeight: 620, objectFit: "cover" as const, borderRadius: 20 };
 const galleryStyle = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 };
 const galleryImageStyle = { width: "100%", aspectRatio: "1", objectFit: "cover" as const, borderRadius: 14 };
-const primaryButtonStyle = { border: "none", borderRadius: 999, padding: "14px 22px", background: "var(--invite-primary)", color: "white", cursor: "pointer", font: "inherit", justifySelf: "start" };
+const primaryButtonStyle: CSSProperties = { border: "none", borderRadius: 999, padding: "14px 22px", background: "var(--invite-primary)", color: "white", cursor: "pointer", font: "inherit", justifySelf: "start" };
 const secondaryButtonStyle = { border: "1px solid currentColor", borderRadius: 999, padding: "12px 18px", background: "transparent", color: "inherit", cursor: "pointer", font: "inherit", justifySelf: "start" };
 const selectedButtonStyle = { ...secondaryButtonStyle, background: "currentColor", color: "white" };
 const choiceGridStyle = { display: "flex", flexWrap: "wrap" as const, gap: 10 };
