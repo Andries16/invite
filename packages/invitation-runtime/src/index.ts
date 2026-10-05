@@ -112,11 +112,12 @@ export const isExperienceSpec = (value: unknown): value is ExperienceSpec => {
 
   const design = value.design;
   if (!isRecord(design.theme) || !isMotionLevel(design.motion)) return false;
-  if (!requiredThemeKeys.every((key) => isString(design.theme[key]))) return false;
-  if (design.theme.headingFont !== undefined && !isString(design.theme.headingFont)) {
+  const theme = design.theme;
+  if (!requiredThemeKeys.every((key) => isString(theme[key]))) return false;
+  if (theme.headingFont !== undefined && !isString(theme.headingFont)) {
     return false;
   }
-  if (design.theme.bodyFont !== undefined && !isString(design.theme.bodyFont)) {
+  if (theme.bodyFont !== undefined && !isString(theme.bodyFont)) {
     return false;
   }
   if (!Array.isArray(value.scenes) || !value.scenes.every(isScene)) return false;
