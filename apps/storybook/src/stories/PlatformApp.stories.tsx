@@ -1,4 +1,5 @@
 import { EditorShell, GuestFrame, SceneRail } from "@invite/design-system";
+import { ExperienceRenderer } from "@invite/invitation-components";
 import { getOrderedScenes } from "@invite/invitation-runtime";
 import { getSceneDescription, getSceneDisplayType, getSceneDurationLabel, getSceneTitle, sampleExperience } from "@invite/story";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -230,36 +231,9 @@ function PublicPreview({ onBack, onPublish }: { onBack: () => void; onPublish: (
     >
       <Stack spacing={2} sx={{ alignItems: "center" }}>
         <GuestFrame>
-          <Stack
-            spacing={5}
-            sx={{
-              minHeight: 720,
-              p: { xs: 3, md: 7 },
-              textAlign: "center",
-              background: "linear-gradient(160deg,#fffaf3,#f0e9ef)",
-            }}
-          >
-            {getOrderedScenes(sampleExperience).map((scene, index) => (
-              <Box
-                key={scene.id}
-                sx={{ py: 5, minHeight: 260, display: "grid", placeItems: "center" }}
-              >
-                <Stack spacing={1.5} sx={{ alignItems: "center" }}>
-                  <Typography variant="overline" sx={{ color: "primary" }}>
-                    {String(index + 1).padStart(2, "0")} · {getSceneDisplayType(scene)}
-                  </Typography>
-                  <Typography variant="h2" sx={{ fontFamily: "Georgia, serif" }}>
-                    {getSceneTitle(scene)}
-                  </Typography>
-                  <Typography sx={{ color: "text.secondary", maxWidth: 500 }}>
-                    {getSceneDescription(scene)}
-                  </Typography>
-                  {getSceneDisplayType(scene) === "Quiz" && <Button variant="contained">Continue</Button>}
-                  {getSceneDisplayType(scene) === "Rsvp" && <Button variant="outlined">RSVP</Button>}
-                </Stack>
-              </Box>
-            ))}
-          </Stack>
+          <Box sx={{ minHeight: 720, width: "100%", overflow: "hidden" }}>
+            <ExperienceRenderer spec={sampleExperience} />
+          </Box>
         </GuestFrame>
         <Button startIcon={<ArrowBackIcon />} onClick={onBack}>
           Back to editor
