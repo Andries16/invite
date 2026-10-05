@@ -86,6 +86,35 @@ const normalizeTone = (tone: CreativeBrief["tone"]): string =>
 const normalizeVisualDirection = (brief: CreativeBrief): string =>
   brief.visualDirection?.trim() || normalizeTone(brief.tone);
 
+export const applyExperienceSpecPatch = (
+  base: ExperienceSpec,
+  patch: ExperienceSpecPatch,
+): ExperienceSpec => {
+  if (patch.schemaVersion !== base.schemaVersion) {
+    throw new Error(`Unsupported ExperienceSpec patch version: ${patch.schemaVersion}`);
+  }
+
+  return patch.operations.reduce<ExperienceSpec>((next, operation) => {
+    if (operation.op === "set") {
+      if (operation.path === "/visualLanguage") return { ...next, visualLanguage: operation.value };
+      if (operation.path === "/design/motion") {
+        return { ...next, design: { ...next.design, motion: operation.value as ExperienceSpec["design"]["motion"] } };
+      }
+      const themePath = operation.path.slice("/design/theme/".length) as keyof ExperienceSpec["design"]["theme"];
+      return { ...next, design: { ...next.design, theme: { ...next.design.theme, [themePath]: operation.value } } };
+    }
+
+    const sceneIndex = next.scenes.findIndex((scene) => scene.id === operation.sceneId);
+    if (sceneIndex < 0) throw new Error(`Unknown scene id: ${String(operation.sceneId)}`);
+    const scenes = [...next.scenes];
+    const scene = scenes[sceneIndex];
+    scenes[sceneIndex] = operation.op === "set-scene-purpose"
+      ? { ...scene, purpose: operation.value }
+      : { ...scene, content: operation.value };
+    return { ...next, scenes };
+  }, base);
+};
+
 export const createExperienceSpecProposal = (
   brief: CreativeBrief,
   base: Pick<ExperienceSpec, "schemaVersion" | "scenes">,
