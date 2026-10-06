@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpCode, NotFoundException, Param, Post } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  NotFoundException,
+  Param,
+  Post,
+} from "@nestjs/common";
+import { isExperienceSpec } from "@invite/invitation-runtime";
 import { GenerationService } from "./generation.service";
 
 @Controller()
@@ -11,9 +21,18 @@ export class GenerationController {
     @Param("invitationId") invitationId: string,
     @Body() body: { spec?: unknown },
   ): { jobId: string } {
-    if (!invitationId.trim()) throw new NotFoundException("Invitation not found.");
+    if (!invitationId.trim()) {
+      throw new NotFoundException("Invitation not found.");
+    }
 
-    const job = this.generationService.createJob(invitationId, body?.spec);
+    if (!isExperienceSpec(body?.spec) || body.spec.id !== invitationId) {
+      throw new BadRequestException({
+        code: "INVITATION_SPEC_MISMATCH",
+        message: "The submitted specification does not match the invitation.",
+      });
+    }
+
+    const job = this.generationService.createJob(invitationId, body.spec);
     return { jobId: job.id };
   }
 
