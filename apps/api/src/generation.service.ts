@@ -39,11 +39,20 @@ export class GenerationService {
     };
 
     this.jobs.set(id, job);
+    queueMicrotask(() => void this.runJob(id, spec));
 
+    return job;
+  }
+
+  getJob(id: string): GenerationJob | undefined {
+    return this.jobs.get(id);
+  }
+
+  private async runJob(id: string, spec: unknown): Promise<void> {
     try {
+      this.updateJob(id, { status: "running" });
       const plan = planGeneration(spec);
-      const running = this.updateJob(id, { status: "running", plan });
-      return this.updateJob(id, { status: "succeeded", plan: running.plan });
+      this.updateJob(id, { status: "succeeded", plan });
     } catch (error) {
       const failed =
         error instanceof GenerationValidationError
@@ -58,12 +67,8 @@ export class GenerationService {
               details: [],
             };
 
-      return this.updateJob(id, { status: "failed", error: failed });
+      this.updateJob(id, { status: "failed", error: failed });
     }
-  }
-
-  getJob(id: string): GenerationJob | undefined {
-    return this.jobs.get(id);
   }
 
   private updateJob(id: string, patch: Partial<GenerationJob>): GenerationJob {
