@@ -1,6 +1,6 @@
+import { createHash } from "node:crypto";
 import { isExperienceSpec, validateExperienceSpec } from "@invite/invitation-runtime";
 import type { ExperienceSpec } from "@invite/invitation-schema";
-import { createHash } from "node:crypto";
 
 export const GENERATOR_VERSION = "1";
 export const SUPPORTED_SCHEMA_VERSIONS = ["1"] as const;
@@ -31,8 +31,24 @@ export class GenerationValidationError extends Error {
   }
 }
 
-const createContentHash = (spec: ExperienceSpec): string =>
-  createHash("sha256").update(JSON.stringify(spec)).digest("hex");
+const canonicalize = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value.map(canonicalize);
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, nestedValue]) => [key, canonicalize(nestedValue)]),
+    );
+  }
+
+  return value;
+};
+
+export const createContentHash = (spec: ExperienceSpec): string =>
+  createHash("sha256").update(JSON.stringify(canonicalize(spec))).digest("hex");
 
 export const planGeneration = (spec: unknown): GenerationPlan => {
   const validation = validateExperienceSpec(spec);
