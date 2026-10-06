@@ -32,8 +32,20 @@ export class GenerationValidationError extends Error {
 }
 
 const compareCanonicalKeys = (left: string, right: string): number => {
-  if (left < right) return -1;
-  if (left > right) return 1;
+  const leftLength = left.length;
+  const rightLength = right.length;
+  const length = Math.min(leftLength, rightLength);
+
+  for (let index = 0; index < length; index += 1) {
+    const leftCodeUnit = left.charCodeAt(index);
+    const rightCodeUnit = right.charCodeAt(index);
+
+    if (leftCodeUnit < rightCodeUnit) return -1;
+    if (leftCodeUnit > rightCodeUnit) return 1;
+  }
+
+  if (leftLength < rightLength) return -1;
+  if (leftLength > rightLength) return 1;
   return 0;
 };
 
