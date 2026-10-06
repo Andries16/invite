@@ -1,3 +1,4 @@
+import { isExperienceSpec } from "@invite/invitation-runtime";
 import {
   BadRequestException,
   Body,
@@ -8,7 +9,6 @@ import {
   Param,
   Post,
 } from "@nestjs/common";
-import { isExperienceSpec } from "@invite/invitation-runtime";
 import { GenerationService } from "./generation.service";
 
 @Controller()
