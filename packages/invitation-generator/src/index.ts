@@ -1,7 +1,4 @@
-import {
-  isExperienceSpec,
-  validateExperienceSpec,
-} from "@invite/invitation-runtime";
+import { isExperienceSpec, validateExperienceSpec } from "@invite/invitation-runtime";
 import type { ExperienceSpec } from "@invite/invitation-schema";
 
 export const GENERATOR_VERSION = "1";
