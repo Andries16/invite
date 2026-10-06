@@ -18,9 +18,11 @@ export class GenerationController {
   createGeneration(
     @Param("invitationId") invitationId: string,
     @Body() body: { spec?: unknown },
-  ) {
+  ): { jobId: string } {
     if (!invitationId.trim()) throw new NotFoundException("Invitation not found.");
-    return this.generationService.createJob(invitationId, body?.spec);
+
+    const job = this.generationService.createJob(invitationId, body?.spec);
+    return { jobId: job.id };
   }
 
   @Get("generation-jobs/:jobId")
