@@ -15,18 +15,35 @@ export interface InterviewMessage {
   content: string;
 }
 
-export interface CreativeBrief {
+export type AIInteraction =
+  | { type: "single_choice"; id: string; question: string; options: string[] }
+  | { type: "multi_choice"; id: string; question: string; options: string[] }
+  | { type: "text"; id: string; question: string; placeholder?: string }
+  | { type: "date"; id: string; question: string }
+  | { type: "color"; id: string; question: string }
+  | { type: "media"; id: string; question: string; accept: string[] }
+  | { type: "confirmation"; id: string; summary: string };
+
+export interface DesignBrief {
+  emotionalIntent: string[];
+  visualKeywords: string[];
+  avoid: string[];
+  typographyDirection: string;
+  colorDirection: string;
+  imageryDirection: string;
+  motionLevel: "none" | "subtle" | "moderate" | "expressive" | "cinematic";
+  interactionLevel: "minimal" | "moderate" | "rich";
   invitationType: string;
   goal: string;
   audience?: string;
-  tone?: string[];
-  visualDirection?: string;
   date?: string;
   location?: string;
   hiddenDetails?: string[];
   memories?: string[];
   constraints?: string[];
 }
+
+export type CreativeBrief = DesignBrief;
 
 export interface ExperienceSpecPatch {
   schemaVersion: string;
@@ -75,11 +92,11 @@ export interface AiProposal<T> {
   requiresReview: boolean;
 }
 
-const normalizeTone = (tone: CreativeBrief["tone"]): string =>
-  tone?.filter(Boolean).join(", ") || "personal";
+const normalizeTone = (tone: DesignBrief["emotionalIntent"]): string =>
+  tone.filter(Boolean).join(", ") || "personal";
 
-const normalizeVisualDirection = (brief: CreativeBrief): string =>
-  brief.visualDirection?.trim() || normalizeTone(brief.tone);
+const normalizeVisualDirection = (brief: DesignBrief): string =>
+  brief.visualKeywords.filter(Boolean).join(", ") || normalizeTone(brief.emotionalIntent);
 
 export const applyExperienceSpecPatch = (
   base: ExperienceSpec,
@@ -120,7 +137,7 @@ export const applyExperienceSpecPatch = (
 };
 
 export const createExperienceSpecProposal = (
-  brief: CreativeBrief,
+  brief: DesignBrief,
   base: Pick<ExperienceSpec, "schemaVersion" | "scenes">,
 ): AiProposal<ExperienceSpecPatch> => {
   const visualLanguage = normalizeVisualDirection(brief);
