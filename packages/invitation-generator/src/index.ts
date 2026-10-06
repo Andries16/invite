@@ -41,7 +41,11 @@ export const planGeneration = (spec: unknown): GenerationPlan => {
     throw new GenerationValidationError(validation.issues);
   }
 
-  if (!SUPPORTED_SCHEMA_VERSIONS.includes(spec.schemaVersion as (typeof SUPPORTED_SCHEMA_VERSIONS)[number])) {
+  if (
+    !SUPPORTED_SCHEMA_VERSIONS.includes(
+      spec.schemaVersion as (typeof SUPPORTED_SCHEMA_VERSIONS)[number],
+    )
+  ) {
     throw new GenerationValidationError([
       {
         path: "schemaVersion",
