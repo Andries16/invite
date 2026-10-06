@@ -358,6 +358,9 @@ importers:
 
   packages/invitation-generator:
     dependencies:
+      '@invite/invitation-runtime':
+        specifier: workspace:*
+        version: link:../invitation-runtime
       '@invite/invitation-schema':
         specifier: workspace:*
         version: link:../invitation-schema
