@@ -25,14 +25,15 @@ export class GenerationController {
       throw new NotFoundException("Invitation not found.");
     }
 
-    if (!isExperienceSpec(body?.spec) || body.spec.id !== invitationId) {
+    const spec = body?.spec;
+    if (!isExperienceSpec(spec) || spec.id !== invitationId) {
       throw new BadRequestException({
         code: "INVITATION_SPEC_MISMATCH",
         message: "The submitted specification does not match the invitation.",
       });
     }
 
-    const job = this.generationService.createJob(invitationId, body.spec);
+    const job = this.generationService.createJob(invitationId, spec);
     return { jobId: job.id };
   }
 
