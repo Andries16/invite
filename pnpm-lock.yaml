@@ -63,6 +63,9 @@ importers:
       '@invite/invitation-schema':
         specifier: workspace:*
         version: link:../../packages/invitation-schema
+      '@invite/invitation-runtime':
+        specifier: workspace:*
+        version: link:../../packages/invitation-runtime
       '@invite/shared':
         specifier: workspace:*
         version: link:../../packages/shared
