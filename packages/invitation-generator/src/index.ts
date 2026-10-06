@@ -1,6 +1,6 @@
-import { createHash } from "node:crypto";
 import { isExperienceSpec, validateExperienceSpec } from "@invite/invitation-runtime";
 import type { ExperienceSpec } from "@invite/invitation-schema";
+import { createHash } from "node:crypto";
 
 export const GENERATOR_VERSION = "1";
 export const SUPPORTED_SCHEMA_VERSIONS = ["1"] as const;
