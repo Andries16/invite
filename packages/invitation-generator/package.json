@@ -11,6 +11,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@invite/invitation-runtime": "workspace:*",
     "@invite/invitation-schema": "workspace:*"
   }
 }
