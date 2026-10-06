@@ -31,6 +31,12 @@ export class GenerationValidationError extends Error {
   }
 }
 
+const compareCanonicalKeys = (left: string, right: string): number => {
+  if (left < right) return -1;
+  if (left > right) return 1;
+  return 0;
+};
+
 const canonicalize = (value: unknown): unknown => {
   if (Array.isArray(value)) {
     return value.map(canonicalize);
@@ -39,7 +45,7 @@ const canonicalize = (value: unknown): unknown => {
   if (typeof value === "object" && value !== null) {
     return Object.fromEntries(
       Object.entries(value)
-        .sort(([left], [right]) => left.localeCompare(right))
+        .sort(([left], [right]) => compareCanonicalKeys(left, right))
         .map(([key, nestedValue]) => [key, canonicalize(nestedValue)]),
     );
   }
