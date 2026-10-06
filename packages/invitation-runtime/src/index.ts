@@ -60,7 +60,10 @@ const isSceneTrigger = (value: unknown): value is SceneTrigger => {
   if (value.type === "after") {
     return typeof value.seconds === "number" && value.seconds >= 0;
   }
-  return isString(value.interactionId) && value.interactionId.length > 0;
+  if (value.type === "interaction-complete") {
+    return isString(value.interactionId) && value.interactionId.length > 0;
+  }
+  return false;
 };
 
 const isSceneComponent = (value: unknown): value is SceneComponent =>
