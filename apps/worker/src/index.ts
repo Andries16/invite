@@ -5,5 +5,4 @@ export interface GenerationWorkItem {
   spec: unknown;
 }
 
-/** Queue adapters belong here; the generator remains transport-agnostic. */
 export const executeGenerationWork = (item: GenerationWorkItem) => planGeneration(item.spec);
