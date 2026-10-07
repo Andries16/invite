@@ -27,7 +27,9 @@ export interface GenerationPlan {
 export class GenerationValidationError extends Error {
   public readonly issues: ReturnType<typeof validateExperienceSpec>["issues"];
 
-  public constructor(issues: ReturnType<typeof validateExperienceSpec>["issues"]) {
+  public constructor(
+    issues: ReturnType<typeof validateExperienceSpec>["issues"],
+  ) {
     super("ExperienceSpec cannot be generated.");
     this.name = "GenerationValidationError";
     this.issues = issues;
