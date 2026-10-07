@@ -43,16 +43,9 @@ interface InvitationIdempotencyRecords {
 @Injectable()
 export class GenerationService {
   private readonly jobs = new Map<string, GenerationJob>();
-  private readonly idempotencyRecords = new Map<
-    string,
-    InvitationIdempotencyRecords
-  >();
+  private readonly idempotencyRecords = new Map<string, InvitationIdempotencyRecords>();
 
-  createJob(
-    invitationId: string,
-    spec: ExperienceSpec,
-    idempotencyKey?: string,
-  ): GenerationJob {
+  createJob(invitationId: string, spec: ExperienceSpec, idempotencyKey?: string): GenerationJob {
     const contentHash = createContentHash(spec);
     const normalizedIdempotencyKey = idempotencyKey?.trim();
 
@@ -85,13 +78,10 @@ export class GenerationService {
     this.jobs.set(id, job);
 
     if (normalizedIdempotencyKey) {
-      this.getIdempotencyRecords(invitationId).records.set(
-        normalizedIdempotencyKey,
-        {
-          jobId: id,
-          contentHash,
-        },
-      );
+      this.getIdempotencyRecords(invitationId).records.set(normalizedIdempotencyKey, {
+        jobId: id,
+        contentHash,
+      });
     }
 
     queueMicrotask(() => void this.runJob(id, spec));
@@ -126,9 +116,7 @@ export class GenerationService {
     }
   }
 
-  private getIdempotencyRecords(
-    invitationId: string,
-  ): InvitationIdempotencyRecords {
+  private getIdempotencyRecords(invitationId: string): InvitationIdempotencyRecords {
     let records = this.idempotencyRecords.get(invitationId);
 
     if (!records) {
