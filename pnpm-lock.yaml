@@ -306,6 +306,17 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
 
+  packages/generation-persistence:
+    dependencies:
+      '@invite/invitation-generator':
+        specifier: workspace:*
+        version: link:../invitation-generator
+      '@invite/invitation-schema':
+        specifier: workspace:*
+        version: link:../invitation-schema
+
+  packages/generation-queue: {}
+
   packages/design-system:
     dependencies:
       '@emotion/react':
