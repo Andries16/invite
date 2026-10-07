@@ -18,13 +18,13 @@ export interface ArtifactStore {
 
 export type GenerationJobStatus = "queued" | "running" | "failed" | "succeeded";
 
-export interface GenerationJobRecord {
+export interface GenerationJobRecord<TPlan = unknown> {
   id: string;
   invitationId: string;
   status: GenerationJobStatus;
   createdAt: string;
   updatedAt: string;
-  plan?: unknown;
+  plan?: TPlan;
   error?: {
     code: "INVITATION_SPEC_INVALID" | "GENERATION_FAILED";
     message: string;
@@ -39,13 +39,10 @@ export interface GenerationIdempotencyRecord {
   contentHash: string;
 }
 
-export interface GenerationJobStore {
-  create(job: GenerationJobRecord): Promise<void>;
-  get(jobId: string): Promise<GenerationJobRecord | undefined>;
-  update(job: GenerationJobRecord): Promise<void>;
-  getIdempotency(
-    invitationId: string,
-    key: string,
-  ): Promise<GenerationIdempotencyRecord | undefined>;
+export interface GenerationJobStore<TPlan = unknown> {
+  create(job: GenerationJobRecord<TPlan>): Promise<void>;
+  get(jobId: string): Promise<GenerationJobRecord<TPlan> | undefined>;
+  update(job: GenerationJobRecord<TPlan>): Promise<void>;
+  getIdempotency(invitationId: string, key: string): Promise<GenerationIdempotencyRecord | undefined>;
   putIdempotency(record: GenerationIdempotencyRecord): Promise<void>;
 }
