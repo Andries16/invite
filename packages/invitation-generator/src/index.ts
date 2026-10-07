@@ -1,9 +1,6 @@
-import { createHash } from "node:crypto";
-import {
-  isExperienceSpec,
-  validateExperienceSpec,
-} from "@invite/invitation-runtime";
+import { isExperienceSpec, validateExperienceSpec } from "@invite/invitation-runtime";
 import type { ExperienceSpec } from "@invite/invitation-schema";
+import { createHash } from "node:crypto";
 
 export const GENERATOR_VERSION = "1";
 export const SUPPORTED_SCHEMA_VERSIONS = ["1"] as const;
@@ -27,9 +24,7 @@ export interface GenerationPlan {
 export class GenerationValidationError extends Error {
   public readonly issues: ReturnType<typeof validateExperienceSpec>["issues"];
 
-  public constructor(
-    issues: ReturnType<typeof validateExperienceSpec>["issues"],
-  ) {
+  public constructor(issues: ReturnType<typeof validateExperienceSpec>["issues"]) {
     super("ExperienceSpec cannot be generated.");
     this.name = "GenerationValidationError";
     this.issues = issues;
@@ -71,7 +66,9 @@ const canonicalize = (value: unknown): unknown => {
 };
 
 export const createContentHash = (spec: ExperienceSpec): string =>
-  createHash("sha256").update(JSON.stringify(canonicalize(spec))).digest("hex");
+  createHash("sha256")
+    .update(JSON.stringify(canonicalize(spec)))
+    .digest("hex");
 
 export const planGeneration = (spec: unknown): GenerationPlan => {
   const validation = validateExperienceSpec(spec);
@@ -97,9 +94,7 @@ export const planGeneration = (spec: unknown): GenerationPlan => {
     .sort((left, right) => left.order - right.order)
     .map((scene) => scene.id);
 
-  const mediaIds = [
-    ...new Set(spec.scenes.flatMap((scene) => scene.mediaIds)),
-  ].sort();
+  const mediaIds = [...new Set(spec.scenes.flatMap((scene) => scene.mediaIds))].sort();
   const contentHash = createContentHash(spec);
 
   return {
