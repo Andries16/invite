@@ -4,19 +4,19 @@ import type {
   GenerationJobStore,
 } from "@invite/storage";
 
-export class InMemoryGenerationJobStore implements GenerationJobStore {
-  private readonly jobs = new Map<string, GenerationJobRecord>();
+export class InMemoryGenerationJobStore<TPlan = unknown> implements GenerationJobStore<TPlan> {
+  private readonly jobs = new Map<string, GenerationJobRecord<TPlan>>();
   private readonly idempotency = new Map<string, GenerationIdempotencyRecord>();
 
-  public async create(job: GenerationJobRecord): Promise<void> {
+  public async create(job: GenerationJobRecord<TPlan>): Promise<void> {
     this.jobs.set(job.id, job);
   }
 
-  public async get(jobId: string): Promise<GenerationJobRecord | undefined> {
+  public async get(jobId: string): Promise<GenerationJobRecord<TPlan> | undefined> {
     return this.jobs.get(jobId);
   }
 
-  public async update(job: GenerationJobRecord): Promise<void> {
+  public async update(job: GenerationJobRecord<TPlan>): Promise<void> {
     this.jobs.set(job.id, job);
   }
 
