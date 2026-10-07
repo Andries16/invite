@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
-import { isExperienceSpec, validateExperienceSpec } from "@invite/invitation-runtime";
+import {
+  isExperienceSpec,
+  validateExperienceSpec,
+} from "@invite/invitation-runtime";
 import type { ExperienceSpec } from "@invite/invitation-schema";
 
 export const GENERATOR_VERSION = "1";
@@ -92,7 +95,9 @@ export const planGeneration = (spec: unknown): GenerationPlan => {
     .sort((left, right) => left.order - right.order)
     .map((scene) => scene.id);
 
-  const mediaIds = [...new Set(spec.scenes.flatMap((scene) => scene.mediaIds))].sort();
+  const mediaIds = [
+    ...new Set(spec.scenes.flatMap((scene) => scene.mediaIds)),
+  ].sort();
   const contentHash = createContentHash(spec);
 
   return {
