@@ -188,6 +188,61 @@ export const getNextScene = (
 export const isAutomaticTrigger = (trigger: SceneTrigger): boolean =>
   trigger.type === "load" || trigger.type === "after";
 
+export type RuntimeEvent =
+  | { type: "load" }
+  | { type: "scroll"; threshold: number }
+  | { type: "click"; target: string }
+  | { type: "after"; seconds: number }
+  | { type: "interaction-complete"; interactionId: string };
+
+const matchesTrigger = (trigger: SceneTrigger, event: RuntimeEvent): boolean => {
+  if (trigger.type !== event.type) return false;
+  if (trigger.type === "load" && event.type === "load") return true;
+  if (trigger.type === "scroll" && event.type === "scroll") {
+    return trigger.threshold === undefined || event.threshold >= trigger.threshold;
+  }
+  if (trigger.type === "click" && event.type === "click") {
+    return trigger.target === event.target;
+  }
+  if (trigger.type === "after" && event.type === "after") {
+    return event.seconds >= trigger.seconds;
+  }
+  if (trigger.type === "interaction-complete" && event.type === "interaction-complete") {
+    return trigger.interactionId === event.interactionId;
+  }
+  return false;
+};
+
+export const transitionRuntime = (
+  spec: ExperienceSpec,
+  state: RuntimeState,
+  event: RuntimeEvent,
+): RuntimeState => {
+  if (state.currentSceneId === null) {
+    const initialScene = getInitialScene(spec);
+    if (!initialScene || !matchesTrigger(initialScene.trigger, event)) return state;
+
+    return {
+      ...state,
+      currentSceneId: initialScene.id,
+      sceneStatus: "active",
+    };
+  }
+
+  if (state.sceneStatus !== "active") return state;
+
+  const nextScene = getNextScene(spec, state.currentSceneId);
+  if (!nextScene || !matchesTrigger(nextScene.trigger, event)) {
+    return state;
+  }
+
+  return {
+    ...state,
+    currentSceneId: nextScene.id,
+    sceneStatus: "active",
+  };
+};
+
 export const validateExperienceSpec = (spec: unknown): RuntimeValidationResult => {
   const issues: RuntimeValidationIssue[] = [];
 
