@@ -12,9 +12,9 @@ The generation boundary follows the project architecture: a validated Experience
 
 ## Deliberate limitation
 
-The current API job store is in-memory and the worker is not connected to Redis/BullMQ yet. It is a control-plane foundation, not the final production job infrastructure.
+The current API job store is in-memory and the worker is not connected to Redis/BullMQ yet. It is a control-plane foundation, not the final production job infrastructure. Generation requests now support invitation-scoped idempotency keys, and artifact identity uses canonicalized ExperienceSpec content.
 
-The production path must replace the in-memory store with durable persistence and a queue adapter without changing the generator contract.
+The production path must replace the in-memory store with durable persistence and a queue adapter without changing the generator contract. `@invite/storage` now exposes the provider-neutral immutable artifact boundary that the worker can consume once the persistent storage ADR is accepted.
 
 ## Invariants
 

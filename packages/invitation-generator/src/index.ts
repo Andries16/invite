@@ -31,8 +31,44 @@ export class GenerationValidationError extends Error {
   }
 }
 
-const createContentHash = (spec: ExperienceSpec): string =>
-  createHash("sha256").update(JSON.stringify(spec)).digest("hex");
+const compareCanonicalKeys = (left: string, right: string): number => {
+  const leftLength = left.length;
+  const rightLength = right.length;
+  const length = Math.min(leftLength, rightLength);
+
+  for (let index = 0; index < length; index += 1) {
+    const leftCodeUnit = left.charCodeAt(index);
+    const rightCodeUnit = right.charCodeAt(index);
+
+    if (leftCodeUnit < rightCodeUnit) return -1;
+    if (leftCodeUnit > rightCodeUnit) return 1;
+  }
+
+  if (leftLength < rightLength) return -1;
+  if (leftLength > rightLength) return 1;
+  return 0;
+};
+
+const canonicalize = (value: unknown): unknown => {
+  if (Array.isArray(value)) {
+    return value.map(canonicalize);
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => compareCanonicalKeys(left, right))
+        .map(([key, nestedValue]) => [key, canonicalize(nestedValue)]),
+    );
+  }
+
+  return value;
+};
+
+export const createContentHash = (spec: ExperienceSpec): string =>
+  createHash("sha256")
+    .update(JSON.stringify(canonicalize(spec)))
+    .digest("hex");
 
 export const planGeneration = (spec: unknown): GenerationPlan => {
   const validation = validateExperienceSpec(spec);

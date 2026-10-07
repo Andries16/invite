@@ -1,8 +1,10 @@
 import {
+  createContentHash,
   GenerationValidationError,
   planGeneration,
   type GenerationPlan,
 } from "@invite/invitation-generator";
+import type { ExperienceSpec } from "@invite/invitation-schema";
 import { Injectable } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 
@@ -22,11 +24,46 @@ export interface GenerationJob {
   };
 }
 
+export class GenerationIdempotencyConflictError extends Error {
+  public constructor() {
+    super("Generation idempotency key was already used for different input.");
+    this.name = "GenerationIdempotencyConflictError";
+  }
+}
+
+interface IdempotencyRecord {
+  jobId: string;
+  contentHash: string;
+}
+
+interface InvitationIdempotencyRecords {
+  readonly records: Map<string, IdempotencyRecord>;
+}
+
 @Injectable()
 export class GenerationService {
   private readonly jobs = new Map<string, GenerationJob>();
+  private readonly idempotencyRecords = new Map<string, InvitationIdempotencyRecords>();
 
-  createJob(invitationId: string, spec: unknown): GenerationJob {
+  createJob(invitationId: string, spec: ExperienceSpec, idempotencyKey?: string): GenerationJob {
+    const contentHash = createContentHash(spec);
+    const normalizedIdempotencyKey = idempotencyKey?.trim();
+
+    if (normalizedIdempotencyKey) {
+      const invitationRecords = this.getIdempotencyRecords(invitationId);
+      const existing = invitationRecords.records.get(normalizedIdempotencyKey);
+
+      if (existing) {
+        if (existing.contentHash !== contentHash) {
+          throw new GenerationIdempotencyConflictError();
+        }
+
+        const existingJob = this.jobs.get(existing.jobId);
+        if (existingJob) return existingJob;
+        invitationRecords.records.delete(normalizedIdempotencyKey);
+      }
+    }
+
     const now = new Date().toISOString();
     const id = randomUUID();
 
@@ -39,6 +76,14 @@ export class GenerationService {
     };
 
     this.jobs.set(id, job);
+
+    if (normalizedIdempotencyKey) {
+      this.getIdempotencyRecords(invitationId).records.set(normalizedIdempotencyKey, {
+        jobId: id,
+        contentHash,
+      });
+    }
+
     queueMicrotask(() => void this.runJob(id, spec));
 
     return job;
@@ -48,7 +93,7 @@ export class GenerationService {
     return this.jobs.get(id);
   }
 
-  private async runJob(id: string, spec: unknown): Promise<void> {
+  private async runJob(id: string, spec: ExperienceSpec): Promise<void> {
     try {
       this.updateJob(id, { status: "running" });
       const plan = planGeneration(spec);
@@ -69,6 +114,17 @@ export class GenerationService {
 
       this.updateJob(id, { status: "failed", error: failed });
     }
+  }
+
+  private getIdempotencyRecords(invitationId: string): InvitationIdempotencyRecords {
+    let records = this.idempotencyRecords.get(invitationId);
+
+    if (!records) {
+      records = { records: new Map<string, IdempotencyRecord>() };
+      this.idempotencyRecords.set(invitationId, records);
+    }
+
+    return records;
   }
 
   private updateJob(id: string, patch: Partial<GenerationJob>): GenerationJob {
