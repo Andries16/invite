@@ -43,7 +43,10 @@ interface InvitationIdempotencyRecords {
 @Injectable()
 export class GenerationService {
   private readonly jobs = new Map<string, GenerationJob>();
-  private readonly idempotencyRecords = new Map<string, InvitationIdempotencyRecords>();
+  private readonly idempotencyRecords = new Map<
+    string,
+    InvitationIdempotencyRecords
+  >();
 
   createJob(
     invitationId: string,
