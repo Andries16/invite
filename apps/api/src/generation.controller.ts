@@ -19,14 +19,12 @@ export class GenerationController {
 
   @Post("invitations/:invitationId/generations")
   @HttpCode(202)
-  createGeneration(
+  async createGeneration(
     @Param("invitationId") invitationId: string,
     @Headers("Idempotency-Key") idempotencyKey: string | undefined,
     @Body() body: { spec?: unknown },
-  ): { jobId: string } {
-    if (!invitationId.trim()) {
-      throw new NotFoundException("Invitation not found.");
-    }
+  ): Promise<{ jobId: string }> {
+    if (!invitationId.trim()) throw new NotFoundException("Invitation not found.");
 
     const spec = body?.spec;
     if (!isExperienceSpec(spec) || spec.invitationId !== invitationId) {
@@ -37,7 +35,7 @@ export class GenerationController {
     }
 
     try {
-      const job = this.generationService.createJob(invitationId, spec, idempotencyKey);
+      const job = await this.generationService.createJob(invitationId, spec, idempotencyKey);
       return { jobId: job.id };
     } catch (error) {
       if (error instanceof GenerationIdempotencyConflictError) {
@@ -46,14 +44,13 @@ export class GenerationController {
           message: "The idempotency key was already used for different generation input.",
         });
       }
-
       throw error;
     }
   }
 
   @Get("generation-jobs/:jobId")
-  getGenerationJob(@Param("jobId") jobId: string) {
-    const job = this.generationService.getJob(jobId);
+  async getGenerationJob(@Param("jobId") jobId: string) {
+    const job = await this.generationService.getJob(jobId);
     if (!job) throw new NotFoundException("Generation job not found.");
     return job;
   }
