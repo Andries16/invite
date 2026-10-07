@@ -8,13 +8,15 @@ The generation boundary follows the project architecture: a validated Experience
 - Generation produces an immutable-style artifact manifest containing the experience, schema version, generator version, ordered scene IDs and deduplicated media IDs.
 - `POST /invitations/:invitationId/generations` returns HTTP 202 and creates a generation job.
 - `GET /generation-jobs/:jobId` exposes the job state.
-- The worker package exposes the queue-independent execution boundary.
+- Generation job persistence is accessed through `@invite/storage`'s provider-neutral `GenerationJobStore<TPlan>` contract.
+- The API currently supplies an in-memory adapter behind that contract; a durable database adapter can replace it without changing the generation service contract.
+- Generation requests support invitation-scoped idempotency keys, and artifact identity uses canonicalized ExperienceSpec content.
 
 ## Deliberate limitation
 
-The current API job store is in-memory and the worker is not connected to Redis/BullMQ yet. It is a control-plane foundation, not the final production job infrastructure. Generation requests now support invitation-scoped idempotency keys, and artifact identity uses canonicalized ExperienceSpec content.
+The current API job store is in-memory and the worker is not connected to Redis/BullMQ yet. It is a control-plane foundation, not the final production job infrastructure. The storage boundary deliberately isolates that limitation from the generation domain.
 
-The production path must replace the in-memory store with durable persistence and a queue adapter without changing the generator contract. `@invite/storage` now exposes the provider-neutral immutable artifact boundary that the worker can consume once the persistent storage ADR is accepted.
+The production path must replace the in-memory store with durable persistence and add a queue adapter without changing the deterministic generator contract.
 
 ## Invariants
 
@@ -23,3 +25,4 @@ The production path must replace the in-memory store with durable persistence an
 3. Generation does not publish directly.
 4. The same validated specification produces the same generation manifest.
 5. Public serving remains independent from generation availability.
+6. Job persistence is accessed through a provider-neutral storage contract.
