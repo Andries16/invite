@@ -123,7 +123,9 @@ export class GenerationService {
     }
   }
 
-  private getIdempotencyRecords(invitationId: string): InvitationIdempotencyRecords {
+  private getIdempotencyRecords(
+    invitationId: string,
+  ): InvitationIdempotencyRecords {
     let records = this.idempotencyRecords.get(invitationId);
 
     if (!records) {
