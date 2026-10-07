@@ -36,10 +36,14 @@ interface IdempotencyRecord {
   contentHash: string;
 }
 
+interface InvitationIdempotencyRecords {
+  readonly records: Map<string, IdempotencyRecord>;
+}
+
 @Injectable()
 export class GenerationService {
   private readonly jobs = new Map<string, GenerationJob>();
-  private readonly idempotencyRecords = new Map<string, IdempotencyRecord>();
+  private readonly idempotencyRecords = new Map<string, InvitationIdempotencyRecords>();
 
   createJob(
     invitationId: string,
@@ -50,11 +54,8 @@ export class GenerationService {
     const normalizedIdempotencyKey = idempotencyKey?.trim();
 
     if (normalizedIdempotencyKey) {
-      const recordKey = this.createIdempotencyRecordKey(
-        invitationId,
-        normalizedIdempotencyKey,
-      );
-      const existing = this.idempotencyRecords.get(recordKey);
+      const invitationRecords = this.getIdempotencyRecords(invitationId);
+      const existing = invitationRecords.records.get(normalizedIdempotencyKey);
 
       if (existing) {
         if (existing.contentHash !== contentHash) {
@@ -63,7 +64,7 @@ export class GenerationService {
 
         const existingJob = this.jobs.get(existing.jobId);
         if (existingJob) return existingJob;
-        this.idempotencyRecords.delete(recordKey);
+        invitationRecords.records.delete(normalizedIdempotencyKey);
       }
     }
 
@@ -81,13 +82,10 @@ export class GenerationService {
     this.jobs.set(id, job);
 
     if (normalizedIdempotencyKey) {
-      this.idempotencyRecords.set(
-        this.createIdempotencyRecordKey(invitationId, normalizedIdempotencyKey),
-        {
-          jobId: id,
-          contentHash,
-        },
-      );
+      this.getIdempotencyRecords(invitationId).records.set(normalizedIdempotencyKey, {
+        jobId: id,
+        contentHash,
+      });
     }
 
     queueMicrotask(() => void this.runJob(id, spec));
@@ -122,8 +120,15 @@ export class GenerationService {
     }
   }
 
-  private createIdempotencyRecordKey(invitationId: string, idempotencyKey: string): string {
-    return invitationId + ":" + idempotencyKey;
+  private getIdempotencyRecords(invitationId: string): InvitationIdempotencyRecords {
+    let records = this.idempotencyRecords.get(invitationId);
+
+    if (!records) {
+      records = { records: new Map<string, IdempotencyRecord>() };
+      this.idempotencyRecords.set(invitationId, records);
+    }
+
+    return records;
   }
 
   private updateJob(id: string, patch: Partial<GenerationJob>): GenerationJob {
