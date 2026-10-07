@@ -8,7 +8,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck lint",
     "format": "prettier --write \"**/*.{ts,tsx,md,json,html,css}\"",
-    "format:check": "prettier --write \"**/*.{ts,tsx,md,json,html,css}\" && git diff -- apps/api/src/generation.service.ts packages/invitation-generator/src/index.ts",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json,html,css}\"",
     "spellcheck": "cspell \"**/*.{ts,tsx,md,mdx,json,html,css}\"",
     "storybook": "turbo run dev --filter=@invite/storybook",
     "storybook:build": "turbo run build --filter=@invite/storybook"
