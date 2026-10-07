@@ -82,10 +82,13 @@ export class GenerationService {
     this.jobs.set(id, job);
 
     if (normalizedIdempotencyKey) {
-      this.getIdempotencyRecords(invitationId).records.set(normalizedIdempotencyKey, {
-        jobId: id,
-        contentHash,
-      });
+      this.getIdempotencyRecords(invitationId).records.set(
+        normalizedIdempotencyKey,
+        {
+          jobId: id,
+          contentHash,
+        },
+      );
     }
 
     queueMicrotask(() => void this.runJob(id, spec));
