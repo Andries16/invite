@@ -33,7 +33,7 @@ export const GENERATION_JOB_STORE = Symbol("GENERATION_JOB_STORE");
 export class GenerationService {
   public constructor(
     @Inject(GENERATION_JOB_STORE)
-    private readonly store: GenerationJobStore,
+    private readonly store: GenerationJobStore<GenerationPlan>,
   ) {}
 
   async createJob(invitationId: string, spec: ExperienceSpec, idempotencyKey?: string): Promise<GenerationJob> {
@@ -45,12 +45,18 @@ export class GenerationService {
       if (existing) {
         if (existing.contentHash !== contentHash) throw new GenerationIdempotencyConflictError();
         const existingJob = await this.store.get(existing.jobId);
-        if (existingJob) return existingJob as GenerationJob;
+        if (existingJob) return existingJob;
       }
     }
 
     const now = new Date().toISOString();
-    const job: GenerationJob = { id: randomUUID(), invitationId, status: "queued", createdAt: now, updatedAt: now };
+    const job: GenerationJob = {
+      id: randomUUID(),
+      invitationId,
+      status: "queued",
+      createdAt: now,
+      updatedAt: now,
+    };
     await this.store.create(job);
 
     if (key) {
@@ -62,7 +68,7 @@ export class GenerationService {
   }
 
   async getJob(id: string): Promise<GenerationJob | undefined> {
-    return this.store.get(id) as Promise<GenerationJob | undefined>;
+    return this.store.get(id);
   }
 
   private async runJob(id: string, spec: ExperienceSpec): Promise<void> {
@@ -72,8 +78,16 @@ export class GenerationService {
       await this.updateJob(id, { status: "succeeded", plan });
     } catch (error) {
       const failed = error instanceof GenerationValidationError
-        ? { code: "INVITATION_SPEC_INVALID" as const, message: "The invitation specification is invalid.", details: error.issues }
-        : { code: "GENERATION_FAILED" as const, message: "Generation planning failed.", details: [] };
+        ? {
+            code: "INVITATION_SPEC_INVALID" as const,
+            message: "The invitation specification is invalid.",
+            details: error.issues,
+          }
+        : {
+            code: "GENERATION_FAILED" as const,
+            message: "Generation planning failed.",
+            details: [],
+          };
       await this.updateJob(id, { status: "failed", error: failed });
     }
   }
@@ -81,8 +95,13 @@ export class GenerationService {
   private async updateJob(id: string, patch: Partial<GenerationJob>): Promise<GenerationJob> {
     const current = await this.store.get(id);
     if (!current) throw new Error("Generation job disappeared.");
-    const next = { ...current, ...patch, updatedAt: new Date().toISOString() };
+
+    const next: GenerationJob = {
+      ...current,
+      ...patch,
+      updatedAt: new Date().toISOString(),
+    };
     await this.store.update(next);
-    return next as GenerationJob;
+    return next;
   }
 }
