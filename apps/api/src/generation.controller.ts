@@ -11,7 +11,7 @@ import {
   Param,
   Post,
 } from "@nestjs/common";
-import { GenerationService, GenerationIdempotencyConflictError } from "./generation.service";
+import { GenerationIdempotencyConflictError, GenerationService } from "./generation.service";
 
 @Controller()
 export class GenerationController {
