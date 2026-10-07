@@ -315,7 +315,11 @@ importers:
         specifier: workspace:*
         version: link:../invitation-schema
 
-  packages/generation-queue: {}
+  packages/generation-queue:
+    dependencies:
+      '@invite/invitation-schema':
+        specifier: workspace:*
+        version: link:../invitation-schema
 
   packages/design-system:
     dependencies:
