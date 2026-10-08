@@ -50,7 +50,9 @@ const toJob = (row: GenerationJobRow): GenerationJobRecord => ({
   updatedAt: row.updated_at,
 });
 
-const toIdempotency = (row: GenerationIdempotencyRow): GenerationIdempotencyRecord => ({
+const toIdempotency = (
+  row: GenerationIdempotencyRow,
+): GenerationIdempotencyRecord => ({
   invitationId: row.invitation_id,
   idempotencyKey: row.idempotency_key,
   contentHash: row.content_hash,
@@ -61,7 +63,9 @@ const toIdempotency = (row: GenerationIdempotencyRow): GenerationIdempotencyReco
 export class PostgresGenerationJobRepository implements GenerationJobRepository {
   public constructor(private readonly client: PostgresClient) {}
 
-  public async create(input: CreateGenerationJobInput): Promise<GenerationJobRecord> {
+  public async create(
+    input: CreateGenerationJobInput,
+  ): Promise<GenerationJobRecord> {
     const result = await this.client.query<GenerationJobRow>(
       `INSERT INTO generation_jobs (
         id, invitation_id, content_hash, status, spec, created_at, updated_at
@@ -77,7 +81,9 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
     );
 
     const row = result.rows[0];
-    if (!row) throw new Error("PostgreSQL did not return the created generation job.");
+    if (!row) {
+      throw new Error("PostgreSQL did not return the created generation job.");
+    }
     return toJob(row);
   }
 
@@ -179,7 +185,9 @@ export class PostgresGenerationIdempotencyRepository
     );
 
     const row = result.rows[0];
-    if (!row) throw new Error("PostgreSQL did not return the idempotency record.");
+    if (!row) {
+      throw new Error("PostgreSQL did not return the idempotency record.");
+    }
     return toIdempotency(row);
   }
 }
