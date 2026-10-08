@@ -32,7 +32,9 @@ export interface BullMqJobLike {
   data: GenerationQueueJob;
 }
 
-export type BullMqGenerationJobHandler = (job: GenerationQueueJob) => Promise<void>;
+export type BullMqGenerationJobHandler = (
+  job: GenerationQueueJob,
+) => Promise<void>;
 
 export interface BullMqWorkerLike {
   close(): Promise<void>;
