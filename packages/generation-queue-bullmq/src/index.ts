@@ -28,6 +28,42 @@ export interface BullMqGenerationQueueOptions {
   removeOnFail?: boolean | number;
 }
 
+export interface BullMqJobLike {
+  data: GenerationQueueJob;
+}
+
+export type BullMqGenerationJobHandler = (job: GenerationQueueJob) => Promise<void>;
+
+export interface BullMqWorkerLike {
+  close(): Promise<void>;
+}
+
+export interface BullMqWorkerFactory {
+  create(
+    name: string,
+    handler: (job: BullMqJobLike) => Promise<void>,
+    options?: {
+      concurrency?: number;
+    },
+  ): BullMqWorkerLike;
+}
+
+export class BullMqGenerationConsumer {
+  public readonly worker: BullMqWorkerLike;
+
+  public constructor(
+    factory: BullMqWorkerFactory,
+    handler: BullMqGenerationJobHandler,
+    options: { concurrency?: number } = {},
+  ) {
+    this.worker = factory.create(
+      GENERATION_QUEUE_NAME,
+      async (job) => handler(job.data),
+      options,
+    );
+  }
+}
+
 export class BullMqGenerationQueue implements GenerationQueue {
   public constructor(
     private readonly queue: BullMqQueueLike,
