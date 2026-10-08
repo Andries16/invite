@@ -3,7 +3,7 @@ import type {
   GenerationQueueJob,
 } from "@invite/generation-queue";
 import { ModuleRef } from "@nestjs/core";
-import type { GenerationService } from "./generation.service";
+import { GenerationService } from "./generation.service";
 
 export class InMemoryGenerationQueue implements GenerationQueue {
   public constructor(private readonly moduleRef: ModuleRef) {}
