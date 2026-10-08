@@ -10,9 +10,7 @@ export class InMemoryGenerationQueue implements GenerationQueue {
 
   public async enqueue(job: GenerationQueueJob): Promise<void> {
     queueMicrotask(() => {
-      void this.moduleRef
-        .get<GenerationService>("GenerationService", { strict: false })
-        .executeQueuedJob(job.jobId);
+      void this.moduleRef.get(GenerationService).executeQueuedJob(job.jobId);
     });
   }
 }
