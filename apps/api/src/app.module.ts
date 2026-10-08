@@ -1,16 +1,32 @@
 import { Module } from "@nestjs/common";
+import { InMemoryGenerationIdempotencyRepository, InMemoryGenerationJobRepository } from "./in-memory-generation-job-store";
+import { InMemoryGenerationQueue } from "./in-memory-generation-queue";
+import {
+  GENERATION_IDEMPOTENCY_REPOSITORY,
+  GENERATION_JOB_REPOSITORY,
+  GENERATION_QUEUE,
+  GenerationService,
+} from "./generation.service";
 import { GenerationController } from "./generation.controller";
-import { GenerationService, GENERATION_JOB_STORE } from "./generation.service";
-import { InMemoryGenerationJobStore } from "./in-memory-generation-job-store";
 
 @Module({
   controllers: [GenerationController],
   providers: [
     GenerationService,
-    InMemoryGenerationJobStore,
+    InMemoryGenerationJobRepository,
+    InMemoryGenerationIdempotencyRepository,
+    InMemoryGenerationQueue,
     {
-      provide: GENERATION_JOB_STORE,
-      useExisting: InMemoryGenerationJobStore,
+      provide: GENERATION_JOB_REPOSITORY,
+      useExisting: InMemoryGenerationJobRepository,
+    },
+    {
+      provide: GENERATION_IDEMPOTENCY_REPOSITORY,
+      useExisting: InMemoryGenerationIdempotencyRepository,
+    },
+    {
+      provide: GENERATION_QUEUE,
+      useExisting: InMemoryGenerationQueue,
     },
   ],
 })
