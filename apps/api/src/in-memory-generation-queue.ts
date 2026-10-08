@@ -2,15 +2,17 @@ import type {
   GenerationQueue,
   GenerationQueueJob,
 } from "@invite/generation-queue";
-
-export type GenerationQueueHandler = (job: GenerationQueueJob) => Promise<void>;
+import { ModuleRef } from "@nestjs/core";
+import type { GenerationService } from "./generation.service";
 
 export class InMemoryGenerationQueue implements GenerationQueue {
-  public constructor(private readonly handler: GenerationQueueHandler) {}
+  public constructor(private readonly moduleRef: ModuleRef) {}
 
   public async enqueue(job: GenerationQueueJob): Promise<void> {
     queueMicrotask(() => {
-      void this.handler(job);
+      void this.moduleRef
+        .get<GenerationService>("GenerationService", { strict: false })
+        .executeQueuedJob(job.jobId);
     });
   }
 }
