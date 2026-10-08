@@ -54,3 +54,16 @@ Use:
 - `pnpm --filter @invite/storybook typecheck` for type validation
 
 See the phase-specific requirements in `tasks/03-design-system` and `tasks/13-quality-security-performance`.
+
+
+## Current implementation slice
+
+Generation infrastructure is split into provider-neutral control-plane contracts:
+
+- `@invite/generation-persistence` owns durable generation-job and invitation-scoped idempotency repository interfaces.
+- `@invite/generation-queue` owns the immutable queue payload contract and canonical `invite.generation` queue name.
+- `@invite/generation-persistence-postgres` provides the PostgreSQL repository adapter and migration.
+- `@invite/generation-queue-bullmq` provides the BullMQ producer and consumer boundary.
+- The API persists a generation job before enqueueing work.
+- The worker validates the queue payload and verifies the persisted content hash before executing generation.
+- In-memory API adapters remain transitional; the deterministic generator stays independent of all infrastructure packages.
