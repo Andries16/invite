@@ -1,6 +1,16 @@
-import { createContentHash, GenerationValidationError, planGeneration, type GenerationPlan } from "@invite/invitation-generator";
+import {
+  createContentHash,
+  GenerationValidationError,
+  type GenerationPlan,
+  planGeneration,
+} from "@invite/invitation-generator";
+import type {
+  GenerationIdempotencyRepository,
+  GenerationJobRecord,
+  GenerationJobRepository,
+} from "@invite/generation-persistence";
+import type { GenerationQueue } from "@invite/generation-queue";
 import type { ExperienceSpec } from "@invite/invitation-schema";
-import type { GenerationJobStore } from "@invite/storage";
 import { Inject, Injectable } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 
@@ -13,11 +23,7 @@ export interface GenerationJob {
   createdAt: string;
   updatedAt: string;
   plan?: GenerationPlan;
-  error?: {
-    code: "INVITATION_SPEC_INVALID" | "GENERATION_FAILED";
-    message: string;
-    details: unknown[];
-  };
+  error?: GenerationJobRecord["error"];
 }
 
 export class GenerationIdempotencyConflictError extends Error {
@@ -27,81 +33,135 @@ export class GenerationIdempotencyConflictError extends Error {
   }
 }
 
-export const GENERATION_JOB_STORE = Symbol("GENERATION_JOB_STORE");
+export const GENERATION_JOB_REPOSITORY = Symbol("GENERATION_JOB_REPOSITORY");
+export const GENERATION_IDEMPOTENCY_REPOSITORY = Symbol("GENERATION_IDEMPOTENCY_REPOSITORY");
+export const GENERATION_QUEUE = Symbol("GENERATION_QUEUE");
 
 @Injectable()
 export class GenerationService {
   public constructor(
-    @Inject(GENERATION_JOB_STORE)
-    private readonly store: GenerationJobStore<GenerationPlan>,
+    @Inject(GENERATION_JOB_REPOSITORY)
+    private readonly jobs: GenerationJobRepository,
+    @Inject(GENERATION_IDEMPOTENCY_REPOSITORY)
+    private readonly idempotency: GenerationIdempotencyRepository,
+    @Inject(GENERATION_QUEUE)
+    private readonly queue: GenerationQueue,
   ) {}
 
-  async createJob(invitationId: string, spec: ExperienceSpec, idempotencyKey?: string): Promise<GenerationJob> {
+  public async createJob(
+    invitationId: string,
+    spec: ExperienceSpec,
+    idempotencyKey?: string,
+  ): Promise<GenerationJob> {
     const contentHash = createContentHash(spec);
-    const key = idempotencyKey?.trim();
+    const normalizedKey = idempotencyKey?.trim();
 
-    if (key) {
-      const existing = await this.store.getIdempotency(invitationId, key);
+    if (normalizedKey) {
+      const existing = await this.idempotency.find(invitationId, normalizedKey);
       if (existing) {
-        if (existing.contentHash !== contentHash) throw new GenerationIdempotencyConflictError();
-        const existingJob = await this.store.get(existing.jobId);
-        if (existingJob) return existingJob;
+        if (existing.contentHash !== contentHash) {
+          throw new GenerationIdempotencyConflictError();
+        }
+
+        const existingJob = await this.jobs.findById(existing.jobId);
+        if (existingJob) return this.toPublicJob(existingJob);
       }
     }
 
     const now = new Date().toISOString();
-    const job: GenerationJob = {
-      id: randomUUID(),
+    const jobId = randomUUID();
+    const record = await this.jobs.create({
+      id: jobId,
       invitationId,
-      status: "queued",
+      contentHash,
+      spec,
       createdAt: now,
-      updatedAt: now,
-    };
-    await this.store.create(job);
+    });
 
-    if (key) {
-      await this.store.putIdempotency({ invitationId, key, jobId: job.id, contentHash });
+    if (normalizedKey) {
+      try {
+        await this.idempotency.create({
+          invitationId,
+          idempotencyKey: normalizedKey,
+          contentHash,
+          jobId,
+          createdAt: now,
+        });
+      } catch (error) {
+        const existing = await this.idempotency.find(invitationId, normalizedKey);
+        if (existing?.contentHash !== contentHash) {
+          throw new GenerationIdempotencyConflictError();
+        }
+
+        const existingJob = existing ? await this.jobs.findById(existing.jobId) : undefined;
+        if (existingJob) return this.toPublicJob(existingJob);
+        throw error;
+      }
     }
 
-    queueMicrotask(() => void this.runJob(job.id, spec));
-    return job;
+    await this.queue.enqueue({
+      jobId: record.id,
+      invitationId: record.invitationId,
+      contentHash: record.contentHash,
+      spec: record.spec,
+      enqueuedAt: now,
+    });
+
+    return this.toPublicJob(record);
   }
 
-  async getJob(id: string): Promise<GenerationJob | undefined> {
-    return this.store.get(id);
+  public async getJob(id: string): Promise<GenerationJob | undefined> {
+    const job = await this.jobs.findById(id);
+    return job ? this.toPublicJob(job) : undefined;
   }
 
-  private async runJob(id: string, spec: ExperienceSpec): Promise<void> {
+  public async executeQueuedJob(jobId: string): Promise<void> {
+    const record = await this.jobs.findById(jobId);
+    if (!record) throw new Error("Generation job not found.");
+
     try {
-      await this.updateJob(id, { status: "running" });
-      const plan = planGeneration(spec);
-      await this.updateJob(id, { status: "succeeded", plan });
+      await this.jobs.update(jobId, {
+        status: "running",
+        updatedAt: new Date().toISOString(),
+      });
+
+      const plan = planGeneration(record.spec);
+      await this.jobs.update(jobId, {
+        status: "succeeded",
+        plan,
+        updatedAt: new Date().toISOString(),
+      });
     } catch (error) {
-      const failed = error instanceof GenerationValidationError
-        ? {
-            code: "INVITATION_SPEC_INVALID" as const,
-            message: "The invitation specification is invalid.",
-            details: error.issues,
-          }
-        : {
-            code: "GENERATION_FAILED" as const,
-            message: "Generation planning failed.",
-            details: [],
-          };
-      await this.updateJob(id, { status: "failed", error: failed });
+      const failure =
+        error instanceof GenerationValidationError
+          ? {
+              code: "INVITATION_SPEC_INVALID" as const,
+              message: "The invitation specification is invalid.",
+              details: error.issues,
+            }
+          : {
+              code: "GENERATION_FAILED" as const,
+              message: "Generation planning failed.",
+              details: [],
+            };
+
+      await this.jobs.update(jobId, {
+        status: "failed",
+        error: failure,
+        updatedAt: new Date().toISOString(),
+      });
     }
   }
 
-  private async updateJob(id: string, patch: Partial<GenerationJob>): Promise<GenerationJob> {
-    const current = await this.store.get(id);
-    if (!current) throw new Error("Generation job disappeared.");
-
-    const next: GenerationJob = {
-      ...current,
-      ...patch,
-      updatedAt: new Date().toISOString(),
+  private toPublicJob(record: GenerationJobRecord): GenerationJob {
+    return {
+      id: record.id,
+      invitationId: record.invitationId,
+      status: record.status,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
+      ...(record.plan === undefined ? {} : { plan: record.plan }),
+      ...(record.error === undefined ? {} : { error: record.error }),
     };
-    await this.store.update(next);
-    return next;
   }
 }
