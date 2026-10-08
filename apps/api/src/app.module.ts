@@ -1,5 +1,8 @@
 import { Module } from "@nestjs/common";
-import { InMemoryGenerationIdempotencyRepository, InMemoryGenerationJobRepository } from "./in-memory-generation-job-store";
+import {
+  InMemoryGenerationIdempotencyRepository,
+  InMemoryGenerationJobRepository,
+} from "./in-memory-generation-job-store";
 import { InMemoryGenerationQueue } from "./in-memory-generation-queue";
 import {
   GENERATION_IDEMPOTENCY_REPOSITORY,
