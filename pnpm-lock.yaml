@@ -321,6 +321,18 @@ importers:
         specifier: workspace:*
         version: link:../invitation-schema
 
+  packages/generation-persistence-postgres:
+    dependencies:
+      '@invite/generation-persistence':
+        specifier: workspace:*
+        version: link:../generation-persistence
+
+  packages/generation-queue-bullmq:
+    dependencies:
+      '@invite/generation-queue':
+        specifier: workspace:*
+        version: link:../generation-queue
+
   packages/design-system:
     dependencies:
       '@emotion/react':
