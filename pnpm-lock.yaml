@@ -57,6 +57,12 @@ importers:
 
   apps/api:
     dependencies:
+      '@invite/generation-persistence':
+        specifier: workspace:*
+        version: link:../../packages/generation-persistence
+      '@invite/generation-queue':
+        specifier: workspace:*
+        version: link:../../packages/generation-queue
       '@invite/invitation-generator':
         specifier: workspace:*
         version: link:../../packages/invitation-generator
