@@ -34,7 +34,9 @@ export class GenerationIdempotencyConflictError extends Error {
 }
 
 export const GENERATION_JOB_REPOSITORY = Symbol("GENERATION_JOB_REPOSITORY");
-export const GENERATION_IDEMPOTENCY_REPOSITORY = Symbol("GENERATION_IDEMPOTENCY_REPOSITORY");
+export const GENERATION_IDEMPOTENCY_REPOSITORY = Symbol(
+  "GENERATION_IDEMPOTENCY_REPOSITORY",
+);
 export const GENERATION_QUEUE = Symbol("GENERATION_QUEUE");
 
 @Injectable()
@@ -93,7 +95,9 @@ export class GenerationService {
           throw new GenerationIdempotencyConflictError();
         }
 
-        const existingJob = existing ? await this.jobs.findById(existing.jobId) : undefined;
+        const existingJob = existing
+          ? await this.jobs.findById(existing.jobId)
+          : undefined;
         if (existingJob) return this.toPublicJob(existingJob);
         throw error;
       }
