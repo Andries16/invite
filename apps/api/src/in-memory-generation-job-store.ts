@@ -1,37 +1,71 @@
 import type {
+  CreateGenerationJobInput,
   GenerationIdempotencyRecord,
+  GenerationIdempotencyRepository,
   GenerationJobRecord,
-  GenerationJobStore,
-} from "@invite/storage";
+  GenerationJobRepository,
+} from "@invite/generation-persistence";
 
-export class InMemoryGenerationJobStore<TPlan = unknown> implements GenerationJobStore<TPlan> {
-  private readonly jobs = new Map<string, GenerationJobRecord<TPlan>>();
-  private readonly idempotency = new Map<string, GenerationIdempotencyRecord>();
+export class InMemoryGenerationJobRepository implements GenerationJobRepository {
+  private readonly jobs = new Map<string, GenerationJobRecord>();
 
-  public async create(job: GenerationJobRecord<TPlan>): Promise<void> {
+  public async create(input: CreateGenerationJobInput): Promise<GenerationJobRecord> {
+    const job: GenerationJobRecord = {
+      id: input.id,
+      invitationId: input.invitationId,
+      contentHash: input.contentHash,
+      status: "queued",
+      spec: structuredClone(input.spec),
+      createdAt: input.createdAt,
+      updatedAt: input.createdAt,
+    };
     this.jobs.set(job.id, job);
+    return structuredClone(job);
   }
 
-  public async get(jobId: string): Promise<GenerationJobRecord<TPlan> | undefined> {
-    return this.jobs.get(jobId);
+  public async findById(id: string): Promise<GenerationJobRecord | undefined> {
+    const job = this.jobs.get(id);
+    return job ? structuredClone(job) : undefined;
   }
 
-  public async update(job: GenerationJobRecord<TPlan>): Promise<void> {
-    this.jobs.set(job.id, job);
-  }
+  public async update(
+    id: string,
+    patch: Partial<
+      Pick<GenerationJobRecord, "status" | "plan" | "error" | "updatedAt">
+    >,
+  ): Promise<GenerationJobRecord> {
+    const current = this.jobs.get(id);
+    if (!current) throw new Error("Generation job not found.");
 
-  public async getIdempotency(
+    const next = { ...current, ...structuredClone(patch) };
+    this.jobs.set(id, next);
+    return structuredClone(next);
+  }
+}
+
+export class InMemoryGenerationIdempotencyRepository
+  implements GenerationIdempotencyRepository
+{
+  private readonly records = new Map<string, GenerationIdempotencyRecord>();
+
+  public async find(
     invitationId: string,
-    key: string,
+    idempotencyKey: string,
   ): Promise<GenerationIdempotencyRecord | undefined> {
-    return this.idempotency.get(this.idempotencyKey(invitationId, key));
+    const record = this.records.get(this.key(invitationId, idempotencyKey));
+    return record ? structuredClone(record) : undefined;
   }
 
-  public async putIdempotency(record: GenerationIdempotencyRecord): Promise<void> {
-    this.idempotency.set(this.idempotencyKey(record.invitationId, record.key), record);
+  public async create(
+    record: GenerationIdempotencyRecord,
+  ): Promise<GenerationIdempotencyRecord> {
+    const key = this.key(record.invitationId, record.idempotencyKey);
+    if (this.records.has(key)) throw new Error("GENERATION_IDEMPOTENCY_CONFLICT");
+    this.records.set(key, structuredClone(record));
+    return structuredClone(record);
   }
 
-  private idempotencyKey(invitationId: string, key: string): string {
-    return invitationId + ":" + key;
+  private key(invitationId: string, idempotencyKey: string): string {
+    return JSON.stringify([invitationId, idempotencyKey]);
   }
 }
