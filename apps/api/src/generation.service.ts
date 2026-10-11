@@ -66,7 +66,12 @@ export class GenerationService {
         }
 
         const existingJob = await this.jobs.findById(existing.jobId);
-        if (existingJob) return this.toPublicJob(existingJob);
+        if (existingJob) {
+          if (existingJob.status === "queued") {
+            await this.enqueueJob(existingJob);
+          }
+          return this.toPublicJob(existingJob);
+        }
       }
     }
 
@@ -98,19 +103,17 @@ export class GenerationService {
         const existingJob = existing
           ? await this.jobs.findById(existing.jobId)
           : undefined;
-        if (existingJob) return this.toPublicJob(existingJob);
+        if (existingJob) {
+          if (existingJob.status === "queued") {
+            await this.enqueueJob(existingJob);
+          }
+          return this.toPublicJob(existingJob);
+        }
         throw error;
       }
     }
 
-    await this.queue.enqueue({
-      jobId: record.id,
-      invitationId: record.invitationId,
-      contentHash: record.contentHash,
-      spec: record.spec,
-      enqueuedAt: now,
-    });
-
+    await this.enqueueJob(record);
     return this.toPublicJob(record);
   }
 
@@ -122,6 +125,7 @@ export class GenerationService {
   public async executeQueuedJob(jobId: string): Promise<void> {
     const record = await this.jobs.findById(jobId);
     if (!record) throw new Error("Generation job not found.");
+    if (record.status !== "queued") return;
 
     try {
       await this.jobs.update(jobId, {
@@ -155,6 +159,16 @@ export class GenerationService {
         updatedAt: new Date().toISOString(),
       });
     }
+  }
+
+  private async enqueueJob(record: GenerationJobRecord): Promise<void> {
+    await this.queue.enqueue({
+      jobId: record.id,
+      invitationId: record.invitationId,
+      contentHash: record.contentHash,
+      spec: record.spec,
+      enqueuedAt: new Date().toISOString(),
+    });
   }
 
   private toPublicJob(record: GenerationJobRecord): GenerationJob {
