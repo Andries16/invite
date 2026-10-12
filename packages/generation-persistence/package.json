@@ -1,0 +1,17 @@
+{
+  "name": "@invite/generation-persistence",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@invite/invitation-generator": "workspace:*",
+    "@invite/invitation-schema": "workspace:*"
+  }
+}
