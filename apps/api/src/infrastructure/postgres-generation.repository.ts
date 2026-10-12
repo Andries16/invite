@@ -130,6 +130,14 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
     input: CreateGenerationJobInput,
     idempotency: GenerationIdempotencyRecord,
   ): Promise<GenerationJobRecord> {
+    if (
+      input.id !== idempotency.jobId ||
+      input.invitationId !== idempotency.invitationId ||
+      input.contentHash !== idempotency.contentHash
+    ) {
+      throw new Error("Generation job and idempotency record must describe the same request.");
+    }
+
     const connection = await this.pool.connect();
     try {
       await connection.query("BEGIN");
