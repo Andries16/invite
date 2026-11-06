@@ -139,8 +139,12 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
     }
 
     const connection = await this.pool.connect();
+    let transactionStarted = false;
+
     try {
       await connection.query("BEGIN");
+      transactionStarted = true;
+
       const jobResult = await connection.query<JobRow>(
         `INSERT INTO generation_jobs
           (id, invitation_id, content_hash, status, spec, created_at, updated_at)
@@ -148,6 +152,9 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
          RETURNING ${jobColumns}`,
         [input.id, input.invitationId, input.contentHash, JSON.stringify(input.spec), input.createdAt],
       );
+      const row = jobResult.rows[0];
+      if (!row) throw new Error("PostgreSQL did not return the created generation job.");
+
       await connection.query(
         `INSERT INTO generation_idempotency_keys
           (invitation_id, idempotency_key, content_hash, job_id, created_at)
@@ -155,11 +162,17 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
         [idempotency.invitationId, idempotency.idempotencyKey, idempotency.contentHash, idempotency.jobId, idempotency.createdAt],
       );
       await connection.query("COMMIT");
-      const row = jobResult.rows[0];
-      if (!row) throw new Error("PostgreSQL did not return the created generation job.");
+      transactionStarted = false;
+
       return toJobRecord(row);
     } catch (error) {
-      await connection.query("ROLLBACK");
+      if (transactionStarted) {
+        try {
+          await connection.query("ROLLBACK");
+        } catch {
+          // Preserve the original query/commit error; the connection is released below.
+        }
+      }
       throw error;
     } finally {
       connection.release();
