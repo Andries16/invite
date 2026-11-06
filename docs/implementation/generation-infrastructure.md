@@ -16,6 +16,8 @@ The repository constructors accept a small structural SQL interface, so the API 
 
 `BullMqGenerationQueue` implements the `GenerationQueue` contract. It uses the generation job ID as BullMQ's stable `jobId`, configures bounded retries with exponential backoff, and retains completed/failed queue records for operational inspection.
 
+Stable IDs prevent duplicate queue entries while a BullMQ record exists; they do **not** make a retained completed or failed job executable again. A future recovery/retry workflow must inspect the existing BullMQ job state and deliberately remove/recreate or otherwise re-arm the queue record before re-enqueueing. Do not rely on calling `add` again with the same retained ID to recover a job.
+
 The constructor accepts a structural subset of BullMQ's `Queue` API so the adapter package remains independent of the vendor SDK.
 
 ## Remaining integration work
@@ -26,6 +28,7 @@ These are adapter implementations, not yet the default runtime wiring. Before pr
 2. Replace the in-memory `GenerationService` maps with repository-backed async operations.
 3. Persist the job before enqueueing; on enqueue failure, keep the durable job queued and allow a safe retry.
 4. Add a worker that claims queued jobs, runs `planGeneration`, and persists terminal status.
-5. Add integration tests against PostgreSQL and Redis, including concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, and restart recovery.
+5. Add integration tests against PostgreSQL and Redis, including concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, retained-job recovery, and restart recovery.
+6. Add a transactional outbox or equivalent reconciliation process so a crash between database commit and queue enqueue cannot leave a queued job undispatched indefinitely.
 
 The deterministic generator contract remains unchanged.
