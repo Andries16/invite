@@ -109,6 +109,13 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
            error = CASE WHEN $5::boolean THEN $6::jsonb ELSE error END,
            updated_at = COALESCE($7::timestamptz, NOW())
        WHERE id = $1
+         AND (
+           $2::text IS NULL
+           OR $2 = status
+           OR (status = 'queued' AND $2 IN ('running', 'failed'))
+           OR (status = 'running' AND $2 IN ('succeeded', 'failed'))
+           OR (status = 'failed' AND $2 = 'queued')
+         )
        RETURNING ${jobColumns}`,
       [
         id,
@@ -121,8 +128,11 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
       ],
     );
     const row = result.rows[0];
-    if (!row) throw new Error("Generation job not found.");
-    return toJobRecord(row);
+    if (row) return toJobRecord(row);
+
+    const existing = await this.findById(id);
+    if (!existing) throw new Error("Generation job not found.");
+    throw new Error(`Invalid generation job status transition: ${existing.status} -> ${patch.status}.`);
   }
 
   /** Atomically persists a keyed request so no orphan idempotency record remains. */
