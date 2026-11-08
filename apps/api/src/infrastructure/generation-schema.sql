@@ -24,3 +24,22 @@ CREATE TABLE IF NOT EXISTS generation_idempotency_keys (
 
 CREATE INDEX IF NOT EXISTS generation_idempotency_job_idx
   ON generation_idempotency_keys (job_id);
+
+CREATE TABLE IF NOT EXISTS generation_outbox (
+  id UUID PRIMARY KEY,
+  job_id UUID NOT NULL UNIQUE REFERENCES generation_jobs (id) ON DELETE CASCADE,
+  event_type TEXT NOT NULL CHECK (event_type = 'generation.requested'),
+  payload JSONB NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'processing', 'dispatched', 'failed')),
+  attempts INTEGER NOT NULL DEFAULT 0 CHECK (attempts >= 0),
+  available_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  locked_at TIMESTAMPTZ,
+  dispatched_at TIMESTAMPTZ,
+  last_error TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS generation_outbox_pending_idx
+  ON generation_outbox (available_at, created_at)
+  WHERE status IN ('pending', 'failed');
