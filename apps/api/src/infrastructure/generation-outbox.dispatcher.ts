@@ -46,6 +46,7 @@ export class GenerationOutboxDispatcher {
     const events = await this.outbox.claimBatch(this.batchSize, this.leaseDurationMs);
     let dispatched = 0;
     let failed = 0;
+    const persistenceErrors: Error[] = [];
 
     for (const event of events) {
       try {
@@ -57,8 +58,23 @@ export class GenerationOutboxDispatcher {
         const message = error instanceof Error ? error.message : "Unknown queue dispatch error";
         // If this update also fails, the processing lease expires and another
         // dispatcher can recover the event without losing the durable record.
-        await this.outbox.markFailed(event.id, message, this.retryDelayMs);
+        try {
+          await this.outbox.markFailed(event.id, message, this.retryDelayMs);
+        } catch (persistenceError) {
+          persistenceErrors.push(
+            persistenceError instanceof Error
+              ? persistenceError
+              : new Error("Could not persist outbox dispatch failure."),
+          );
+        }
       }
+    }
+
+    if (persistenceErrors.length > 0) {
+      throw new AggregateError(
+        persistenceErrors,
+        "One or more outbox events could not persist their retry state; leases will recover them.",
+      );
     }
 
     return { claimed: events.length, dispatched, failed };
