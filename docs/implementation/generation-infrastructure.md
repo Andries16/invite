@@ -8,7 +8,10 @@ Apply `apps/api/src/infrastructure/generation-schema.sql` before enabling the re
 
 - `PostgresGenerationJobRepository` implements job creation, lookup, and state updates.
 - `PostgresGenerationIdempotencyRepository` implements invitation-scoped idempotency lookup and insertion.
-- `createIdempotent` persists the job and idempotency row in one transaction. Callers must handle a unique-key violation by reading the existing idempotency record and comparing its content hash.
+- Both `create` and `createIdempotent` now persist the generation job and a `generation.requested` outbox event in one PostgreSQL transaction. The idempotent variant also inserts the invitation-scoped idempotency row in that same transaction.
+- The outbox event contains the immutable job payload needed by a future dispatcher. This closes the database-commit/queue-enqueue loss window at the write boundary: a committed job always has a committed outbox row.
+- The outbox is only a durable write-ahead record at this stage. A dispatcher/lease-claim repository, retry scheduler, and BullMQ delivery reconciliation are not implemented yet; events will remain pending until that integration exists.
+- Callers must still handle a unique-key violation by reading the existing idempotency record and comparing its content hash.
 
 The repository constructors accept a small structural SQL interface, so the API can provide a `pg` pool without leaking the driver into domain contracts.
 
@@ -26,9 +29,9 @@ These are adapter implementations, not yet the default runtime wiring. Before pr
 
 1. Add and configure PostgreSQL and BullMQ/Redis clients from validated environment configuration.
 2. Replace the in-memory `GenerationService` maps with repository-backed async operations.
-3. Persist the job before enqueueing; on enqueue failure, keep the durable job queued and allow a safe retry.
+3. Implement an outbox dispatcher using row locking (`FOR UPDATE SKIP LOCKED`) or an equivalent lease claim, publish to BullMQ, then mark the event dispatched. Recover stale `processing` leases after process crashes; delivery must be at-least-once and consumers idempotent.
 4. Add a worker that claims queued jobs, runs `planGeneration`, and persists terminal status.
 5. Add integration tests against PostgreSQL and Redis, including concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, retained-job recovery, and restart recovery.
-6. Add a transactional outbox or equivalent reconciliation process so a crash between database commit and queue enqueue cannot leave a queued job undispatched indefinitely.
+6. Complete outbox dispatch/reconciliation and monitor the age/count of pending events so a crash between database commit and queue enqueue cannot leave a queued job undispatched indefinitely.
 
 The deterministic generator contract remains unchanged.
