@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { GenerationQueueJob } from "@invite/generation-queue";
 import type {
   CreateGenerationJobInput,
   GenerationIdempotencyRecord,
@@ -240,5 +241,93 @@ export class PostgresGenerationIdempotencyRepository implements GenerationIdempo
     const row = result.rows[0];
     if (!row) throw new Error("PostgreSQL did not return the idempotency record.");
     return toIdempotencyRecord(row);
+  }
+}
+
+
+interface OutboxRow {
+  id: string;
+  payload: GenerationQueueJob;
+}
+
+/**
+ * PostgreSQL outbox operations for an at-least-once dispatcher.
+ * Claimed rows are leased; a crashed dispatcher can be recovered after lease expiry.
+ */
+export class PostgresGenerationOutboxRepository {
+  public constructor(private readonly pool: SqlPool) {}
+
+  public async claimBatch(
+    limit: number,
+    leaseDurationMs: number,
+  ): Promise<Array<{ id: string; payload: GenerationQueueJob }>> {
+    if (!Number.isInteger(limit) || limit < 1) {
+      throw new RangeError("Outbox batch limit must be a positive integer.");
+    }
+    if (!Number.isFinite(leaseDurationMs) || leaseDurationMs < 1) {
+      throw new RangeError("Outbox lease duration must be a positive number.");
+    }
+
+    const result = await this.pool.query<OutboxRow>(
+      `WITH candidates AS (
+         SELECT id
+         FROM generation_outbox
+         WHERE (
+           (status IN ('pending', 'failed') AND available_at <= NOW())
+           OR (status = 'processing' AND locked_at < NOW() - ($2 * INTERVAL '1 millisecond'))
+         )
+         ORDER BY available_at ASC, created_at ASC
+         FOR UPDATE SKIP LOCKED
+         LIMIT $1
+       )
+       UPDATE generation_outbox AS outbox
+       SET status = 'processing',
+           locked_at = NOW(),
+           attempts = outbox.attempts + 1
+       FROM candidates
+       WHERE outbox.id = candidates.id
+       RETURNING outbox.id, outbox.payload`,
+      [limit, leaseDurationMs],
+    );
+
+    return result.rows.map((row) => ({ id: row.id, payload: row.payload }));
+  }
+
+  public async markDispatched(id: string): Promise<void> {
+    const result = await this.pool.query(
+      `UPDATE generation_outbox
+       SET status = 'dispatched',
+           dispatched_at = NOW(),
+           locked_at = NULL,
+           last_error = NULL
+       WHERE id = $1 AND status = 'processing'`,
+      [id],
+    );
+    if (result.rowCount === 0) {
+      throw new Error("Outbox event was not processing when marked dispatched.");
+    }
+  }
+
+  public async markFailed(
+    id: string,
+    error: string,
+    retryDelayMs: number,
+  ): Promise<void> {
+    if (!Number.isFinite(retryDelayMs) || retryDelayMs < 0) {
+      throw new RangeError("Outbox retry delay must be a non-negative number.");
+    }
+
+    const result = await this.pool.query(
+      `UPDATE generation_outbox
+       SET status = 'failed',
+           available_at = NOW() + ($3 * INTERVAL '1 millisecond'),
+           locked_at = NULL,
+           last_error = $2
+       WHERE id = $1 AND status = 'processing'`,
+      [id, error.slice(0, 2_000), retryDelayMs],
+    );
+    if (result.rowCount === 0) {
+      throw new Error("Outbox event was not processing when marked failed.");
+    }
   }
 }
