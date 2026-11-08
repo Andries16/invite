@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type {
   CreateGenerationJobInput,
   GenerationIdempotencyRecord,
@@ -77,16 +78,81 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
   public constructor(private readonly pool: SqlPool) {}
 
   public async create(input: CreateGenerationJobInput): Promise<GenerationJobRecord> {
-    const result = await this.pool.query<JobRow>(
-      `INSERT INTO generation_jobs
-        (id, invitation_id, content_hash, status, spec, created_at, updated_at)
-       VALUES ($1, $2, $3, 'queued', $4::jsonb, $5::timestamptz, $5::timestamptz)
-       RETURNING ${jobColumns}`,
-      [input.id, input.invitationId, input.contentHash, JSON.stringify(input.spec), input.createdAt],
-    );
-    const row = result.rows[0];
-    if (!row) throw new Error("PostgreSQL did not return the created generation job.");
-    return toJobRecord(row);
+    return this.persistQueuedJob(input);
+  }
+
+  private async persistQueuedJob(
+    input: CreateGenerationJobInput,
+    idempotency?: GenerationIdempotencyRecord,
+  ): Promise<GenerationJobRecord> {
+    if (
+      idempotency &&
+      (input.id !== idempotency.jobId ||
+        input.invitationId !== idempotency.invitationId ||
+        input.contentHash !== idempotency.contentHash)
+    ) {
+      throw new Error("Generation job and idempotency record must describe the same request.");
+    }
+
+    const connection = await this.pool.connect();
+    let transactionStarted = false;
+
+    try {
+      await connection.query("BEGIN");
+      transactionStarted = true;
+
+      const jobResult = await connection.query<JobRow>(
+        `INSERT INTO generation_jobs
+          (id, invitation_id, content_hash, status, spec, created_at, updated_at)
+         VALUES ($1, $2, $3, 'queued', $4::jsonb, $5::timestamptz, $5::timestamptz)
+         RETURNING ${jobColumns}`,
+        [input.id, input.invitationId, input.contentHash, JSON.stringify(input.spec), input.createdAt],
+      );
+      const row = jobResult.rows[0];
+      if (!row) throw new Error("PostgreSQL did not return the created generation job.");
+
+      if (idempotency) {
+        await connection.query(
+          `INSERT INTO generation_idempotency_keys
+            (invitation_id, idempotency_key, content_hash, job_id, created_at)
+           VALUES ($1, $2, $3, $4, $5::timestamptz)`,
+          [idempotency.invitationId, idempotency.idempotencyKey, idempotency.contentHash, idempotency.jobId, idempotency.createdAt],
+        );
+      }
+
+      await connection.query(
+        `INSERT INTO generation_outbox
+          (id, job_id, event_type, payload, status, created_at)
+         VALUES ($1, $2, 'generation.requested', $3::jsonb, 'pending', $4::timestamptz)`,
+        [
+          randomUUID(),
+          input.id,
+          JSON.stringify({
+            jobId: input.id,
+            invitationId: input.invitationId,
+            contentHash: input.contentHash,
+            spec: input.spec,
+            enqueuedAt: input.createdAt,
+          }),
+          input.createdAt,
+        ],
+      );
+
+      await connection.query("COMMIT");
+      transactionStarted = false;
+      return toJobRecord(row);
+    } catch (error) {
+      if (transactionStarted) {
+        try {
+          await connection.query("ROLLBACK");
+        } catch {
+          // Preserve the original query/commit error.
+        }
+      }
+      throw error;
+    } finally {
+      connection.release();
+    }
   }
 
   public async findById(id: string): Promise<GenerationJobRecord | undefined> {
@@ -140,53 +206,7 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
     input: CreateGenerationJobInput,
     idempotency: GenerationIdempotencyRecord,
   ): Promise<GenerationJobRecord> {
-    if (
-      input.id !== idempotency.jobId ||
-      input.invitationId !== idempotency.invitationId ||
-      input.contentHash !== idempotency.contentHash
-    ) {
-      throw new Error("Generation job and idempotency record must describe the same request.");
-    }
-
-    const connection = await this.pool.connect();
-    let transactionStarted = false;
-
-    try {
-      await connection.query("BEGIN");
-      transactionStarted = true;
-
-      const jobResult = await connection.query<JobRow>(
-        `INSERT INTO generation_jobs
-          (id, invitation_id, content_hash, status, spec, created_at, updated_at)
-         VALUES ($1, $2, $3, 'queued', $4::jsonb, $5::timestamptz, $5::timestamptz)
-         RETURNING ${jobColumns}`,
-        [input.id, input.invitationId, input.contentHash, JSON.stringify(input.spec), input.createdAt],
-      );
-      const row = jobResult.rows[0];
-      if (!row) throw new Error("PostgreSQL did not return the created generation job.");
-
-      await connection.query(
-        `INSERT INTO generation_idempotency_keys
-          (invitation_id, idempotency_key, content_hash, job_id, created_at)
-         VALUES ($1, $2, $3, $4, $5::timestamptz)`,
-        [idempotency.invitationId, idempotency.idempotencyKey, idempotency.contentHash, idempotency.jobId, idempotency.createdAt],
-      );
-      await connection.query("COMMIT");
-      transactionStarted = false;
-
-      return toJobRecord(row);
-    } catch (error) {
-      if (transactionStarted) {
-        try {
-          await connection.query("ROLLBACK");
-        } catch {
-          // Preserve the original query/commit error; the connection is released below.
-        }
-      }
-      throw error;
-    } finally {
-      connection.release();
-    }
+    return this.persistQueuedJob(input, idempotency);
   }
 }
 
