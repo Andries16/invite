@@ -34,4 +34,4 @@ These are adapter implementations, not yet the default runtime wiring. Before pr
 5. Add integration tests against PostgreSQL and Redis, including concurrent worker claims, process crashes after claim, concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, retained-job recovery, and restart recovery.
 6. Complete outbox dispatch/reconciliation and monitor the age/count of pending events so a crash between database commit and queue enqueue cannot leave a queued job undispatched indefinitely.
 
-The deterministic generator contract remains unchanged.
+The worker's claim is a single compare-and-set update, so concurrent consumers cannot both transition one queued row to running. A crash after claiming leaves the row running; a stale-running lease/reaper and explicit retry policy are still required before production use. Persistence errors are allowed to escape the processor rather than being mislabeled as generation failures. The deterministic generator contract remains unchanged.
