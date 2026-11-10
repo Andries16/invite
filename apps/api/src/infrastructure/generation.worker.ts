@@ -33,14 +33,9 @@ export class GenerationWorker {
       return { outcome: "ignored", jobId: message.jobId, reason: "already-claimed" };
     }
 
+    let plan;
     try {
-      const plan = planGeneration(claimed.spec);
-      await this.jobs.update(claimed.id, {
-        status: "succeeded",
-        plan,
-        error: undefined,
-      });
-      return { outcome: "succeeded", jobId: claimed.id };
+      plan = planGeneration(claimed.spec);
     } catch (error) {
       const failure =
         error instanceof GenerationValidationError
@@ -57,5 +52,14 @@ export class GenerationWorker {
       await this.jobs.update(claimed.id, { status: "failed", error: failure });
       return { outcome: "failed", jobId: claimed.id };
     }
+
+    // Persistence errors must escape to the queue runtime for retry/alerting;
+    // they are not generation failures and must not be rewritten as such.
+    await this.jobs.update(claimed.id, {
+      status: "succeeded",
+      plan,
+      error: undefined,
+    });
+    return { outcome: "succeeded", jobId: claimed.id };
   }
 }
