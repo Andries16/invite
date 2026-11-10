@@ -30,8 +30,8 @@ These are adapter implementations, not yet the default runtime wiring. Before pr
 1. Add and configure PostgreSQL and BullMQ/Redis clients from validated environment configuration.
 2. Replace the in-memory `GenerationService` maps with repository-backed async operations.
 3. Wire `PostgresGenerationOutboxRepository` into a continuously running dispatcher: claim batches, publish to BullMQ, mark successful deliveries dispatched, and schedule failed deliveries with bounded backoff. Recover stale `processing` leases after process crashes; delivery is at-least-once and consumers must be idempotent.
-4. Add a worker that claims queued jobs, runs `planGeneration`, and persists terminal status.
-5. Add integration tests against PostgreSQL and Redis, including concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, retained-job recovery, and restart recovery.
+4. `GenerationWorker` now validates the immutable queue payload against the stored job, atomically claims `queued -> running` with a PostgreSQL compare-and-set, runs `planGeneration`, and persists terminal status. Duplicate deliveries are ignored once another worker has claimed the job.
+5. Add integration tests against PostgreSQL and Redis, including concurrent worker claims, process crashes after claim, concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, retained-job recovery, and restart recovery.
 6. Complete outbox dispatch/reconciliation and monitor the age/count of pending events so a crash between database commit and queue enqueue cannot leave a queued job undispatched indefinitely.
 
 The deterministic generator contract remains unchanged.
