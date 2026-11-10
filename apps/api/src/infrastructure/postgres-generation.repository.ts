@@ -165,6 +165,19 @@ export class PostgresGenerationJobRepository implements GenerationJobRepository 
     return row ? toJobRecord(row) : undefined;
   }
 
+  /** Claims a queued job with a single compare-and-set statement. */
+  public async claimQueued(id: string): Promise<GenerationJobRecord | undefined> {
+    const result = await this.pool.query<JobRow>(
+      `UPDATE generation_jobs
+       SET status = 'running', updated_at = NOW()
+       WHERE id = $1 AND status = 'queued'
+       RETURNING ${jobColumns}`,
+      [id],
+    );
+    const row = result.rows[0];
+    return row ? toJobRecord(row) : undefined;
+  }
+
   public async update(
     id: string,
     patch: Partial<Pick<GenerationJobRecord, "status" | "plan" | "error" | "updatedAt">>,
