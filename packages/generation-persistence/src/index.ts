@@ -38,6 +38,8 @@ export interface CreateGenerationJobInput {
 export interface GenerationJobRepository {
   create(input: CreateGenerationJobInput): Promise<GenerationJobRecord>;
   findById(id: string): Promise<GenerationJobRecord | undefined>;
+  /** Atomically transitions queued -> running; returns undefined for duplicate or stale deliveries. */
+  claimQueued(id: string): Promise<GenerationJobRecord | undefined>;
   update(
     id: string,
     patch: Partial<
