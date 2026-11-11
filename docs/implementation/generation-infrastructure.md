@@ -1,6 +1,6 @@
 # Generation infrastructure adapters
 
-The API now contains first-pass PostgreSQL and BullMQ adapter boundaries. These adapters are deliberately injected with driver-compatible objects; neither the deterministic generator nor the persistence contracts import a vendor SDK.
+The API now contains first-pass PostgreSQL and BullMQ adapter boundaries. These adapters are deliberately injected with driver-compatible objects; neither the deterministic generator nor the persistence contracts import a vendor SDK. The API's `GenerationService` has been moved off process-local maps and now depends on repository tokens. Because `AppModule` does not yet register concrete PostgreSQL providers, generation endpoints currently fail closed with a structured HTTP 503 until that wiring exists.
 
 ## PostgreSQL
 
@@ -11,7 +11,7 @@ Apply `apps/api/src/infrastructure/generation-schema.sql` before enabling the re
 - Both `create` and `createIdempotent` now persist the generation job and a `generation.requested` outbox event in one PostgreSQL transaction. The idempotent variant also inserts the invitation-scoped idempotency row in that same transaction.
 - The outbox event contains the immutable job payload needed by a future dispatcher. This closes the database-commit/queue-enqueue loss window at the write boundary: a committed job always has a committed outbox row.
 - `PostgresGenerationOutboxRepository` provides atomic batch leasing with `FOR UPDATE SKIP LOCKED`, stale-lease recovery, and explicit dispatched/failed transitions. `GenerationOutboxDispatcher.runOnce()` claims a batch, publishes each payload through the provider-neutral `GenerationQueue`, and records success or delayed retry. If retry-state persistence fails, the dispatcher reports an aggregate error and the lease remains recoverable after expiry. A continuously running scheduler/process supervisor is still required to invoke `runOnce()`.
-- Callers must still handle a unique-key violation by reading the existing idempotency record and comparing its content hash.
+- `GenerationService` now uses asynchronous repository contracts. For keyed requests it first checks for an existing record, then commits job + idempotency + outbox atomically. If concurrent requests race on the unique key, it reads the winning record after transaction rollback, compares content hashes, and returns the existing job or raises an idempotency conflict. A dangling idempotency record is treated as an integrity error.
 
 The repository constructors accept a small structural SQL interface, so the API can provide a `pg` pool without leaking the driver into domain contracts.
 
