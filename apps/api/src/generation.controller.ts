@@ -19,7 +19,7 @@ export class GenerationController {
 
   @Post("invitations/:invitationId/generations")
   @HttpCode(202)
-  createGeneration(
+  async createGeneration(
     @Param("invitationId") invitationId: string,
     @Headers("Idempotency-Key") idempotencyKey: string | undefined,
     @Body() body: { spec?: unknown },
