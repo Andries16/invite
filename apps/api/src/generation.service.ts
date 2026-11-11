@@ -26,13 +26,13 @@ export class GenerationService {
 
   public async createJob(invitationId: string, spec: ExperienceSpec, idempotencyKey?: string): Promise<GenerationJobRecord> {
     const jobs = this.requireJobs();
-    const idempotency = this.requireIdempotency();
     const contentHash = createContentHash(spec);
     const key = idempotencyKey?.trim();
     const now = new Date().toISOString();
     const input = { id: randomUUID(), invitationId, contentHash, spec, createdAt: now };
     if (!key) return jobs.create(input);
 
+    const idempotency = this.requireIdempotency();
     const existing = await idempotency.find(invitationId, key);
     if (existing) return this.resolveExisting(existing, contentHash);
 
