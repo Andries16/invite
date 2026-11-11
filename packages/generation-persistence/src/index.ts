@@ -48,6 +48,11 @@ export interface GenerationJobRepository {
   ): Promise<GenerationJobRecord>;
 }
 
+/** Job repository that commits the job, idempotency key, and outbox event atomically. */
+export interface AtomicGenerationJobRepository extends GenerationJobRepository {
+  createIdempotent(input: CreateGenerationJobInput, idempotency: GenerationIdempotencyRecord): Promise<GenerationJobRecord>;
+}
+
 export interface GenerationIdempotencyRepository {
   find(
     invitationId: string,
