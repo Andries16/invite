@@ -28,7 +28,7 @@ The constructor accepts a structural subset of BullMQ's `Queue` API so the adapt
 These are adapter implementations, not yet the default runtime wiring. Before production use:
 
 1. Add and configure PostgreSQL and BullMQ/Redis clients from validated environment configuration.
-2. Replace the in-memory `GenerationService` maps with repository-backed async operations.
+2. `GenerationService` now uses asynchronous repository-backed create/read operations and the atomic job+idempotency+outbox transaction. It resolves concurrent unique-key races by loading the winning idempotency record, comparing hashes, and returning the existing job or a conflict. Provider tokens are defined, but concrete PostgreSQL providers are not registered in `AppModule`; until runtime wiring is added, generation endpoints return an explicit 503 rather than falling back to volatile in-memory state.
 3. Wire `PostgresGenerationOutboxRepository` into a continuously running dispatcher: claim batches, publish to BullMQ, mark successful deliveries dispatched, and schedule failed deliveries with bounded backoff. Recover stale `processing` leases after process crashes; delivery is at-least-once and consumers must be idempotent.
 4. `GenerationWorker` now validates the immutable queue payload against the stored job, atomically claims `queued -> running` with a PostgreSQL compare-and-set, runs `planGeneration`, and persists terminal status. Duplicate deliveries are ignored once another worker has claimed the job.
 5. Add integration tests against PostgreSQL and Redis, including concurrent worker claims, process crashes after claim, concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, retained-job recovery, and restart recovery.
