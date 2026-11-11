@@ -54,3 +54,16 @@ Use:
 - `pnpm --filter @invite/storybook typecheck` for type validation
 
 See the phase-specific requirements in `tasks/03-design-system` and `tasks/13-quality-security-performance`.
+
+## Current implementation slice
+
+Generation infrastructure is now split into provider-neutral control-plane contracts:
+
+- `@invite/generation-persistence` owns durable job and invitation-scoped idempotency repository interfaces.
+- `@invite/generation-queue` owns the queue payload contract; the Redis/BullMQ adapter remains outside these packages.
+- PostgreSQL is the intended persistence implementation and Redis/BullMQ is the intended queue implementation, per ADR 0001.
+- The API must persist a job before enqueueing work.
+- The worker must receive an immutable queue payload and update job state through the repository boundary.
+- Repository and queue adapters must be replaceable without changing `@invite/invitation-generator`.
+
+The current in-memory API implementation remains transitional until the PostgreSQL and BullMQ adapters land.

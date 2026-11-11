@@ -1,0 +1,37 @@
+# Generation infrastructure adapters
+
+The API now contains first-pass PostgreSQL and BullMQ adapter boundaries. These adapters are deliberately injected with driver-compatible objects; neither the deterministic generator nor the persistence contracts import a vendor SDK. The API's `GenerationService` has been moved off process-local maps and now depends on repository tokens. Because `AppModule` does not yet register concrete PostgreSQL providers, generation endpoints currently fail closed with a structured HTTP 503 until that wiring exists.
+
+## PostgreSQL
+
+Apply `apps/api/src/infrastructure/generation-schema.sql` before enabling the repositories. The schema persists generation state and enforces uniqueness for the pair `(invitation_id, idempotency_key)`.
+
+- `PostgresGenerationJobRepository` implements job creation, lookup, and state updates.
+- `PostgresGenerationIdempotencyRepository` implements invitation-scoped idempotency lookup and insertion.
+- Both `create` and `createIdempotent` now persist the generation job and a `generation.requested` outbox event in one PostgreSQL transaction. The idempotent variant also inserts the invitation-scoped idempotency row in that same transaction.
+- The outbox event contains the immutable job payload needed by a future dispatcher. This closes the database-commit/queue-enqueue loss window at the write boundary: a committed job always has a committed outbox row.
+- `PostgresGenerationOutboxRepository` provides atomic batch leasing with `FOR UPDATE SKIP LOCKED`, stale-lease recovery, and explicit dispatched/failed transitions. `GenerationOutboxDispatcher.runOnce()` claims a batch, publishes each payload through the provider-neutral `GenerationQueue`, and records success or delayed retry. If retry-state persistence fails, the dispatcher reports an aggregate error and the lease remains recoverable after expiry. A continuously running scheduler/process supervisor is still required to invoke `runOnce()`.
+- `GenerationService` now uses asynchronous repository contracts. For keyed requests it first checks for an existing record, then commits job + idempotency + outbox atomically. If concurrent requests race on the unique key, it reads the winning record after transaction rollback, compares content hashes, and returns the existing job or raises an idempotency conflict. A dangling idempotency record is treated as an integrity error.
+
+The repository constructors accept a small structural SQL interface, so the API can provide a `pg` pool without leaking the driver into domain contracts.
+
+## Redis / BullMQ
+
+`BullMqGenerationQueue` implements the `GenerationQueue` contract. It uses the generation job ID as BullMQ's stable `jobId`, configures bounded retries with exponential backoff, and retains completed/failed queue records for operational inspection.
+
+Stable IDs prevent duplicate queue entries while a BullMQ record exists; they do **not** make a retained completed or failed job executable again. A future recovery/retry workflow must inspect the existing BullMQ job state and deliberately remove/recreate or otherwise re-arm the queue record before re-enqueueing. Do not rely on calling `add` again with the same retained ID to recover a job.
+
+The constructor accepts a structural subset of BullMQ's `Queue` API so the adapter package remains independent of the vendor SDK.
+
+## Remaining integration work
+
+These are adapter implementations, not yet the default runtime wiring. Before production use:
+
+1. Add and configure PostgreSQL and BullMQ/Redis clients from validated environment configuration.
+2. `GenerationService` now uses asynchronous repository-backed create/read operations and the atomic job+idempotency+outbox transaction. It resolves concurrent unique-key races by loading the winning idempotency record, comparing hashes, and returning the existing job or a conflict. Provider tokens are defined, but concrete PostgreSQL providers are not registered in `AppModule`; until runtime wiring is added, generation endpoints return an explicit 503 rather than falling back to volatile in-memory state.
+3. Wire `PostgresGenerationOutboxRepository` into a continuously running dispatcher: claim batches, publish to BullMQ, mark successful deliveries dispatched, and schedule failed deliveries with bounded backoff. Recover stale `processing` leases after process crashes; delivery is at-least-once and consumers must be idempotent.
+4. `GenerationWorker` now validates the immutable queue payload against the stored job, atomically claims `queued -> running` with a PostgreSQL compare-and-set, runs `planGeneration`, and persists terminal status. Duplicate deliveries are ignored once another worker has claimed the job.
+5. Add integration tests against PostgreSQL and Redis, including concurrent worker claims, process crashes after claim, concurrent idempotency-key races, rollback behavior, duplicate enqueue, worker retry, retained-job recovery, and restart recovery.
+6. Complete outbox dispatch/reconciliation and monitor the age/count of pending events so a crash between database commit and queue enqueue cannot leave a queued job undispatched indefinitely.
+
+The worker's claim is a single compare-and-set update, so concurrent consumers cannot both transition one queued row to running. A crash after claiming leaves the row running; a stale-running lease/reaper and explicit retry policy are still required before production use. Persistence errors are allowed to escape the processor rather than being mislabeled as generation failures. The deterministic generator contract remains unchanged.

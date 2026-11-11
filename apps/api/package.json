@@ -11,6 +11,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@invite/generation-persistence": "workspace:*",
+    "@invite/generation-queue": "workspace:*",
     "@invite/invitation-generator": "workspace:*",
     "@invite/invitation-schema": "workspace:*",
     "@invite/shared": "workspace:*",

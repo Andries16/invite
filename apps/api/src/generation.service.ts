@@ -1,28 +1,11 @@
-import {
-  createContentHash,
-  GenerationValidationError,
-  planGeneration,
-  type GenerationPlan,
-} from "@invite/invitation-generator";
+import { createContentHash } from "@invite/invitation-generator";
+import type { AtomicGenerationJobRepository, GenerationIdempotencyRepository, GenerationJobRecord } from "@invite/generation-persistence";
 import type { ExperienceSpec } from "@invite/invitation-schema";
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, Optional, ServiceUnavailableException } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 
-export type GenerationJobStatus = "queued" | "running" | "failed" | "succeeded";
-
-export interface GenerationJob {
-  id: string;
-  invitationId: string;
-  status: GenerationJobStatus;
-  createdAt: string;
-  updatedAt: string;
-  plan?: GenerationPlan;
-  error?: {
-    code: "INVITATION_SPEC_INVALID" | "GENERATION_FAILED";
-    message: string;
-    details: unknown[];
-  };
-}
+export const GENERATION_JOB_REPOSITORY = Symbol.for("invite.generation.job-repository");
+export const GENERATION_IDEMPOTENCY_REPOSITORY = Symbol.for("invite.generation.idempotency-repository");
 
 export class GenerationIdempotencyConflictError extends Error {
   public constructor() {
@@ -31,108 +14,68 @@ export class GenerationIdempotencyConflictError extends Error {
   }
 }
 
-interface IdempotencyRecord {
-  jobId: string;
-  contentHash: string;
-}
-
-interface InvitationIdempotencyRecords {
-  readonly records: Map<string, IdempotencyRecord>;
-}
+const isUniqueConstraintViolation = (error: unknown): boolean =>
+  typeof error === "object" && error !== null && "code" in error && error.code === "23505";
 
 @Injectable()
 export class GenerationService {
-  private readonly jobs = new Map<string, GenerationJob>();
-  private readonly idempotencyRecords = new Map<string, InvitationIdempotencyRecords>();
+  public constructor(
+    @Optional() @Inject(GENERATION_JOB_REPOSITORY) private readonly jobs?: AtomicGenerationJobRepository,
+    @Optional() @Inject(GENERATION_IDEMPOTENCY_REPOSITORY) private readonly idempotency?: GenerationIdempotencyRepository,
+  ) {}
 
-  createJob(invitationId: string, spec: ExperienceSpec, idempotencyKey?: string): GenerationJob {
+  public async createJob(invitationId: string, spec: ExperienceSpec, idempotencyKey?: string): Promise<GenerationJobRecord> {
+    const jobs = this.requireJobs();
     const contentHash = createContentHash(spec);
-    const normalizedIdempotencyKey = idempotencyKey?.trim();
-
-    if (normalizedIdempotencyKey) {
-      const invitationRecords = this.getIdempotencyRecords(invitationId);
-      const existing = invitationRecords.records.get(normalizedIdempotencyKey);
-
-      if (existing) {
-        if (existing.contentHash !== contentHash) {
-          throw new GenerationIdempotencyConflictError();
-        }
-
-        const existingJob = this.jobs.get(existing.jobId);
-        if (existingJob) return existingJob;
-        invitationRecords.records.delete(normalizedIdempotencyKey);
-      }
-    }
-
+    const key = idempotencyKey?.trim();
     const now = new Date().toISOString();
-    const id = randomUUID();
+    const input = { id: randomUUID(), invitationId, contentHash, spec, createdAt: now };
+    if (!key) return jobs.create(input);
 
-    const job: GenerationJob = {
-      id,
-      invitationId,
-      status: "queued",
-      createdAt: now,
-      updatedAt: now,
-    };
+    const idempotency = this.requireIdempotency();
+    const existing = await idempotency.find(invitationId, key);
+    if (existing) return this.resolveExisting(existing, contentHash);
 
-    this.jobs.set(id, job);
-
-    if (normalizedIdempotencyKey) {
-      this.getIdempotencyRecords(invitationId).records.set(normalizedIdempotencyKey, {
-        jobId: id,
-        contentHash,
+    try {
+      return await jobs.createIdempotent(input, {
+        invitationId, idempotencyKey: key, contentHash, jobId: input.id, createdAt: now,
       });
+    } catch (error) {
+      // The unique key arbitrates concurrent requests; load the winner after rollback.
+      if (!isUniqueConstraintViolation(error)) throw error;
+      const winner = await idempotency.find(invitationId, key);
+      if (!winner) throw error;
+      return this.resolveExisting(winner, contentHash);
     }
+  }
 
-    queueMicrotask(() => void this.runJob(id, spec));
+  public async getJob(id: string): Promise<GenerationJobRecord | undefined> {
+    return this.requireJobs().findById(id);
+  }
 
+  private async resolveExisting(
+    existing: { contentHash: string; jobId: string },
+    requestedHash: string,
+  ): Promise<GenerationJobRecord> {
+    if (existing.contentHash !== requestedHash) throw new GenerationIdempotencyConflictError();
+    const job = await this.requireJobs().findById(existing.jobId);
+    if (!job) throw new Error("Generation idempotency record references a missing job.");
     return job;
   }
 
-  getJob(id: string): GenerationJob | undefined {
-    return this.jobs.get(id);
+  private requireJobs(): AtomicGenerationJobRepository {
+    if (!this.jobs) throw new ServiceUnavailableException({
+      code: "GENERATION_PERSISTENCE_UNAVAILABLE",
+      message: "Durable generation persistence is not configured.",
+    });
+    return this.jobs;
   }
 
-  private async runJob(id: string, spec: ExperienceSpec): Promise<void> {
-    try {
-      this.updateJob(id, { status: "running" });
-      const plan = planGeneration(spec);
-      this.updateJob(id, { status: "succeeded", plan });
-    } catch (error) {
-      const failed =
-        error instanceof GenerationValidationError
-          ? {
-              code: "INVITATION_SPEC_INVALID" as const,
-              message: "The invitation specification is invalid.",
-              details: error.issues,
-            }
-          : {
-              code: "GENERATION_FAILED" as const,
-              message: "Generation planning failed.",
-              details: [],
-            };
-
-      this.updateJob(id, { status: "failed", error: failed });
-    }
-  }
-
-  private getIdempotencyRecords(invitationId: string): InvitationIdempotencyRecords {
-    let records = this.idempotencyRecords.get(invitationId);
-
-    if (!records) {
-      records = { records: new Map<string, IdempotencyRecord>() };
-      this.idempotencyRecords.set(invitationId, records);
-    }
-
-    return records;
-  }
-
-  private updateJob(id: string, patch: Partial<GenerationJob>): GenerationJob {
-    const current = this.jobs.get(id);
-    if (!current) throw new Error("Generation job disappeared.");
-
-    const next = { ...current, ...patch, updatedAt: new Date().toISOString() };
-    this.jobs.set(id, next);
-    return next;
+  private requireIdempotency(): GenerationIdempotencyRepository {
+    if (!this.idempotency) throw new ServiceUnavailableException({
+      code: "GENERATION_PERSISTENCE_UNAVAILABLE",
+      message: "Durable generation persistence is not configured.",
+    });
+    return this.idempotency;
   }
 }
