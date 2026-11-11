@@ -5,7 +5,7 @@ import type {
   GenerationIdempotencyRecord,
   GenerationIdempotencyRepository,
   GenerationJobRecord,
-  GenerationJobRepository,
+  AtomicGenerationJobRepository,
 } from "@invite/generation-persistence";
 
 interface QueryResult<Row> {
@@ -75,7 +75,7 @@ const jobColumns = "id, invitation_id, content_hash, status, spec, plan, error, 
 const idempotencyColumns = "invitation_id, idempotency_key, content_hash, job_id, created_at";
 
 /** Accepts a pg-compatible pool without coupling domain packages to a driver. */
-export class PostgresGenerationJobRepository implements GenerationJobRepository {
+export class PostgresGenerationJobRepository implements AtomicGenerationJobRepository {
   public constructor(private readonly pool: SqlPool) {}
 
   public async create(input: CreateGenerationJobInput): Promise<GenerationJobRecord> {
